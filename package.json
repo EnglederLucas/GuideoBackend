@@ -12,7 +12,8 @@
   "author": "Lukas Wirth",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "firebase-admin": "^8.9.2"
   },
   "devDependencies": {
     "@types/express": "^4.17.2",
