@@ -112,3 +112,7 @@ temp/
 # Created by Guideo Team
 # builded files
 build/
+
+# editor files
+.idea/
+.vs/
