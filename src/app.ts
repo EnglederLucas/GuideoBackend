@@ -13,6 +13,7 @@ const server: GuideoServer = new GuideoServer(
     )
 );
 
+app.use(express.static('../public'));
 app.use(server.router);
 app.listen(port, () => {
    console.log('Now listening on port ' + port);
