@@ -1,25 +1,19 @@
-import { IUser, IGuide } from "./core/models";
-import * as fbadmin from "firebase-admin";
-import { DataInitializer } from "./persistence/initializers";
+import express, { Application } from "express";
+import GuideoServer from "./application/GuideoServer";
+import {GuideController} from "./logic/controllers";
+import {GuideRepository, RatingRepository} from "./persistence/inmemory/repositories";
 
-console.log('Hello World');
+const port: number = 3030;
+const app: Application = express();
 
-let userX: IUser = {
-    name: 'Max',
-    password: 'Hellome'
-};
+const server: GuideoServer = new GuideoServer(
+    new GuideController(
+        new GuideRepository(),
+        new RatingRepository()
+    )
+);
 
-var defaultApp = fbadmin.initializeApp({
-    credential: fbadmin.credential.applicationDefault(),
-    databaseURL: " guideo-cf028.web.app"
-});
-
-let users: IUser[] = DataInitializer.getUsers();
-let db = defaultApp.firestore();
-
-// let docRef: FirebaseFirestore.DocumentReference = db.collection('Users').doc('masterrule21');
-
-users.forEach(async (user) => {
-    let docRef: FirebaseFirestore.DocumentReference = db.collection('Users').doc();
-    docRef.set(user);
+app.use(server.router);
+app.listen(port, () => {
+   console.log('Now listening on port ' + port);
 });

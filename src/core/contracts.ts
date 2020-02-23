@@ -1,24 +1,27 @@
 import {IGuide, IRating, ITag, IUser} from "./models";
 
-export interface IRatingRepository {
-    getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
-    getRatingsOfUser(userName: string) : Promise<IRating[]>;
-    getAllRatings() : Promise<IRating[]>    // Für das Testen
+export interface IGenericRepository<TEntity, TId> {
+    getAll(): Promise<TEntity[]>;
+    add(item: TEntity): Promise<void>;
+    addRange(items: TEntity[]): Promise<void>;
 }
 
-export interface IGuideRepoitory {
+export interface IRatingRepository {
+    getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
+    getAverageRatingOfGuide(guideName: string): Promise<number>;
+    getRatingsOfUser(userName: string) : Promise<IRating[]>;
+}
+
+export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuideByName(name: string) : Promise<IGuide>;
     getGuidesOfUser(userName: string) : Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag[]): Promise<IGuide[]>;
-    getAllGuides(): Promise<IGuide[]>;      // Für das Testen
 }
 
-export interface IUserRepository {
+export interface IUserRepository extends IGenericRepository<IUser, string> {
     getUserByName(name: string): Promise<IUser>
-    getAllUsers(): Promise<IUser[]>;
 }
 
-export interface ITagRepository {
-    getTagByName(name: string): Promise<ITag>;
-    getAllTags(): Promise<ITag[]>;
+export interface ITagRepository extends IGenericRepository<ITag, string> {
+    getTagByName(name: string): Promise<ITag | undefined>;
 }

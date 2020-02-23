@@ -5,8 +5,8 @@ export interface IUser {
 
 export interface IGuide {
     name: string;
-    description: string;
-    tags: ITag[];
+    description?: string;
+    tags?: ITag[];
     userName: string;
 }
 
