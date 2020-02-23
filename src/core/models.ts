@@ -8,6 +8,7 @@ export interface IGuide {
     description?: string;
     tags?: ITag[];
     userName: string;
+    imageLink?: string;
 }
 
 export interface IRating {
