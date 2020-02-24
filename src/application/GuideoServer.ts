@@ -2,7 +2,7 @@ import express, { Router, Application } from "express";
 import { IRoutable } from './contracts';
 
 export default class GuideoServer {
-    private app: Application;
+    public app: Application;
 
     constructor(private port: number, private routables: IRoutable[]) {
         this.app = express()

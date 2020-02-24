@@ -33,7 +33,7 @@ export class UserRepository implements IUserRepository {
 
 export class GuideRepository implements IGuideRepository {
     private guides: IGuide[] = [
-        { name: 'History of Linz', userName: 'thelegend27', imageLink: 'public/AbbeyRoad.jpg' },
+        { name: 'History of Linz', userName: 'thelegend27', imageLink: '/AbbeyRoad.jpg' },
         { name: 'A Guide with name 2', userName: 'maxmuster', imageLink: '' },
         { name: 'Callcenter access 3000', userName: 'luxdachef', imageLink: '' },
         { name: 'A man must do, what a man have to do', userName: 'thelegend27', imageLink: '' }
