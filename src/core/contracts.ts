@@ -1,4 +1,4 @@
-import {IGuide, IRating, ITag, IUser} from "./models";
+import { IGuide, IRating, ITag, IUser } from './models';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
@@ -6,7 +6,7 @@ export interface IGenericRepository<TEntity, TId> {
     addRange(items: TEntity[]): Promise<void>;
 }
 
-export interface IRatingRepository {
+export interface IRatingRepository extends IGenericRepository<IRating, any> {
     getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
     getAverageRatingOfGuide(guideName: string): Promise<number>;
     getRatingsOfUser(userName: string) : Promise<IRating[]>;
@@ -31,4 +31,14 @@ export interface IUnitOfWork {
     readonly tags: ITagRepository;
     readonly users: IUserRepository;
     readonly ratings: IRatingRepository;
+}
+
+export interface IDataInitializer {
+    initDataSync(): number;
+    initData(): Promise<number>;
+
+    getGuides(): IGuide[];
+    getUsers(): IUser[];
+    getTags(): ITag[];
+    getRatings(): IRating[];
 }
