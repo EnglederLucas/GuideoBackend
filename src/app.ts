@@ -6,6 +6,8 @@ import {GuideRepository, RatingRepository} from "./persistence/inmemory/reposito
 const port: number = 3030;
 const app: Application = express();
 
+const publicFiles: string = '../public/';
+
 const server: GuideoServer = new GuideoServer(
     new GuideController(
         new GuideRepository(),
@@ -13,7 +15,7 @@ const server: GuideoServer = new GuideoServer(
     )
 );
 
-app.use(express.static('../public'));
+app.use('/public',express.static(publicFiles));
 app.use(server.router);
 app.listen(port, () => {
    console.log('Now listening on port ' + port);
