@@ -19,9 +19,16 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
 }
 
 export interface IUserRepository extends IGenericRepository<IUser, string> {
-    getUserByName(name: string): Promise<IUser>
+    getUserByName(name: string): Promise<IUser>;
 }
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag | undefined>;
+}
+
+export interface IUnitOfWork {
+    readonly guides: IGuideRepository;
+    readonly tags: ITagRepository;
+    readonly users: IUserRepository;
+    readonly ratings: IRatingRepository;
 }

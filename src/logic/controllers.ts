@@ -1,15 +1,14 @@
-import {IGuideRepository, IRatingRepository} from "../core/contracts";
+import { IGuideRepository, IRatingRepository, IUnitOfWork } from '../core/contracts';
 import {GuideDto} from "./datatransferobjects";
 
 export class GuideController {
 
     constructor(
-        private readonly repository: IGuideRepository,
-        private readonly ratingRepo: IRatingRepository) {
+        private readonly unitOfWork: IUnitOfWork) {
     }
 
     async getAll(): Promise<GuideDto[]> {
-        const guides = await this.repository.getAll();
+        const guides = await this.unitOfWork.guides.getAll();
         const result: GuideDto[] = [];
 
         for (const g of guides) {
@@ -17,7 +16,7 @@ export class GuideController {
 
             const dto: GuideDto = {
                 guide: g,
-                rating: await this.ratingRepo.getAverageRatingOfGuide(g.name)
+                rating: await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
             };
 
             result.push(dto);
