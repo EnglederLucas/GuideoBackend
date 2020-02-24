@@ -1,4 +1,4 @@
-import { IGuideRepository, IRatingRepository, IUnitOfWork } from '../core/contracts';
+import { IUnitOfWork } from '../core/contracts';
 import {GuideDto} from "./datatransferobjects";
 
 export class GuideController {
@@ -12,8 +12,6 @@ export class GuideController {
         const result: GuideDto[] = [];
 
         for (const g of guides) {
-            // const ratingAvg = await this.ratingRepo.getAverageRatingOfGuide(g.name);
-
             const dto: GuideDto = {
                 guide: g,
                 rating: await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
