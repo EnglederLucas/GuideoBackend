@@ -1,22 +1,26 @@
-import { Router } from "express";
-import {GuideController} from "../logic/controllers";
+import express, { Router, Application } from "express";
+import { IRoutable } from './contracts';
 
 export default class GuideoServer {
-    public router: Router = Router();
+    private app: Application;
 
-    constructor(private guideController: GuideController) {
-        this.initRoutes();
+    constructor(private port: number, private routables: IRoutable[]) {
+        this.app = express()
+
+        this.initRoutes(routables);
     }
 
-    private initRoutes(): void {
-        this.router.get('/', (req, res) => {
-           res.send('<a href="./guides">Test guides</a>');
-        });
+    private initRoutes(routables: IRoutable[]): void {
+        routables.forEach(r => this.app.use(`/api/${ r.getBasePath() }`, r.getRouter()));
 
-        this.router.get('/guides', (req, res) => {
-            this.guideController.getAll()
-                .catch(reason => res.send(reason))
-                .then(result => res.send(result));
+        this.app.get('/', (req, res) => {
+           res.send('<a href="./api/guides">Test guides</a>');
+        });
+    }
+
+    public start(): void {
+        this.app.listen(this.port, () => {
+            console.log(`server startet at port ${this.port}`);
         });
     }
 }

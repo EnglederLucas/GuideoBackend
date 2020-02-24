@@ -1,21 +1,13 @@
-import express, { Application } from "express";
 import GuideoServer from "./application/GuideoServer";
-import {GuideController} from "./logic/controllers";
+import { GuideController } from "./logic/controllers";
 import { UnitOfWork } from './persistence/inmemory/unitofwork';
+import { GuideEndpoint } from './application/rest/endpoints';
 
 const port: number = 3030;
-const app: Application = express();
+const unitOfWork: UnitOfWork = new UnitOfWork();
 
-const publicFiles: string = '../public/';
+const server: GuideoServer = new GuideoServer(port, [
+    new GuideEndpoint(new GuideController(unitOfWork))
+]);
 
-const server: GuideoServer = new GuideoServer(
-    new GuideController(
-        new UnitOfWork()
-    )
-);
-
-app.use('/public',express.static(publicFiles));
-app.use(server.router);
-app.listen(port, () => {
-   console.log('Now listening on port ' + port);
-});
+server.start();
