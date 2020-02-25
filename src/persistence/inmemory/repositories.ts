@@ -2,11 +2,7 @@ import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} fr
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 
 export class UserRepository implements IUserRepository {
-    private users: IUser[] = [
-        { name: 'thelegend27', password: '1234' },
-        { name: 'maxmuster', password: '5678' },
-        { name: 'luxdachef', password: 'mochmaguides' }
-    ];
+    private users: IUser[] = [];
 
     async getAll(): Promise<IUser[]> {
         return [...this.users];     // makes a copy of the users array
@@ -32,12 +28,7 @@ export class UserRepository implements IUserRepository {
 }
 
 export class GuideRepository implements IGuideRepository {
-    private guides: IGuide[] = [
-        { name: 'History of Linz', userName: 'thelegend27', imageLink: '/AbbeyRoad.jpg' },
-        { name: 'A Guide with name 2', userName: 'maxmuster', imageLink: '' },
-        { name: 'Callcenter access 3000', userName: 'luxdachef', imageLink: '' },
-        { name: 'A man must do, what a man have to do', userName: 'thelegend27', imageLink: '' }
-    ];
+    private guides: IGuide[] = [];
 
     async getAll(): Promise<IGuide[]> {
         return [...this.guides];  // makes a copy of guides
@@ -70,12 +61,7 @@ export class GuideRepository implements IGuideRepository {
 }
 
 export class TagRepository implements ITagRepository {
-    private tags: ITag[] = [
-        { name: 'History' },
-        { name: 'Culture' },
-        { name: 'Technology' },
-        { name: 'irrelevant' }
-    ];
+    private tags: ITag[] = [];
 
     async getAll(): Promise<ITag[]> {
         return [...this.tags];
@@ -95,10 +81,7 @@ export class TagRepository implements ITagRepository {
 }
 
 export class RatingRepository implements IRatingRepository {
-    private ratings: IRating[] = [
-        { userName: 'thelegend27', guideName: 'Callcenter access 3000', rating: 3 },
-        { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 2 }
-    ];
+    private ratings: IRating[] = [];
 
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
         const ratings = this.ratings
@@ -122,4 +105,15 @@ export class RatingRepository implements IRatingRepository {
             .filter(r => r.userName === userName);
     }
 
+    async getAll(): Promise<IRating[]> {
+        return [...this.ratings];
+    }
+
+    async add(item: IRating): Promise<void> {
+        this.ratings.push(item);
+    }
+
+    async addRange(items: IRating[]): Promise<void> {
+        items.forEach(item => this.ratings.push(item));
+    }
 }
