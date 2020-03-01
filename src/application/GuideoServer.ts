@@ -1,11 +1,19 @@
 import express, { Router, Application } from "express";
 import { IRoutable } from './contracts';
+import cors from 'cors';
 
 export default class GuideoServer {
     private app: Application;
 
     constructor(private port: number, private routables: IRoutable[]) {
-        this.app = express()
+        this.app = express();
+        var corsOptions = {
+            origin: 'localhost:4200',
+            optionsSuccessStatus: 200
+        }
+
+        this.app.use(cors(corsOptions));
+        //this.app.options('*', cors());
 
         this.initRoutes(routables);
     }
