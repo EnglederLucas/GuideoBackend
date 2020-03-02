@@ -13,7 +13,7 @@ If you want automatically compiling and restarting use this steps:
 2. run `npm run tscw` in one terminal (tscw -> typescript watch)
 3. run `npm run starw` in another terminal (startw -> start watch -> nodemon)
 
-Now if you make changes and save the file `tscw` will automatically compile the typescript file and `startw` will automatically start the server  
+Now, if you make changes and save the file `tscw` will automatically compile the typescript file and `startw` will automatically start the server  
 
 ## Contribute
 
