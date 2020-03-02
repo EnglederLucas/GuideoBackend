@@ -41,7 +41,10 @@ export class GuideoServer {
         routables.forEach(r => this.app.use(`/api/${ r.getBasePath() }`, r.getRouter()));
 
         this.app.get('/', (req, res) => {
-           res.send('<a href="./api/guides">Test guides</a>');
+           res.send(
+               '<div><a href="./api/guides">Test guides</a></div>' +
+               '<div><a href="./api/guides/paged?pos=0&size=2">Test guides paged</a></div>'
+            );
         });
     }
 
