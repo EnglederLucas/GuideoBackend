@@ -23,7 +23,8 @@ export class GuideoServer {
             this.app.use(cors(corsOptions));
         }    
 
-        this.initRoutes(settings.routables);
+        if (settings.routables !== null)
+            this.initRoutes(settings.routables);
     }
 
     private initRoutes(routables: IRoutable[]): void {

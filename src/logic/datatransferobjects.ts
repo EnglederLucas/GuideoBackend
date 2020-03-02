@@ -1,14 +1,5 @@
 import { IGuide } from '../core/models';
 
-export interface IGuideDto {
-    name: string;
-    description?: string;
-    tags?: string[];
-    userName: string;
-    imageLink?: string;
-    rating: number;
-}
-
 export class GuideDto {
     private name: string;
     private description: string;
