@@ -15,7 +15,7 @@ export class GuideoServer {
         this.app = express();
 
         let corsOptions: CorsOptions = {
-            origin: 'localhost:4200',
+            origin: '*',
             optionsSuccessStatus: 200
         };
 
