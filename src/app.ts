@@ -1,4 +1,3 @@
-import express from 'express';
 import { GuideoServer } from './application/GuideoServer';
 import { GuideController } from "./logic/controllers";
 import { UnitOfWork } from './persistence/inmemory/unitofwork';
@@ -24,10 +23,14 @@ console.log('> added data to repositories');
 const server: GuideoServer = new GuideoServer({
     port: port,
     routables: [ new GuideEndpoint(new GuideController(unitOfWork)) ],
-    enableCors: enableCors
+    enableCors: enableCors,
+    staticPaths: [
+        { route: '/', paths: [ `${__dirname}\\..\\public` ] }
+    ]
 });
 
 if (enableCors) console.log('> cors enabled');
 
-server.app.use(express.static('D:\\Projects\\guideo_backend\\public'));
+console.log(`${__dirname}\\..\\public`);
+
 server.start();
