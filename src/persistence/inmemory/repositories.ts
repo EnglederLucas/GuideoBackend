@@ -58,6 +58,10 @@ export class GuideRepository implements IGuideRepository {
     async addRange(items: IGuide[]): Promise<void> {
         items.forEach(g => this.guides.push(g));
     }
+
+    async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
+       return this.guides.slice(index * size, index * size + size);
+    }
 }
 
 export class TagRepository implements ITagRepository {

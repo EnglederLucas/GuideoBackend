@@ -15,10 +15,23 @@ export class GuideEndpoint implements IRoutable {
         if (this.initialized)
             return;
 
-        this.router.get('/', (req, res) => {
-            this.guideController.getAll()
+        this.router.get('/', async (req, res) => {
+            /*this.guideController.getAll()
                 .catch(reason => res.send(reason))
-                .then(result => res.send(result));
+                .then(result => res.send(result));*/
+
+            res.send(await this.guideController.getAll());
+        });
+
+        this.router.get('/paged', async (req, res) => {
+            const pos = req.query.pos;
+            const size = req.query.size;
+
+            /*this.guideController.getGuidesPaged(pos, size)
+                .then(result => res.send(result))
+                .catch(reason => res.send(reason));*/
+
+            res.send(await this.guideController.getGuidesPaged(pos, size));
         });
 
         this.initialized = true;
