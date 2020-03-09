@@ -1,8 +1,8 @@
 import express from 'express';
 import { GuideoServer } from './application/GuideoServer';
-import { GuideController } from "./logic/controllers";
+import { GuideController, UserController } from "./logic/controllers";
 //import { UnitOfWork } from './persistence/inmemory/unitofwork';
-import { GuideEndpoint } from './application/rest/endpoints';
+import { GuideEndpoint, UserEndpoint } from './application/rest/endpoints';
 import { IDataInitializer } from './core/contracts';
 import { InMemoryDataInitializer } from './persistence/initializers';
 import { UnitOfWork } from './persistence/firebase/unitofwork';
@@ -13,7 +13,7 @@ const enableCors: boolean = true;
 //const unitOfWork: UnitOfWork = new UnitOfWork();
 const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
-var serviceAccount = require(__dirname + '..\\..\\..\\vyzerdb-firebase-adminsdk-02032020.json');
+var serviceAccount = require(__dirname + '..\\..\\..\\vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://vyzerdb.firebaseio.com"
@@ -25,6 +25,8 @@ console.log('> initialize data ...');
 const result: number = dataInitializer.initDataSync();
 console.log(`> ${result} entries was initizialized`);
 
+unitOfWork.users.add(dataInitializer.getUsers()[0]);
+
 /*unitOfWork.users.addRange(dataInitializer.getUsers());
 unitOfWork.guides.addRange(dataInitializer.getGuides());
 unitOfWork.tags.addRange(dataInitializer.getTags());
@@ -33,7 +35,7 @@ unitOfWork.ratings.addRange(dataInitializer.getRatings());*/
 
 const server: GuideoServer = new GuideoServer({
     port: port,
-    routables: [ new GuideEndpoint(new GuideController(unitOfWork)) ],
+    routables: [ new GuideEndpoint(new GuideController(unitOfWork)), new UserEndpoint(new UserController(unitOfWork)) ],
     enableCors: enableCors
 });
 

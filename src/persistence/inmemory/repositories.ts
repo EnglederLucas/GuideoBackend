@@ -34,13 +34,13 @@ export class GuideRepository implements IGuideRepository {
         return [...this.guides];  // makes a copy of guides
     }
 
-    async getGuideByName(name: string): Promise<IGuide> {
+    async getGuidesByName(name: string): Promise<IGuide[]> {
         const result: IGuide[] = this.guides.filter(g => g.name === name);
 
         if (result.length > 1)
             throw 'Found too much users with name ' + name;
 
-        return result[0];
+        return result;
     }
 
     async getGuidesOfUser(userName: string): Promise<IGuide[]> {

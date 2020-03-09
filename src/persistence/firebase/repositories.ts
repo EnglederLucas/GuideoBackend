@@ -1,7 +1,6 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
-import admin from 'firebase-admin'
-import { GuideDto } from '../../logic/datatransferobjects';
+import admin from 'firebase-admin';
 
 export class UserRepository implements IUserRepository {
 
@@ -12,44 +11,34 @@ export class UserRepository implements IUserRepository {
     }
 
     async getAll(): Promise<IUser[]> {
-        var users: IUser[];
+        let users: IUser[] = [];
 
-        let snapshot = await this.db.collection('users').get()/*.catch(err => console.log('Error', err))*/;
-        snapshot.forEach((doc) => {
+        let snapshot = await this.usersRef.get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            //users.push()
+            users.push({name: doc.data().name, password: doc.data().password});
         });
 
-        return [];
+        return users;
     }
 
     async getUserByName(name: string): Promise<IUser> {
-        var user: IUser;
-        var query = this.usersRef.where('name','==',name).get()
-            .then(snapshot => {
-                if(snapshot.empty){
-                    console.log('No matching documents.');
-                    return;
-                }
-                user = (snapshot.docs[0].data().name, snapshot.docs[0].data().password);
-            })
-            .catch(err => {
-                console.log('Error getting documents', err);
-            })
+        let user: IUser;
+        let snapshot = await this.usersRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
+        user = {name: snapshot.docs[0].data().name, password: snapshot.docs[0].data().password};
 
-        throw 'Not Supported yet';
+        return user;
     }
 
     async add(item: IUser): Promise<void> {
-        admin.auth().createUser({
+        /*admin.auth().createUser({
             displayName: item.name,
-            password: item.password,
-            email: 'testmail@gmail.com'
-        })
-        /*var setUser = this.usersRef.add({
-            name: item.name,
             password: item.password
         })*/
+        var setUser = this.usersRef.add({
+            name: item.name,
+            password: item.password
+        });
     }
 
     async addRange(items: IUser[]): Promise<void> {
@@ -69,19 +58,49 @@ export class GuideRepository implements IGuideRepository {
     }
 
     async getAll(): Promise<IGuide[]> {
-        throw 'Not Supported yet';
+        let guides: IGuide[] = [];
+
+        let snapshot = await this.guidesRef.get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+        });
+
+        return guides;
     }
 
-    async getGuideByName(name: string): Promise<IGuide> {
-        throw 'Not Supported yet';
+    async getGuidesByName(name: string): Promise<IGuide[]> {
+        let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+        });
+
+        return guides;
     }
 
     async getGuidesOfUser(userName: string): Promise<IGuide[]> {
-        throw 'Not Supported yet';
+        let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.where('userName','==',userName).get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+        });
+
+        return guides;
     }
 
     async getGuidesWithTags(tags: ITag[]): Promise<IGuide[]> {
-        throw 'Not Supported yet';
+        /*let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.where('tags','==',name).get()/*.catch(err => console.log('Error', err))*/;
+        /*snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
+        });
+
+        return guides;*/
+        throw 'Not supported yet';
     }
 
     async add(item: IGuide): Promise<void> {
@@ -91,7 +110,7 @@ export class GuideRepository implements IGuideRepository {
             tags: item.tags,
             userName: item.userName,
             imageLink: item.imageLink
-        })
+        });
     }
 
     async addRange(items: IGuide[]): Promise<void> {
@@ -110,17 +129,30 @@ export class TagRepository implements ITagRepository {
     }
 
     async getAll(): Promise<ITag[]> {
-        throw 'Not Supported yet';
+        let tags: ITag[] = [];
+
+        let snapshot = await this.tagsRef.get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            tags.push({name: doc.data().name});
+        });
+
+        return tags;
     }
 
     async getTagByName(name: string): Promise<ITag | undefined> {
-        throw 'Not Supported yet';
+        let tag: ITag;
+
+        let snapshot = await this.tagsRef.get();
+        tag = {name: snapshot.docs[0].data.name};
+
+        return tag;
     }
 
     async add(item: ITag): Promise<void> {
         var setTag = this.tagsRef.add({
             name: item.name
-        })
+        });
     }
 
     async addRange(items: ITag[]): Promise<void> {
@@ -139,19 +171,46 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
-        throw 'Not Supported yet';
+        let average: number;
+
+        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+        let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
+        average = sum / snapshot.docs.length;
+
+        return average;
     }
 
     async getRatingsOfGuide(guideName: string): Promise<IRating[]> {
-        throw 'Not Supported yet';
+        let ratings: IRating[] = [];
+
+        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+        snapshot.forEach(doc => {
+            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+        });
+
+        return ratings;
     }
 
     async getRatingsOfUser(userName: string): Promise<IRating[]> {
-        throw 'Not Supported yet';
+        let ratings: IRating[] = [];
+
+        let snapshot = await this.ratingsRef.where('userName', '==', userName).get();
+        snapshot.forEach(doc => {
+            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+        });
+
+        return ratings;
     }
 
     async getAll(): Promise<IRating[]> {
-        throw 'Not Supported yet';
+        let ratings: IRating[] = [];
+
+        let snapshot = await this.ratingsRef.get();
+        snapshot.forEach(doc => {
+            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+        })
+
+        return ratings;
     }
 
     async add(item: IRating): Promise<void> {
@@ -159,7 +218,7 @@ export class RatingRepository implements IRatingRepository {
             guideName: item.guideName,
             userName: item.userName,
             rating: item.rating
-        })
+        });
     }
 
     async addRange(items: IRating[]): Promise<void> {
