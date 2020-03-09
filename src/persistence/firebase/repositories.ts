@@ -14,19 +14,13 @@ export class UserRepository implements IUserRepository {
     async getAll(): Promise<IUser[]> {
         var users: IUser[];
 
-        this.db.collection('users').get()
-            .then((snapshot) => {
-                snapshot.forEach((doc) => {
-                    console.log(doc.id, '=>', doc.data());
-                    //users.push();
-                });
-            })
-            .catch((err) => {
-                console.log('Error getting documents', err);
-            });
+        let snapshot = await this.db.collection('users').get()/*.catch(err => console.log('Error', err))*/;
+        snapshot.forEach((doc) => {
+            console.log(doc.id, '=>', doc.data());
+            //users.push()
+        });
 
-
-        throw 'Not Supported yet';
+        return [];
     }
 
     async getUserByName(name: string): Promise<IUser> {
@@ -47,10 +41,15 @@ export class UserRepository implements IUserRepository {
     }
 
     async add(item: IUser): Promise<void> {
-        var setUser = this.usersRef.add({
+        admin.auth().createUser({
+            displayName: item.name,
+            password: item.password,
+            email: 'testmail@gmail.com'
+        })
+        /*var setUser = this.usersRef.add({
             name: item.name,
             password: item.password
-        })
+        })*/
     }
 
     async addRange(items: IUser[]): Promise<void> {

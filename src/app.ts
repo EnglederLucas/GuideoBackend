@@ -13,7 +13,7 @@ const enableCors: boolean = true;
 //const unitOfWork: UnitOfWork = new UnitOfWork();
 const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
-var serviceAccount = require(__dirname + '..\\..\\vyzerdb-firebase-adminsdk-02032020.json');
+var serviceAccount = require(__dirname + '..\\..\\..\\vyzerdb-firebase-adminsdk-02032020.json');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://vyzerdb.firebaseio.com"
@@ -29,7 +29,7 @@ console.log(`> ${result} entries was initizialized`);
 unitOfWork.guides.addRange(dataInitializer.getGuides());
 unitOfWork.tags.addRange(dataInitializer.getTags());
 unitOfWork.ratings.addRange(dataInitializer.getRatings());*/
-console.log('> added data to repositories');
+//console.log('> added data to repositories');
 
 const server: GuideoServer = new GuideoServer({
     port: port,
