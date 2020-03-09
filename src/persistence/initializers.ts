@@ -9,8 +9,8 @@ export class InMemoryDataInitializer implements IDataInitializer {
     
     initDataSync(): number {
         this.users.push(
-            { name: 'thelegend27', password: '1234' },
-            { name: 'maxmuster', password: '5678' },
+            { name: 'thelegend27', password: '1234567' },
+            { name: 'maxmuster', password: '5678901' },
             { name: 'luxdachef', password: 'mochmaguides' }
         );
 
@@ -25,7 +25,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
             { name: 'History of Linz', userName: 'thelegend27',
                  imageLink: '/AbbeyRoad.jpg', tags: [this.tags[0], this.tags[3]] },
             { name: 'A Guide with name 2', userName: 'maxmuster',
-                 imageLink: '', tags: [this.tags[1]] },
+                 imageLink: '/Louvre_Museum.jpeg', tags: [this.tags[1]] },
             { name: 'Callcenter access 3000', userName: 'luxdachef',
                  imageLink: '', tags: [this.tags[2]] },
             { name: 'A man must do, what a man have to do', userName: 'thelegend27',

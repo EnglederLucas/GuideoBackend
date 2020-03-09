@@ -1,6 +1,6 @@
 import { IUnitOfWork } from '../core/contracts';
-import { GuideDto } from "./datatransferobjects";
-import { IGuide } from '../core/models';
+import {GuideDto, UserDto} from "./datatransferobjects";
+import { IUser } from '../core/models';
 
 export class GuideController {
 
@@ -27,6 +27,25 @@ export class GuideController {
                 await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
             );
 
+            result.push(dto);
+        }
+
+        return result;
+    }
+}
+
+export class UserController {
+
+    constructor(
+        private readonly unitOfWork: IUnitOfWork) {
+    }
+
+    async getAll(): Promise<UserDto[]> {
+        const users = await this.unitOfWork.users.getAll();
+        const result: UserDto[] = [];
+
+        for (const u of users) {
+            const dto: UserDto = new UserDto(u);
             result.push(dto);
         }
 
