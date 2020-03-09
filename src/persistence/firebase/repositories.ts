@@ -50,6 +50,9 @@ export class UserRepository implements IUserRepository {
 }
 
 export class GuideRepository implements IGuideRepository {
+    getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
+        throw new Error("Method not implemented.");
+    }
 
     guidesRef: admin.firestore.CollectionReference;
 

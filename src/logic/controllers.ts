@@ -1,6 +1,6 @@
 import { IUnitOfWork } from '../core/contracts';
 import {GuideDto, UserDto} from "./datatransferobjects";
-import { IUser } from '../core/models';
+import { IUser, IGuide } from '../core/models';
 
 export class GuideController {
 
