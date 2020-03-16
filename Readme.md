@@ -6,10 +6,6 @@
 2. run `npm run tsc` for compiling typescript files
 3. run `npm run start` for starting the server
 
-Or 
-
-Just run `nodemon`
-
 The server is running :D
 
 If you want automatically compiling and restarting use this steps:
