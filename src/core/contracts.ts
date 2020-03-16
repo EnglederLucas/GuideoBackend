@@ -13,9 +13,10 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
-    getGuideByName(name: string) : Promise<IGuide>;
+    getGuidesByName(name: string) : Promise<IGuide[]>;
     getGuidesOfUser(userName: string) : Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag[]): Promise<IGuide[]>;
+    getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
 }
 
 export interface IUserRepository extends IGenericRepository<IUser, string> {
