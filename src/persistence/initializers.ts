@@ -9,9 +9,9 @@ export class InMemoryDataInitializer implements IDataInitializer {
     
     initDataSync(): number {
         this.users.push(
-            { name: 'thelegend27', password: '1234567' },
-            { name: 'maxmuster', password: '5678901' },
-            { name: 'luxdachef', password: 'mochmaguides' }
+            { name: 'thelegend27',email: 'first@example.com', password: '1234567' },
+            { name: 'maxmuster',email: 'second@example.com', password: '5678901' },
+            { name: 'luxdachef',email: 'third@example.com', password: 'mochmaguides' }
         );
 
         this.tags.push(
@@ -23,13 +23,13 @@ export class InMemoryDataInitializer implements IDataInitializer {
 
         this.guides.push(
             { name: 'History of Linz', userName: 'thelegend27',
-                 imageLink: '/AbbeyRoad.jpg', tags: [this.tags[0], this.tags[3]] },
+                 imageLink: '/AbbeyRoad.jpg', tags: [this.tags[0].name, this.tags[3].name] },
             { name: 'A Guide with name 2', userName: 'maxmuster',
-                 imageLink: '/Louvre_Museum.jpeg', tags: [this.tags[1]] },
+                 imageLink: '/Louvre_Museum.jpeg', tags: [this.tags[1].name] },
             { name: 'Callcenter access 3000', userName: 'luxdachef',
-                 imageLink: '', tags: [this.tags[2]] },
+                 imageLink: '', tags: [this.tags[2].name] },
             { name: 'A man must do, what a man have to do', userName: 'thelegend27',
-                 imageLink: '', tags: [this.tags[1], this.tags[3]] }
+                 imageLink: '', tags: [this.tags[1].name, this.tags[3].name] }
         );
 
         this.ratings.push(

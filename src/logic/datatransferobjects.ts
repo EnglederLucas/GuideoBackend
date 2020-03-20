@@ -11,7 +11,7 @@ export class GuideDto {
     constructor({ name,description, tags, userName, imageLink }: IGuide, rating: number) {
         this.name = name;
         this.description = description === undefined ? '' : description;
-        this.tags = tags == undefined ? [] : tags.map(t => t.name);
+        this.tags = tags == undefined ? [] : tags;
         this.userName = userName;
         this.imageLink = imageLink === undefined ? '' : imageLink;
         this.rating = rating;
@@ -20,8 +20,11 @@ export class GuideDto {
 
 export class UserDto {
     private name: string;
+    private email: string;
 
-    constructor({name}: IUser){
+    constructor({name, email}: IUser){
         this.name = name;
+        this.email = email;
     }
+
 }
