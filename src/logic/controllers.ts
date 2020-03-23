@@ -47,7 +47,7 @@ export class UserController {
         const result: UserDto[] = [];
 
         for (const u of users) {
-            const dto: UserDto = new UserDto(u);
+            const dto: UserDto = new UserDto(u.name, u.email, u.description);
             result.push(dto);
         }
 

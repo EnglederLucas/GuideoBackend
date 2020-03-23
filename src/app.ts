@@ -39,13 +39,11 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
         }
     })));
 
-    /*unitOfWork.users.add(dataInitializer.getUsers()[0]);
-
-    unitOfWork.users.addRange(dataInitializer.getUsers());
+    /*unitOfWork.users.addRange(dataInitializer.getUsers());
     unitOfWork.guides.addRange(dataInitializer.getGuides());
     unitOfWork.tags.addRange(dataInitializer.getTags());
     unitOfWork.ratings.addRange(dataInitializer.getRatings());
-    console.log('> added data to repositories');*/
+    console.log('> added data to database');*/
 
     const server: GuideoServer = new GuideoServer({
         port: port,
@@ -65,7 +63,7 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
 
     server.start();
 
-    userVerifier.registerUser({
+    /*userVerifier.registerUser({
         name: 'A new Test Man',
         email: 'luke.wirth31@gmail.com',
         password: '12345678'
@@ -75,5 +73,5 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
     })
     .catch((err) => {
         console.log(err);
-    });
+    });*/
 });
