@@ -1,11 +1,8 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 import { firestore, auth } from "firebase-admin";
+import { UserDto } from "../../logic/datatransferobjects";
 
-
-//User Repository
-//Commented Statements are for User-Management with Collection
-//Non-Commented Statements are with FirebaseAuthentication-User-Management
 export class UserRepository implements IUserRepository {
 
     usersRef: firestore.CollectionReference;
@@ -14,27 +11,25 @@ export class UserRepository implements IUserRepository {
         this.usersRef = db.collection('users');
     }
 
-    async getAll(): Promise<IUser[]> {
-        /*let users: IUser[] = [];
+    async getAll(): Promise<UserDto[]> {
+        let users: UserDto[] = [];
 
         let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            users.push({name: doc.data().name, email: snapshot.docs[0].data().email, password: doc.data().password});
+            users.push({name: doc.data().name, email: doc.data().email, description: doc.data().description});
         });
 
-        return users;*/
-        throw new Error("Method not implemented.");
+        return users;
     }
 
-    async getUserByName(name: string): Promise<IUser> {
-        /*let user: IUser;
+    async getUserByName(name: string): Promise<UserDto> {
+        let user: UserDto;
 
         let snapshot = await this.usersRef.where('name','==',name).get();
-        user = {name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, password: snapshot.docs[0].data().password};
+        user = {name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
 
-        return user;*/
-        throw new Error("Method not implemented.");
+        return user;
     }
 
     async add(item: IUser): Promise<void> {
@@ -43,12 +38,12 @@ export class UserRepository implements IUserRepository {
             email: item.email,
             emailVerified: false,
             password: item.password
+        }).then(userRecord => {
+            let setUser = this.usersRef.doc(userRecord.uid).set({
+                name: item.name,
+                description: item.description !== undefined ? item.description : ""
+            });
         })
-        /*let setUser = this.usersRef.add({
-            name: item.name,
-            password: item.password,
-            email: item.email
-        });*/
     }
 
     async addRange(items: IUser[]): Promise<void> {
@@ -60,9 +55,6 @@ export class UserRepository implements IUserRepository {
 }
 
 export class GuideRepository implements IGuideRepository {
-    getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
-        throw new Error("Method not implemented.");
-    }
 
     guidesRef: firestore.CollectionReference;
 
@@ -111,6 +103,18 @@ export class GuideRepository implements IGuideRepository {
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
+        });
+
+        return guides;
+    }
+
+    async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
+        let guides: IGuide[] = [];
+
+        let snapshot = await this.guidesRef.startAt(index).limit(size).get();
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
         return guides;

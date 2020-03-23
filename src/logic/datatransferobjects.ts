@@ -21,10 +21,12 @@ export class GuideDto {
 export class UserDto {
     name: string;
     email: string;
+    description?: string;
 
-    constructor({name , email}: IUser){
+    constructor(name : string, email: string, description?: string){
         this.name = name;
         this.email = email;
+        this.description = description;
     }
 
 }

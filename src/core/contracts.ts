@@ -1,4 +1,5 @@
 import { IGuide, IRating, ITag, IUser } from './models';
+import { UserDto } from '../logic/datatransferobjects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
@@ -19,12 +20,15 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
 }
 
-export interface IUserRepository extends IGenericRepository<IUser, string> {
-    getUserByName(name: string): Promise<IUser>;
-}
-
 export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag | undefined>;
+}
+
+export interface IUserRepository {
+    getUserByName(name: string): Promise<UserDto>;
+    getAll(): Promise<UserDto[]>;
+    add(item: IUser): Promise<void>;
+    addRange(items: IUser[]): Promise<void>;
 }
 
 export interface IUnitOfWork {
