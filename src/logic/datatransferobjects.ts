@@ -26,4 +26,5 @@ export class UserDto {
         this.name = name;
         this.email = email;
     }
+
 }

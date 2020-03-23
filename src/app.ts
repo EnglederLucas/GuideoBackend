@@ -26,7 +26,7 @@ const unitOfWork: UnitOfWork = new UnitOfWork(db);
 
 console.log('> initialize data ...');
 const result: number = dataInitializer.initDataSync();
-console.log(`> ${result} entries was initizialized`);
+console.log(`> ${result} entries were initizialized`);
 
 readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
     const split = data.split(';');
