@@ -1,12 +1,13 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
-import admin from 'firebase-admin';
+import { firestore } from "firebase-admin";
+
 
 export class UserRepository implements IUserRepository {
 
-    usersRef: admin.firestore.CollectionReference;
+    usersRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.usersRef = db.collection('users');
     }
 
@@ -16,7 +17,7 @@ export class UserRepository implements IUserRepository {
         let snapshot = await this.usersRef.get()/*.catch(err => console.log('Error', err))*/;
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            users.push({name: doc.data().name, password: doc.data().password});
+            users.push({name: doc.data().name, password: doc.data().password, email: doc.data().email});
         });
 
         return users;
@@ -25,7 +26,7 @@ export class UserRepository implements IUserRepository {
     async getUserByName(name: string): Promise<IUser> {
         let user: IUser;
         let snapshot = await this.usersRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
-        user = {name: snapshot.docs[0].data().name, password: snapshot.docs[0].data().password};
+        user = {name: snapshot.docs[0].data().name, password: snapshot.docs[0].data().password, email: snapshot.docs[0].data().email};
 
         return user;
     }
@@ -54,9 +55,9 @@ export class GuideRepository implements IGuideRepository {
         throw new Error("Method not implemented.");
     }
 
-    guidesRef: admin.firestore.CollectionReference;
+    guidesRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.guidesRef = db.collection('guides');
     }
 
@@ -125,9 +126,9 @@ export class GuideRepository implements IGuideRepository {
 
 export class TagRepository implements ITagRepository {
 
-    tagsRef: admin.firestore.CollectionReference;
+    tagsRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.tagsRef = db.collection('tags');
     }
 
@@ -167,9 +168,9 @@ export class TagRepository implements ITagRepository {
 
 export class RatingRepository implements IRatingRepository {
 
-    ratingsRef: admin.firestore.CollectionReference;
+    ratingsRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.ratingsRef = db.collection('ratings');
     }
 

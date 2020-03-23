@@ -71,8 +71,8 @@ export class UserEndpoint implements IRoutable {
             }
         });
 
-        this.router.post('/new', async (req, res) => {
-            
+        this.router.post('/register', async (req, res) => {
+            // TODO
         });
 
         this.initialized = true;
