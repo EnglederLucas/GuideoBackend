@@ -111,7 +111,7 @@ export class GuideRepository implements IGuideRepository {
     async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
         let guides: IGuide[] = [];
 
-        let snapshot = await this.guidesRef.startAt(index).limit(size).get();
+        let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
