@@ -1,7 +1,6 @@
 import { IUnitOfWork, IUserVerifier } from '../core/contracts';
 import {GuideDto, UserDto} from "./datatransferobjects";
 import { IUser, IGuide } from '../core/models';
-import * as admin from 'firebase-admin';
 
 export class GuideController {
 

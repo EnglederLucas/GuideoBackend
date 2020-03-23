@@ -24,8 +24,8 @@ export class GuideEndpoint implements IRoutable {
         });
 
         this.router.get('/paged', async (req, res) => {
-            const pos = req.query.pos;
-            const size = req.query.size;
+            const pos = parseInt(req.query.pos);
+            const size = parseInt(req.query.size);
 
             /*this.guideController.getGuidesPaged(pos, size)
                 .then(result => res.send(result))
