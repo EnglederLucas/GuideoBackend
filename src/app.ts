@@ -10,6 +10,7 @@ import { UserVerifier } from './application/firebase/verification';
 import { FBMailService } from './application/mail/mailservice';
 import { createTransport } from 'nodemailer';
 import { readFile } from 'fs';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 const port: number = 3030;
 const enableCors: boolean = true;
@@ -31,13 +32,16 @@ console.log(`> ${result} entries were initizialized`);
 readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
     const split = data.split(';');
 
-    const userVerifier = new UserVerifier(admin.auth(), new FBMailService(createTransport({
+    const options: SMTPTransport.Options = {
         service: 'gmail',
+        secure: true,
         auth: {
             user: split[0],
             pass: split[1]
         }
-    })));
+    }
+
+    const userVerifier = new UserVerifier(admin.auth(), new FBMailService(createTransport(options)));
 
     /*unitOfWork.users.addRange(dataInitializer.getUsers());
     unitOfWork.guides.addRange(dataInitializer.getGuides());
