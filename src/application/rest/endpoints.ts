@@ -62,10 +62,17 @@ export class UserEndpoint implements IRoutable {
         if (this.initialized)
             return;
 
-        this.router.get('/', (req, res) => {
-            this.userController.getAll()
-                .catch(reason => res.send(reason))
-                .then(result => res.send(result));
+        this.router.get('/', async (req, res) => {
+            try {
+                res.send(await this.userController.getAll());
+            }
+            catch(ex) {
+                res.send(ex);
+            }
+        });
+
+        this.router.post('/new', async (req, res) => {
+            
         });
 
         this.initialized = true;

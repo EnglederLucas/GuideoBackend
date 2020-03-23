@@ -7,7 +7,7 @@ export interface IUser {
 export interface IGuide {
     name: string;
     description?: string;
-    tags?: ITag['name'][];
+    tags?: ITag['name'][];      // übernimmt den typ von ITag.name
     userName: string;
     imageLink?: string;
 }

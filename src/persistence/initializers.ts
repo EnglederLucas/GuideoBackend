@@ -22,14 +22,26 @@ export class InMemoryDataInitializer implements IDataInitializer {
         );
 
         this.guides.push(
-            { name: 'History of Linz', userName: 'thelegend27',
-                 imageLink: '/AbbeyRoad.jpg', tags: [this.tags[0].name, this.tags[3].name] },
-            { name: 'A Guide with name 2', userName: 'maxmuster',
-                 imageLink: '/Louvre_Museum.jpeg', tags: [this.tags[1].name] },
+            { 
+                name: 'History of Linz',
+                userName: 'thelegend27',
+                imageLink: '/skyline.jpg',
+                tags: [this.tags[0].name, this.tags[3].name] ,
+                description: 'The guide of guides will guide you through the history of Linz and its beautifullness'
+            },
+            { 
+                name: 'A Guide with name 2',
+                userName: 'maxmuster',
+                imageLink: '/Louvre_Museum.jpg',
+                tags: [this.tags[1].name],
+                description: 'A nonsense guide with nonsense content and nosense description'
+            },
             { name: 'Callcenter access 3000', userName: 'luxdachef',
-                 imageLink: '', tags: [this.tags[2].name] },
-            { name: 'A man must do, what a man have to do', userName: 'thelegend27',
-                 imageLink: '', tags: [this.tags[1].name, this.tags[3].name] }
+                imageLink: '/AbbeyRoad.jpg', tags: [this.tags[2].name],
+                description: 'Sharing is caring. One of the basics of the master callcenter concern access 3000' },
+            { name: 'A man must do, what a man has to do', userName: 'thelegend27',
+                 imageLink: '/deer.png', tags: [this.tags[1].name, this.tags[3].name],
+                description: 'Behind the secrets of duty.' }
         );
 
         this.ratings.push(

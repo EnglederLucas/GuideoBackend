@@ -11,7 +11,7 @@ export class GuideDto {
     constructor({ name,description, tags, userName, imageLink }: IGuide, rating: number) {
         this.name = name;
         this.description = description === undefined ? '' : description;
-        this.tags = tags == undefined ? [] : tags;
+        this.tags = tags === undefined ? [] : tags;
         this.userName = userName;
         this.imageLink = imageLink === undefined ? '' : imageLink;
         this.rating = rating;
