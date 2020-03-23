@@ -1,6 +1,7 @@
-import { IUnitOfWork } from '../core/contracts';
+import { IUnitOfWork, IUserVerifier } from '../core/contracts';
 import {GuideDto, UserDto} from "./datatransferobjects";
 import { IUser, IGuide } from '../core/models';
+import * as admin from 'firebase-admin';
 
 export class GuideController {
 
@@ -37,7 +38,8 @@ export class GuideController {
 export class UserController {
 
     constructor(
-        private readonly unitOfWork: IUnitOfWork) {
+        private readonly unitOfWork: IUnitOfWork,
+        private readonly userVerifier: IUserVerifier) {
     }
 
     async getAll(): Promise<UserDto[]> {
@@ -50,5 +52,9 @@ export class UserController {
         }
 
         return result;
+    }
+
+    registerUser(user : IUser): Promise<void> {
+        return this.userVerifier.registerUser(user);
     }
 }
