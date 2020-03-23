@@ -2,6 +2,9 @@ import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} fr
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 import admin from 'firebase-admin';
 
+//User Repository
+//Commented Statements are for User-Management with Collection
+//Non-Commented Statements are with FirebaseAuthentication-User-Management
 export class UserRepository implements IUserRepository {
 
     usersRef: admin.firestore.CollectionReference;
@@ -11,34 +14,40 @@ export class UserRepository implements IUserRepository {
     }
 
     async getAll(): Promise<IUser[]> {
-        let users: IUser[] = [];
+        /*let users: IUser[] = [];
 
-        let snapshot = await this.usersRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            users.push({name: doc.data().name, password: doc.data().password});
+            users.push({name: doc.data().name, email: snapshot.docs[0].data().email, password: doc.data().password});
         });
 
-        return users;
+        return users;*/
+        throw new Error("Method not implemented.");
     }
 
     async getUserByName(name: string): Promise<IUser> {
-        let user: IUser;
-        let snapshot = await this.usersRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
-        user = {name: snapshot.docs[0].data().name, password: snapshot.docs[0].data().password};
+        /*let user: IUser;
 
-        return user;
+        let snapshot = await this.usersRef.where('name','==',name).get();
+        user = {name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, password: snapshot.docs[0].data().password};
+
+        return user;*/
+        throw new Error("Method not implemented.");
     }
 
     async add(item: IUser): Promise<void> {
-        /*admin.auth().createUser({
+        admin.auth().createUser({
             displayName: item.name,
+            email: item.email,
+            emailVerified: false,
             password: item.password
-        })*/
-        var setUser = this.usersRef.add({
+        })
+        /*let setUser = this.usersRef.add({
             name: item.name,
-            password: item.password
-        });
+            password: item.password,
+            email: item.email
+        });*/
     }
 
     async addRange(items: IUser[]): Promise<void> {
@@ -63,7 +72,7 @@ export class GuideRepository implements IGuideRepository {
     async getAll(): Promise<IGuide[]> {
         let guides: IGuide[] = [];
 
-        let snapshot = await this.guidesRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
@@ -74,7 +83,7 @@ export class GuideRepository implements IGuideRepository {
 
     async getGuidesByName(name: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.where('name','==',name).get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
@@ -85,7 +94,7 @@ export class GuideRepository implements IGuideRepository {
 
     async getGuidesOfUser(userName: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('userName','==',userName).get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.where('userName','==',userName).get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
@@ -95,19 +104,19 @@ export class GuideRepository implements IGuideRepository {
     }
 
     async getGuidesWithTags(tags: ITag[]): Promise<IGuide[]> {
-        /*let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('tags','==',name).get()/*.catch(err => console.log('Error', err))*/;
-        /*snapshot.forEach(doc => {
+        let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
+
+        snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
         });
 
-        return guides;*/
-        throw 'Not supported yet';
+        return guides;
     }
 
     async add(item: IGuide): Promise<void> {
-        var setGuide = this.guidesRef.add({
+        let setGuide = this.guidesRef.add({
             name: item.name,
             description: item.description,
             tags: item.tags,
@@ -134,7 +143,7 @@ export class TagRepository implements ITagRepository {
     async getAll(): Promise<ITag[]> {
         let tags: ITag[] = [];
 
-        let snapshot = await this.tagsRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.tagsRef.get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             tags.push({name: doc.data().name});
@@ -153,7 +162,7 @@ export class TagRepository implements ITagRepository {
     }
 
     async add(item: ITag): Promise<void> {
-        var setTag = this.tagsRef.add({
+        let setTag = this.tagsRef.add({
             name: item.name
         });
     }
@@ -217,7 +226,7 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async add(item: IRating): Promise<void> {
-        var setRating = this.ratingsRef.add({
+        let setRating = this.ratingsRef.add({
             guideName: item.guideName,
             userName: item.userName,
             rating: item.rating

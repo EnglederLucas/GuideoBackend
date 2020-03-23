@@ -20,8 +20,11 @@ export class GuideDto {
 
 export class UserDto {
     private name: string;
+    private email: string;
 
-    constructor({name}: IUser){
+    constructor({name, email}: IUser){
         this.name = name;
+        this.email = email;
     }
+
 }

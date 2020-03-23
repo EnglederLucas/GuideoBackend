@@ -22,7 +22,7 @@ const unitOfWork: UnitOfWork = new UnitOfWork(db);*/
 
 console.log('> initialize data ...');
 const result: number = dataInitializer.initDataSync();
-console.log(`> ${result} entries was initizialized`);
+console.log(`> ${result} entries were initizialized`);
 
 unitOfWork.users.add(dataInitializer.getUsers()[0]);
 
