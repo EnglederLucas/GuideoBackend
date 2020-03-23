@@ -22,7 +22,7 @@ admin.initializeApp({
     databaseURL: "https://vyzerdb.firebaseio.com"
 });
 var db = admin.firestore();
-const unitOfWork: UnitOfWork = new UnitOfWork(db);
+const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
 
 console.log('> initialize data ...');
 const result: number = dataInitializer.initDataSync();

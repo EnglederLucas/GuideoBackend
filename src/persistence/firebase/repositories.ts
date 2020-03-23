@@ -1,6 +1,6 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
-import { firestore } from "firebase-admin";
+import { firestore, auth } from "firebase-admin";
 
 
 //User Repository
@@ -10,7 +10,7 @@ export class UserRepository implements IUserRepository {
 
     usersRef: firestore.CollectionReference;
 
-    constructor(private db: firestore.Firestore){
+    constructor(private db: firestore.Firestore, private readonly fbAuth : auth.Auth){
         this.usersRef = db.collection('users');
     }
 
@@ -38,7 +38,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async add(item: IUser): Promise<void> {
-        admin.auth().createUser({
+        this.fbAuth.createUser({
             displayName: item.name,
             email: item.email,
             emailVerified: false,
