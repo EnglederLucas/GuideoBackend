@@ -1,6 +1,4 @@
-import { createTransport } from "nodemailer";
 import Mail from "nodemailer/lib/mailer";
-
 
 export interface IMailService {
     sendMail(to: string, subject: string, text: string): Promise<void>;
@@ -13,8 +11,8 @@ export class FBMailService implements IMailService {
     }
 
     async sendMail(to: string, subject: string, text: string): Promise<void> {
+
         const mailOptions : Mail.Options = {
-            from: this.transporter.options.from,
             to,
             subject,
             text
