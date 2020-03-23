@@ -69,7 +69,7 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
 
     server.start();
 
-    userVerifier.registerUser({
+    /*userVerifier.registerUser({
         name: 'A new Test Man',
         email: 'luke.wirth31@gmail.com',
         password: '12345678'
@@ -79,5 +79,5 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
     })
     .catch((err) => {
         console.log(err);
-    });
+    });*/
 });
