@@ -157,7 +157,7 @@ export class TagRepository implements ITagRepository {
         return tags;
     }
 
-    async getTagByName(name: string): Promise<ITag | undefined> {
+    async getTagByName(name: string): Promise<ITag> {
         let tag: ITag;
 
         let snapshot = await this.tagsRef.get();
