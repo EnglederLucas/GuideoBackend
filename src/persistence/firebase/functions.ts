@@ -20,11 +20,14 @@ exports.myFunction = functions.firestore
 
         const guideRef = db.collection('guides').doc(guide.id);
 
-        return db.runTransaction(transaction => {
+        return db.runTransaction(async transaction => {
             return transaction.get(guideRef).then(guideDoc => {
-                const newNumOfRatings = guideDoc.data().numOfRatings + 1;
+                const data= guideDoc.data();
 
-                const oldRatingTotal = guideDoc.data().rating * guideDoc.data().numOfRatings;
+                if (data === undefined) throw new Error("guideDoc undefined");
+
+                const newNumOfRatings = data.numOfRatings + 1;
+                const oldRatingTotal = data.rating * data.numOfRatings;
                 const newAvgRating = (oldRatingTotal + rating) / newNumOfRatings; 
 
                 return transaction.update(guideRef, {
