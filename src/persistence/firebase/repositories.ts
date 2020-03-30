@@ -1,7 +1,7 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 import { firestore, auth } from "firebase-admin";
-import { UserDto } from "../../logic/datatransferobjects";
+import { UserDto, GuideDto } from '../../logic/datatransferobjects';
 
 export class UserRepository implements IUserRepository {
 
@@ -69,6 +69,21 @@ export class GuideRepository implements IGuideRepository {
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+        });
+
+        return guides;
+    }
+
+    async getTopGuides(limit: number): Promise<GuideDto[]> {
+        let guides: GuideDto[] = [];
+        
+        let snapshot = await this.guidesRef
+            .orderBy('rating', "desc")
+            .limit(limit)
+            .get();
+        
+        snapshot.forEach(doc => {
+
         });
 
         return guides;
@@ -190,7 +205,10 @@ export class RatingRepository implements IRatingRepository {
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
         let average: number;
 
-        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+        let snapshot = await this.ratingsRef
+            .where('guideName', '==', guideName)
+            .get();
+
         let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
         average = sum / snapshot.docs.length;
 

@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { GuideController, UserController } from '../../logic/controllers';
+import { GuideController, UserController, RatingController } from '../../logic/controllers';
 import { IRoutable } from '../contracts';
 
 export class GuideEndpoint implements IRoutable {
@@ -88,4 +88,44 @@ export class UserEndpoint implements IRoutable {
     getBasePath(): string {
         return this.basePath;
     }
+}
+
+export class RatingEndpoint implements IRoutable {
+    private readonly router: Router = Router();
+    private readonly basePath = 'ratings';
+    private initialized = false;
+
+    constructor(private readonly ratingController : RatingController) {
+    }
+
+    private initRoutes(): void {
+        if (this.initialized)
+            return;
+
+        this.router.get('/best', async (req, res) => {
+            const limit: number = parseInt(req.query.limit);
+            const name: string = req.query.name;
+
+            /*try {
+                res.send(await this.ratingController.getBestRatingsWithLimit(limit, name));
+            }
+            catch(ex) {
+                res.send(ex);
+            }*/
+        });
+
+        this.initialized = true;
+    }
+
+    getRouter(): Router {
+        if (!this.initialized)
+            this.initRoutes();
+
+        return this.router;
+    }
+
+    getBasePath(): string {
+        return this.basePath;
+    }
+
 }

@@ -16,12 +16,11 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase-admin": "^8.9.2",
-    "nodemailer": "^6.4.5"
+    "firebase-functions": "^3.5.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.2",
-    "@types/nodemailer": "^6.4.0",
     "nodemon": "^2.0.2",
     "typescript": "^3.7.5"
   }

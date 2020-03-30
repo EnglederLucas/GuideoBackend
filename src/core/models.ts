@@ -6,11 +6,14 @@ export interface IUser {
 }
 
 export interface IGuide {
+    id: string;
     name: string;
     description?: string;
     tags?: ITag['name'][];      // übernimmt den typ von ITag.name
     userName: IUser['name'];    // übernimmt dne typ von IUser.name
     imageLink?: string;
+    rating: number;
+    numOfRatings: number;
 }
 
 export interface IRating {
