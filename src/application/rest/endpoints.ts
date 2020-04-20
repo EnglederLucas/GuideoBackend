@@ -34,7 +34,7 @@ export class GuideEndpoint implements IRoutable {
         });
 
         this.router.get('/byName', async (req, res) => {
-            const guideName = req.query.guideName;
+            const guideName = req.query.guidename;
 
             try{
                 res.send(await this.guideController.getGuidesByName(guideName));
@@ -44,7 +44,7 @@ export class GuideEndpoint implements IRoutable {
         })
 
         this.router.get('/ofUser', async (req, res) => {
-            const userName = req.query.userName;
+            const userName = req.query.username;
 
             try{
                 res.send(await this.guideController.getGuidesOfUser(userName));
@@ -101,7 +101,7 @@ export class UserEndpoint implements IRoutable {
         });
 
         this.router.get('/byName', async (req, res) => {
-            const userName = req.query.userName;
+            const userName = req.query.username;
 
             try {
                 res.send(await this.userController.getUserByName(userName));
@@ -136,6 +136,7 @@ export class TagEndpoint implements IRoutable {
     private readonly basePath = 'tags';
     
     constructor(private tagController: TagController) {
+
     }
 
     private initRoutes(): void {
@@ -143,6 +144,7 @@ export class TagEndpoint implements IRoutable {
             return;
 
         this.router.get('/', async (req, res) => {
+
             try{
                 res.send(await this.tagController.getAll());
             } catch(ex){
@@ -150,6 +152,7 @@ export class TagEndpoint implements IRoutable {
             }
         });
 
+        //Not working yet
         this.router.get('/averageRatingOfGuide', async (req, res) => {
             const tagName = req.query.tagname;
 
@@ -195,9 +198,10 @@ export class RatingEndpoint implements IRoutable {
             }
         });
 
+        //Not working yet
         this.router.get('/averageRatingOfGuide', async (req, res) => {
-            const guideName = req.query.guideName;
-
+            const guideName = req.query.guidename;
+            
             try{
                 res.send(await this.ratingController.getAverageRatingOfGuide(guideName));
             } catch(ex){
@@ -206,7 +210,7 @@ export class RatingEndpoint implements IRoutable {
         });
 
         this.router.get('/ofGuide', async (req, res) => {
-            const guideName = req.query.guideName;
+            const guideName = req.query.guidename;
 
             try{
                 res.send(await this.ratingController.getRatingsOfGuide(guideName));
@@ -216,7 +220,7 @@ export class RatingEndpoint implements IRoutable {
         })
 
         this.router.get('/ofUser', async (req, res) => {
-            const userName = req.query.userName;
+            const userName = req.query.username;
 
             try{
                 res.send(await this.ratingController.getRatingsOfUser(userName));
