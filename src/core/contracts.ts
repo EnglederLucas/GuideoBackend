@@ -1,10 +1,11 @@
 import { IGuide, IRating, ITag, IUser } from './models';
-import { UserDto } from '../logic/datatransferobjects';
+import { UserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
     add(item: TEntity): Promise<void>;
     addRange(items: TEntity[]): Promise<void>;
+    // getById(id: TId): Promise<TEntity>;
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
@@ -16,7 +17,7 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuidesByName(name: string) : Promise<IGuide[]>;
     getGuidesOfUser(userName: string) : Promise<IGuide[]>;
-    getGuidesWithTags(tags: ITag[]): Promise<IGuide[]>;
+    getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>;     // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
 }
 

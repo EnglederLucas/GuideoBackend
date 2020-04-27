@@ -1,10 +1,13 @@
 import { GuideoServer } from './application/GuideoServer';
-import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
-// import { UnitOfWork } from './persistence/inmemory/unitofwork';
 import { GuideEndpoint, UserEndpoint, RatingEndpoint, TagEndpoint } from './application/rest/endpoints';
+
+import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
+
 import { IDataInitializer } from './core/contracts';
+
 import { InMemoryDataInitializer } from './persistence/initializers';
 import { UnitOfWork } from './persistence/firebase/unitofwork';
+
 import * as admin from 'firebase-admin';
 
 const port: number = 3030;
@@ -13,10 +16,12 @@ const enableCors: boolean = true;
 const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
 var serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
+
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://vyzerdb.firebaseio.com"
 });
+
 var db = admin.firestore();
 const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
 

@@ -17,15 +17,3 @@ export class GuideDto {
         this.rating = rating;
     }
 }
-
-export class UserDto {
-    name: string;
-    email: string;
-    description?: string;
-
-    constructor(name : string, email: string, description?: string){
-        this.name = name;
-        this.email = email;
-        this.description = description;
-    }
-}
