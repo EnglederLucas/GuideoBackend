@@ -11,7 +11,7 @@ export interface IGuide {
     name: string;
     description?: string;
     tags?: ITag['name'][];      // übernimmt den typ von ITag.name und macht ein Array daraus
-    user: IUser['id'];    // übernimmt dne typ von IUser.name
+    user: IUser['id'];          // übernimmt dne typ von IUser.name
     imageLink?: string;
     rating: number;
     numOfRatings: number;

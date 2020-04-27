@@ -1,7 +1,7 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 import { firestore, auth } from "firebase-admin";
-import { UserDto, GuideDto } from '../../logic/datatransferobjects';
+import { UserDto, GuideDto } from '../../logic/data-transfer-objects';
 
 export class UserRepository implements IUserRepository {
 

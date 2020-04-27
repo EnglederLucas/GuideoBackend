@@ -1,5 +1,5 @@
 import { IUnitOfWork } from '../core/contracts';
-import {GuideDto, UserDto} from "./datatransferobjects";
+import {GuideDto, UserDto} from "./data-transfer-objects";
 import { IUser, IGuide, ITag, IRating } from '../core/models';
 
 export class GuideController {
