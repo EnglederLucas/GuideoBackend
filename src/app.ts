@@ -1,7 +1,7 @@
 import { GuideoServer } from './application/GuideoServer';
-import { GuideController, UserController } from "./logic/controllers";
+import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 // import { UnitOfWork } from './persistence/inmemory/unitofwork';
-import { GuideEndpoint, UserEndpoint } from './application/rest/endpoints';
+import { GuideEndpoint, UserEndpoint, RatingEndpoint, TagEndpoint } from './application/rest/endpoints';
 import { IDataInitializer } from './core/contracts';
 import { InMemoryDataInitializer } from './persistence/initializers';
 import { UnitOfWork } from './persistence/firebase/unitofwork';
@@ -53,7 +53,9 @@ readFile(__dirname + '/../email-service.txt', 'utf-8', (err, data: string) => {
         port: port,
         routables: [ 
             new GuideEndpoint(new GuideController(unitOfWork)),
-            new UserEndpoint(new UserController(unitOfWork, userVerifier))
+            new UserEndpoint(new UserController(unitOfWork, userVerifier)),
+            new TagEndpoint(new TagController(unitOfWork)),
+            new RatingEndpoint(new RatingController(unitOfWork))
         ],
         enableCors: enableCors,
         staticPaths: [
