@@ -1,6 +1,8 @@
 import { IUnitOfWork } from '../core/contracts';
-import {GuideDto, UserDto} from "./data-transfer-objects";
-import { IUser, IGuide, ITag, IRating } from '../core/models';
+import { IGuide, ITag, IRating } from '../core/models';
+import { UserDto } from '../core/data-transfer-objects';
+
+import { GuideDto } from "./data-transfer-objects";
 
 export class GuideController {
 
@@ -27,12 +29,12 @@ export class GuideController {
         return await this.convertToDto(guides);
     }
 
-    async getGuidesWithTags(tags: ITag[]): Promise<GuideDto[]>{
+    async getGuidesWithTags(tags: ITag['name'][]): Promise<GuideDto[]>{
         const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
         return await this.convertToDto(guides);
-
     }
 
+    // Das bei jeder Abfrage auszuführen ist zurzeit sehr ineffizient
     private async convertToDto(guides: IGuide[]) {
         const result: GuideDto[] = [];
 
@@ -61,12 +63,6 @@ export class UserController {
 
     async getUserByName(name: string): Promise<UserDto>{
         return await this.unitOfWork.users.getUserByName(name);
-    }
-}
-
-export class RatingController {
-    constructor(private readonly unitOfWork: IUnitOfWork) {
-
     }
 }
 
