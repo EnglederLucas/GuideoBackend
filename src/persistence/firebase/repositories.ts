@@ -142,11 +142,10 @@ export class GuideRepository implements IGuideRepository {
 
     async add(item: IGuide): Promise<void> {
         let setGuide = this.guidesRef.add({
-            // TODO: id!!!
             name: item.name,
             description: item.description,
             tags: item.tags,
-            userName: item.userName,
+            user: item.user,
             imageLink: item.imageLink,
             rating: item.rating,
             numofRatings: item.numOfRatings
@@ -165,7 +164,7 @@ export class GuideRepository implements IGuideRepository {
             name: data.name,
             description: data.description,
             tags: data.tags,
-            userName: data.userName,
+            user: data.user,
             imageLink: data.imageLink,
             rating: data.rating,
             numOfRatings: data.numOfRatings

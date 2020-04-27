@@ -16,13 +16,14 @@ exports.myFunction = functions.firestore
             throw new Error("entity is undefined");
 
         const rating: number = entity.rating;
+        // TODO getGuideById
         const guide: IGuide = (await unitOfWork.guides.getGuidesByName(entity.guideName))[0];
 
         const guideRef = db.collection('guides').doc(guide.id);
 
         return db.runTransaction(async transaction => {
             return transaction.get(guideRef).then(guideDoc => {
-                const data= guideDoc.data();
+                const data = guideDoc.data();
 
                 if (data === undefined) throw new Error("guideDoc undefined");
 
