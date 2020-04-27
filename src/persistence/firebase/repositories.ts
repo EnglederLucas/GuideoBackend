@@ -1,7 +1,7 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
 import {IGuide, IRating, ITag, IUser} from "../../core/models";
 import { firestore, auth } from "firebase-admin";
-import { UserDto } from "../../logic/datatransferobjects";
+import { UserDto, GuideDto } from '../../logic/datatransferobjects';
 
 export class UserRepository implements IUserRepository {
 
@@ -66,6 +66,23 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push(this.convertDataToGuide(doc.data()));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+        });
+
+        return guides;
+    }
+
+    async getTopGuides(limit: number): Promise<GuideDto[]> {
+        let guides: GuideDto[] = [];
+        
+        let snapshot = await this.guidesRef
+            .orderBy('rating', "desc")
+            .limit(limit)
+            .get();
+        
+        snapshot.forEach(doc => {
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
@@ -77,6 +94,10 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('name','==',name).get();
 
         snapshot.forEach(doc => {
+            // from repo-methods branch  
+          // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
@@ -87,6 +108,10 @@ export class GuideRepository implements IGuideRepository {
         let guides: IGuide[] = [];
         let snapshot = await this.guidesRef.where('userName','==',userName).get();
         snapshot.forEach(doc => {
+            // from repo-methods branch 
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
@@ -98,6 +123,9 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
         snapshot.forEach(doc => {
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
         });
 
@@ -109,6 +137,9 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
         snapshot.forEach(doc => {
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
             guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
@@ -120,8 +151,10 @@ export class GuideRepository implements IGuideRepository {
             name: item.name,
             description: item.description,
             tags: item.tags,
-            userName: item.userName,
-            imageLink: item.imageLink
+            user: item.user,
+            imageLink: item.imageLink,
+            rating: item.rating,
+            numofRatings: item.numOfRatings
         });
         this.guidesRef.doc(setGuide.id).update({
             id: setGuide.id
@@ -132,6 +165,21 @@ export class GuideRepository implements IGuideRepository {
         items.forEach(item => {
             this.add(item);
         });
+    }
+
+    private convertDataToGuide(data: firestore.DocumentData): IGuide {
+        const guide: IGuide = {
+            id: data.id,
+            name: data.name,
+            description: data.description,
+            tags: data.tags,
+            user: data.user,
+            imageLink: data.imageLink,
+            rating: data.rating,
+            numOfRatings: data.numOfRatings
+        };
+
+        return guide;
     }
 }
 
@@ -187,7 +235,10 @@ export class RatingRepository implements IRatingRepository {
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
         let average: number;
 
-        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+        let snapshot = await this.ratingsRef
+            .where('guideName', '==', guideName)
+            .get();
+
         let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
         average = sum / snapshot.docs.length;
 

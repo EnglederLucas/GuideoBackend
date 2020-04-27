@@ -9,9 +9,9 @@ export class InMemoryDataInitializer implements IDataInitializer {
     
     initDataSync(): number {
         this.users.push(
-            { name: 'thelegend27', password: '1234567' , email: 'tl27@gmail.com' },
-            { name: 'maxmuster', password: '5678901', email: 'mm@gmx.com' },
-            { name: 'luxdachef', password: 'mochmaguides', email: 'nono@bobo.com' }
+            { id: '', name: 'thelegend27', password: '1234567' , email: 'tl27@gmail.com' },
+            { id: '', name: 'maxmuster', password: '5678901', email: 'mm@gmx.com' },
+            { id: '', name: 'luxdachef', password: 'mochmaguides', email: 'nono@bobo.com' }
         );
 
         this.tags.push(
@@ -23,30 +23,60 @@ export class InMemoryDataInitializer implements IDataInitializer {
 
         this.guides.push(
             { 
+                id: '',
                 name: 'History of Linz',
-                userName: 'thelegend27',
+                user: 'thelegend27',
                 imageLink: '/skyline.jpg',
                 tags: [this.tags[0].name, this.tags[3].name] ,
-                description: 'The guide of guides will guide you through the history of Linz and its beautifullness'
+                description: 'The guide of guides will guide you through the history of Linz and its beautifullness',
+                rating: 0,
+                numOfRatings: 0
             },
             { 
+                id: '',
                 name: 'A Guide with name 2',
-                userName: 'maxmuster',
+                user: 'maxmuster',
                 imageLink: '/Louvre_Museum.jpg',
                 tags: [this.tags[1].name],
-                description: 'A nonsense guide with nonsense content and nosense description'
+                description: 'A nonsense guide with nonsense content and nosense description',
+                rating: 0,
+                numOfRatings: 0
             },
-            { name: 'Callcenter access 3000', userName: 'luxdachef',
+            { 
+                id: '',
+                name: 'Callcenter access 3000', user: 'luxdachef',
                 imageLink: '/AbbeyRoad.jpg', tags: [this.tags[2].name],
-                description: 'Sharing is caring. One of the basics of the master callcenter concern access 3000' },
-            { name: 'A man must do, what a man has to do', userName: 'thelegend27',
-                 imageLink: '/deer.png', tags: [this.tags[1].name, this.tags[3].name],
-                description: 'Behind the secrets of duty.' }
+                description: 'Sharing is caring. One of the basics of the master callcenter concern access 3000',
+                rating: 0,
+                numOfRatings: 0
+            },
+            { 
+                id: '',
+                name: 'A man must do, what a man has to do', user: 'thelegend27',
+                imageLink: '/deer.png', tags: [this.tags[1].name, this.tags[3].name],
+                description: 'Behind the secrets of duty.',
+                rating: 0,
+                numOfRatings: 0 }
         );
 
         this.ratings.push(
             { userName: 'thelegend27', guideName: 'Callcenter access 3000', rating: 3 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 2 }
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 2 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 3 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
+            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 }
         );
 
         return this.users.length

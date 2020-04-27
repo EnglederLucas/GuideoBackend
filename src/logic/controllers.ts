@@ -1,4 +1,4 @@
-import { IUnitOfWork, IUserVerifier } from '../core/contracts';
+import { IUnitOfWork } from '../core/contracts';
 import {GuideDto, UserDto} from "./datatransferobjects";
 import { IUser, IGuide, ITag, IRating } from '../core/models';
 
@@ -30,6 +30,7 @@ export class GuideController {
     async getGuidesWithTags(tags: ITag[]): Promise<GuideDto[]>{
         const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
         return await this.convertToDto(guides);
+
     }
 
     private async convertToDto(guides: IGuide[]) {
@@ -51,8 +52,7 @@ export class GuideController {
 export class UserController {
 
     constructor(
-        private readonly unitOfWork: IUnitOfWork,
-        private readonly userVerifier: IUserVerifier) {
+        private readonly unitOfWork: IUnitOfWork) {
     }
 
     async getAll(): Promise<UserDto[]> {
@@ -62,9 +62,11 @@ export class UserController {
     async getUserByName(name: string): Promise<UserDto>{
         return await this.unitOfWork.users.getUserByName(name);
     }
+}
 
-    registerUser(user : IUser): Promise<void> {
-        return this.userVerifier.registerUser(user);
+export class RatingController {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
+
     }
 }
 

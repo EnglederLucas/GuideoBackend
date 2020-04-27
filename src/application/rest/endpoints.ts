@@ -130,13 +130,13 @@ export class UserEndpoint implements IRoutable {
     }
 }
 
+
 export class TagEndpoint implements IRoutable {
     private router: Router = Router();
     private initialized = false;
     private readonly basePath = 'tags';
     
     constructor(private tagController: TagController) {
-
     }
 
     private initRoutes(): void {
@@ -228,7 +228,7 @@ export class RatingEndpoint implements IRoutable {
                 res.send(ex);
             }
         })
-
+      
         this.initialized = true;
     }
 
@@ -243,4 +243,3 @@ export class RatingEndpoint implements IRoutable {
         return this.basePath;
     }
 }
-

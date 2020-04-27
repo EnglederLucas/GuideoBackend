@@ -47,7 +47,3 @@ export interface IDataInitializer {
     getTags(): ITag[];
     getRatings(): IRating[];
 }
-
-export interface IUserVerifier {
-    registerUser(user: IUser): Promise<void>;
-}
