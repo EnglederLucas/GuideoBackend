@@ -1,7 +1,7 @@
 import { GuideoServer } from './application/GuideoServer';
-import { GuideController, UserController, RatingController } from './logic/controllers';
+import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 // import { UnitOfWork } from './persistence/inmemory/unitofwork';
-import { GuideEndpoint, UserEndpoint, RatingEndpoint } from './application/rest/endpoints';
+import { GuideEndpoint, UserEndpoint, RatingEndpoint, TagEndpoint } from './application/rest/endpoints';
 import { IDataInitializer } from './core/contracts';
 import { InMemoryDataInitializer } from './persistence/initializers';
 import { UnitOfWork } from './persistence/firebase/unitofwork';
@@ -35,6 +35,7 @@ const server: GuideoServer = new GuideoServer({
     routables: [ 
         new GuideEndpoint(new GuideController(unitOfWork)),
         new UserEndpoint(new UserController(unitOfWork)),
+        new TagEndpoint(new TagController(unitOfWork)),
         new RatingEndpoint(new RatingController(unitOfWork))
     ],
     enableCors: enableCors,
@@ -42,6 +43,7 @@ const server: GuideoServer = new GuideoServer({
         { route: '/', paths: [ `${__dirname}\\..\\public` ] }
     ]
 });
+
 
 if (enableCors) console.log('> cors enabled');
 

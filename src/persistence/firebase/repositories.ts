@@ -16,7 +16,6 @@ export class UserRepository implements IUserRepository {
 
         let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             users.push({name: doc.data().name, email: doc.data().email, description: doc.data().description});
         });
 
@@ -84,7 +83,7 @@ export class GuideRepository implements IGuideRepository {
             .get();
         
         snapshot.forEach(doc => {
-
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
         return guides;
@@ -93,10 +92,13 @@ export class GuideRepository implements IGuideRepository {
     async getGuidesByName(name: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];
         let snapshot = await this.guidesRef.where('name','==',name).get();
+
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
-            guides.push(this.convertDataToGuide(doc.data()));
+            // from repo-methods branch  
+          // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
             // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
         return guides;
@@ -106,9 +108,11 @@ export class GuideRepository implements IGuideRepository {
         let guides: IGuide[] = [];
         let snapshot = await this.guidesRef.where('userName','==',userName).get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
-            guides.push(this.convertDataToGuide(doc.data()));
+            // from repo-methods branch 
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
             // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
         return guides;
@@ -119,9 +123,10 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
-            guides.push(this.convertDataToGuide(doc.data()));
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
             // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
         });
 
         return guides;
@@ -132,16 +137,17 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
-            guides.push(this.convertDataToGuide(doc.data()));
+            // console.log(doc.id, '=>', doc.data());
+            // guides.push(this.convertDataToGuide(doc.data()));
             // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
         });
 
         return guides;
     }
 
     async add(item: IGuide): Promise<void> {
-        let setGuide = this.guidesRef.add({
+        let setGuide = await this.guidesRef.add({
             name: item.name,
             description: item.description,
             tags: item.tags,
@@ -149,6 +155,9 @@ export class GuideRepository implements IGuideRepository {
             imageLink: item.imageLink,
             rating: item.rating,
             numofRatings: item.numOfRatings
+        });
+        this.guidesRef.doc(setGuide.id).update({
+            id: setGuide.id
         });
     }
 
@@ -187,14 +196,13 @@ export class TagRepository implements ITagRepository {
 
         let snapshot = await this.tagsRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             tags.push({name: doc.data().name});
         });
 
         return tags;
     }
 
-    async getTagByName(name: string): Promise<ITag | undefined> {
+    async getTagByName(name: string): Promise<ITag> {
         let tag: ITag;
 
         let snapshot = await this.tagsRef.get();

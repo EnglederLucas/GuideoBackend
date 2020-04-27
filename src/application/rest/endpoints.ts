@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { GuideController, UserController, RatingController } from '../../logic/controllers';
+import { GuideController, UserController, RatingController, TagController } from '../../logic/controllers';
 import { IRoutable } from '../contracts';
 
 export class GuideEndpoint implements IRoutable {
@@ -8,7 +8,6 @@ export class GuideEndpoint implements IRoutable {
     private readonly basePath = 'guides';
     
     constructor(private guideController: GuideController) {
-
     }
 
     private initRoutes(): void {
@@ -16,23 +15,53 @@ export class GuideEndpoint implements IRoutable {
             return;
 
         this.router.get('/', async (req, res) => {
-            /*this.guideController.getAll()
-                .catch(reason => res.send(reason))
-                .then(result => res.send(result));*/
-
-            res.send(await this.guideController.getAll());
+            try{
+                res.send(await this.guideController.getAll());
+            } catch(ex){
+                res.send(ex);
+            }
         });
 
         this.router.get('/paged', async (req, res) => {
             const pos = parseInt(req.query.pos);
             const size = parseInt(req.query.size);
 
-            /*this.guideController.getGuidesPaged(pos, size)
-                .then(result => res.send(result))
-                .catch(reason => res.send(reason));*/
-
-            res.send(await this.guideController.getGuidesPaged(pos, size));
+            try{
+                res.send(await this.guideController.getGuidesPaged(pos, size));
+            } catch(ex){
+                res.send(ex);
+            }
         });
+
+        this.router.get('/byName', async (req, res) => {
+            const guideName = req.query.guidename;
+
+            try{
+                res.send(await this.guideController.getGuidesByName(guideName));
+            } catch(ex){
+                res.send(ex);
+            }
+        })
+
+        this.router.get('/ofUser', async (req, res) => {
+            const userName = req.query.username;
+
+            try{
+                res.send(await this.guideController.getGuidesOfUser(userName));
+            } catch(ex){
+                res.send(ex);
+            }
+        })
+
+        this.router.get('/withTags', async (req, res) => {
+            const tags = req.query.tags;
+
+            try{
+                res.send(await this.guideController.getGuidesWithTags(tags));
+            } catch(ex){
+                res.send(ex);
+            }
+        })
 
         this.initialized = true;
     }
@@ -71,6 +100,17 @@ export class UserEndpoint implements IRoutable {
             }
         });
 
+        this.router.get('/byName', async (req, res) => {
+            const userName = req.query.username;
+
+            try {
+                res.send(await this.userController.getUserByName(userName));
+            }
+            catch(ex) {
+                res.send(ex);
+            }
+        });
+
         this.router.post('/register', async (req, res) => {
             // TODO
         });
@@ -90,28 +130,37 @@ export class UserEndpoint implements IRoutable {
     }
 }
 
-export class RatingEndpoint implements IRoutable {
-    private readonly router: Router = Router();
-    private readonly basePath = 'ratings';
-    private initialized = false;
 
-    constructor(private readonly ratingController : RatingController) {
+export class TagEndpoint implements IRoutable {
+    private router: Router = Router();
+    private initialized = false;
+    private readonly basePath = 'tags';
+    
+    constructor(private tagController: TagController) {
     }
 
     private initRoutes(): void {
         if (this.initialized)
             return;
 
-        this.router.get('/best', async (req, res) => {
-            const limit: number = parseInt(req.query.limit);
-            const name: string = req.query.name;
+        this.router.get('/', async (req, res) => {
 
-            /*try {
-                res.send(await this.ratingController.getBestRatingsWithLimit(limit, name));
-            }
-            catch(ex) {
+            try{
+                res.send(await this.tagController.getAll());
+            } catch(ex){
                 res.send(ex);
-            }*/
+            }
+        });
+
+        //Not working yet
+        this.router.get('/averageRatingOfGuide', async (req, res) => {
+            const tagName = req.query.tagname;
+
+            try{
+                res.send(await this.tagController.getTagByName(tagName));
+            } catch(ex){
+                res.send(ex);
+            }
         });
 
         this.initialized = true;
@@ -127,5 +176,70 @@ export class RatingEndpoint implements IRoutable {
     getBasePath(): string {
         return this.basePath;
     }
+}
 
+export class RatingEndpoint implements IRoutable {
+    private router: Router = Router();
+    private initialized = false;
+    private readonly basePath = 'ratings';
+    
+    constructor(private ratingController: RatingController) {
+    }
+
+    private initRoutes(): void {
+        if (this.initialized)
+            return;
+
+        this.router.get('/', async (req, res) => {
+            try{
+                res.send(await this.ratingController.getAll());
+            } catch(ex){
+                res.send(ex);
+            }
+        });
+
+        //Not working yet
+        this.router.get('/averageRatingOfGuide', async (req, res) => {
+            const guideName = req.query.guidename;
+            
+            try{
+                res.send(await this.ratingController.getAverageRatingOfGuide(guideName));
+            } catch(ex){
+                res.send(ex);
+            }
+        });
+
+        this.router.get('/ofGuide', async (req, res) => {
+            const guideName = req.query.guidename;
+
+            try{
+                res.send(await this.ratingController.getRatingsOfGuide(guideName));
+            } catch(ex){
+                res.send(ex);
+            }
+        })
+
+        this.router.get('/ofUser', async (req, res) => {
+            const userName = req.query.username;
+
+            try{
+                res.send(await this.ratingController.getRatingsOfUser(userName));
+            } catch(ex){
+                res.send(ex);
+            }
+        })
+      
+        this.initialized = true;
+    }
+
+    getRouter(): Router {
+        if (!this.initialized)
+            this.initRoutes();
+
+        return this.router;
+    }
+
+    getBasePath(): string {
+        return this.basePath;
+    }
 }

@@ -21,7 +21,7 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
 }
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
-    getTagByName(name: string): Promise<ITag | undefined>;
+    getTagByName(name: string): Promise<ITag>;
 }
 
 export interface IUserRepository {
