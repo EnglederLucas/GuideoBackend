@@ -1,6 +1,11 @@
 # Created by https://www.gitignore.io/api/node
 # Edit at https://www.gitignore.io/?templates=node
 
+### Firebase ###
+
+vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json
+email-service.txt
+
 ### Node ###
 # Logs
 logs

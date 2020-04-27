@@ -1,9 +1,11 @@
 import { IGuide, IRating, ITag, IUser } from './models';
+import { UserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
     add(item: TEntity): Promise<void>;
     addRange(items: TEntity[]): Promise<void>;
+    // getById(id: TId): Promise<TEntity>;
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
@@ -15,16 +17,19 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuidesByName(name: string) : Promise<IGuide[]>;
     getGuidesOfUser(userName: string) : Promise<IGuide[]>;
-    getGuidesWithTags(tags: ITag[]): Promise<IGuide[]>;
+    getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>;     // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
 }
 
-export interface IUserRepository extends IGenericRepository<IUser, string> {
-    getUserByName(name: string): Promise<IUser>;
+export interface ITagRepository extends IGenericRepository<ITag, string> {
+    getTagByName(name: string): Promise<ITag>;
 }
 
-export interface ITagRepository extends IGenericRepository<ITag, string> {
-    getTagByName(name: string): Promise<ITag | undefined>;
+export interface IUserRepository {
+    getUserByName(name: string): Promise<UserDto>;
+    getAll(): Promise<UserDto[]>;
+    add(item: IUser): Promise<void>;
+    addRange(items: IUser[]): Promise<void>;
 }
 
 export interface IUnitOfWork {

@@ -1,43 +1,50 @@
 import {IGuideRepository, IRatingRepository, ITagRepository, IUserRepository} from "../../core/contracts";
-import {IGuide, IRating, ITag, IUser} from "../../core/models";
-import admin from 'firebase-admin';
+import { IGuide, IRating, ITag, IUser } from '../../core/models';
+import { UserDto } from "../../core/data-transfer-objects";
+
+import { GuideDto } from '../../logic/data-transfer-objects';
+
+import { firestore, auth } from "firebase-admin";
 
 export class UserRepository implements IUserRepository {
 
-    usersRef: admin.firestore.CollectionReference;
+    private readonly usersRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore, private readonly fbAuth : auth.Auth){
         this.usersRef = db.collection('users');
     }
 
-    async getAll(): Promise<IUser[]> {
-        let users: IUser[] = [];
+    async getAll(): Promise<UserDto[]> {
+        let users: UserDto[] = [];
 
-        let snapshot = await this.usersRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
-            users.push({name: doc.data().name, password: doc.data().password});
+            users.push({name: doc.data().name, email: doc.data().email, description: doc.data().description});
         });
 
         return users;
     }
 
-    async getUserByName(name: string): Promise<IUser> {
-        let user: IUser;
-        let snapshot = await this.usersRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
-        user = {name: snapshot.docs[0].data().name, password: snapshot.docs[0].data().password};
+    async getUserByName(name: string): Promise<UserDto> {
+        let user: UserDto;
+
+        let snapshot = await this.usersRef.where('name','==',name).get();
+        user = {name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
 
         return user;
     }
 
     async add(item: IUser): Promise<void> {
-        /*admin.auth().createUser({
+        const userRecord: auth.UserRecord = await this.fbAuth.createUser({
             displayName: item.name,
+            email: item.email,
+            emailVerified: false,
             password: item.password
-        })*/
-        var setUser = this.usersRef.add({
+        });
+        
+        const setUser: firestore.WriteResult = await this.usersRef.doc(userRecord.uid).set({
             name: item.name,
-            password: item.password
+            description: item.description !== undefined ? item.description : ""
         });
     }
 
@@ -50,34 +57,60 @@ export class UserRepository implements IUserRepository {
 }
 
 export class GuideRepository implements IGuideRepository {
-    getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
-        throw new Error("Method not implemented.");
-    }
 
-    guidesRef: admin.firestore.CollectionReference;
+    private readonly guidesRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.guidesRef = db.collection('guides');
     }
 
     async getAll(): Promise<IGuide[]> {
         let guides: IGuide[] = [];
 
-        let snapshot = await this.guidesRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push(this.convertDataToGuide(doc.data()));
         });
 
         return guides;
     }
 
+    // maybe later
+    // async getTopGuides(limit: number): Promise<GuideDto[]> {
+    //     let guides: GuideDto[] = [];
+        
+    //     let snapshot = await this.guidesRef
+    //         .orderBy('rating', "desc")
+    //         .limit(limit)
+    //         .get();
+        
+    //     snapshot.forEach(doc => {
+    //         // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, user: doc.data().user, imageLink: doc.data().imageLink});
+    //     });
+
+    //     return guides;
+    // }
+
     async getGuidesByName(name: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('name','==',name).get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.where('name','==',name).get();
+
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push(this.convertDataToGuide(doc.data()));
+        });
+
+        return guides;
+    }
+
+    async getGuidesWithTags(tags: string[]): Promise<IGuide[]> {
+        let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
+
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+            guides.push(this.convertDataToGuide(doc.data()));
         });
 
         return guides;
@@ -85,35 +118,42 @@ export class GuideRepository implements IGuideRepository {
 
     async getGuidesOfUser(userName: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('userName','==',userName).get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.guidesRef.where('userName','==',userName).get();
+
         snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink});
+            guides.push(this.convertDataToGuide(doc.data()));
         });
 
         return guides;
     }
 
-    async getGuidesWithTags(tags: ITag[]): Promise<IGuide[]> {
-        /*let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('tags','==',name).get()/*.catch(err => console.log('Error', err))*/;
-        /*snapshot.forEach(doc => {
+    async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
+        let guides: IGuide[] = [];
+        let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
+
+        snapshot.forEach(doc => {
             console.log(doc.id, '=>', doc.data());
-            guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, userName: doc.data().userName, imageLink: doc.data().imageLink})
+            guides.push(this.convertDataToGuide(doc.data()));
         });
 
-        return guides;*/
-        throw 'Not supported yet';
+        return guides;
     }
 
     async add(item: IGuide): Promise<void> {
-        var setGuide = this.guidesRef.add({
+        let setGuide = await this.guidesRef.add({
             name: item.name,
             description: item.description,
             tags: item.tags,
-            userName: item.userName,
-            imageLink: item.imageLink
+            user: item.user,
+            imageLink: item.imageLink,
+            rating: item.rating,
+            numofRatings: item.numOfRatings
         });
+
+        // this.guidesRef.doc(setGuide.id).update({
+        //     id: setGuide.id
+        // });
     }
 
     async addRange(items: IGuide[]): Promise<void> {
@@ -121,39 +161,53 @@ export class GuideRepository implements IGuideRepository {
             this.add(item);
         });
     }
+
+    private convertDataToGuide(data: firestore.DocumentData): IGuide {
+        const guide: IGuide = {
+            id: data.id as string,
+            name: data.name as string,
+            description: data.description as string | undefined,
+            tags: data.tags as string[],
+            user: data.user as string,
+            imageLink: data.imageLink as string | undefined,
+            rating: data.rating as number,
+            numOfRatings: data.numOfRatings as number
+        };
+
+        return guide;
+    }
 }
 
 export class TagRepository implements ITagRepository {
 
-    tagsRef: admin.firestore.CollectionReference;
+    private readonly tagsRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.tagsRef = db.collection('tags');
     }
 
     async getAll(): Promise<ITag[]> {
         let tags: ITag[] = [];
 
-        let snapshot = await this.tagsRef.get()/*.catch(err => console.log('Error', err))*/;
+        let snapshot = await this.tagsRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             tags.push({name: doc.data().name});
         });
 
         return tags;
     }
 
-    async getTagByName(name: string): Promise<ITag | undefined> {
+    async getTagByName(name: string): Promise<ITag> {
         let tag: ITag;
 
         let snapshot = await this.tagsRef.get();
-        tag = {name: snapshot.docs[0].data.name};
+        tag = { name: snapshot.docs[0].data.name };
 
         return tag;
     }
 
     async add(item: ITag): Promise<void> {
-        var setTag = this.tagsRef.add({
+        let setTag = await this.tagsRef.add({
             name: item.name
         });
     }
@@ -167,16 +221,19 @@ export class TagRepository implements ITagRepository {
 
 export class RatingRepository implements IRatingRepository {
 
-    ratingsRef: admin.firestore.CollectionReference;
+    private readonly ratingsRef: firestore.CollectionReference;
 
-    constructor(private db: admin.firestore.Firestore){
+    constructor(private db: firestore.Firestore){
         this.ratingsRef = db.collection('ratings');
     }
 
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
         let average: number;
 
-        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+        let snapshot = await this.ratingsRef
+            .where('guideName', '==', guideName)
+            .get();
+
         let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
         average = sum / snapshot.docs.length;
 
@@ -188,7 +245,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
         snapshot.forEach(doc => {
-            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+            ratings.push(this.convertDataToRating(doc));
         });
 
         return ratings;
@@ -199,7 +256,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.where('userName', '==', userName).get();
         snapshot.forEach(doc => {
-            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+            ratings.push(this.convertDataToRating(doc));
         });
 
         return ratings;
@@ -210,16 +267,16 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.get();
         snapshot.forEach(doc => {
-            ratings.push({userName: doc.data().userName, guideName: doc.data().guideName, rating: doc.data().rating});
+            ratings.push(this.convertDataToRating(doc));
         })
 
         return ratings;
     }
 
     async add(item: IRating): Promise<void> {
-        var setRating = this.ratingsRef.add({
-            guideName: item.guideName,
-            userName: item.userName,
+        let setRating = this.ratingsRef.add({
+            guide: item.guide,
+            user: item.user,
             rating: item.rating
         });
     }
@@ -230,4 +287,13 @@ export class RatingRepository implements IRatingRepository {
         });
     }
 
+    private convertDataToRating(data: firestore.DocumentData): IRating {
+        const rating: IRating = {
+            user: data.user as string,
+            guide: data.guide as string,
+            rating: data.rating as number
+        }
+
+        return rating;
+    }
 }
