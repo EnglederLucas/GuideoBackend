@@ -18,8 +18,8 @@ export interface IGuide {
 }
 
 export interface IRating {
-    userName: IUser['name'];
-    guideName: IGuide['id'];
+    user: IUser['id'];
+    guide: IGuide['id'];
     rating: number;
 }
 

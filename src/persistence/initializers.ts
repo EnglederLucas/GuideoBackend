@@ -60,23 +60,23 @@ export class InMemoryDataInitializer implements IDataInitializer {
         );
 
         this.ratings.push(
-            { userName: 'thelegend27', guideName: 'Callcenter access 3000', rating: 3 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 2 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 3 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 5 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 4 },
-            { userName: 'maxmuster', guideName: 'Callcenter access 3000', rating: 1 }
+            { user: 'thelegend27', guide: 'Callcenter access 3000', rating: 3 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 2 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 3 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
+            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 }
         );
 
         return this.users.length
