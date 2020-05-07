@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import cors, { CorsOptions } from 'cors';
 import { IRoutable } from './contracts';
+import { auth } from 'firebase-admin';
 
 export interface IStaticPathDefinition {
     route: string;
@@ -19,6 +20,24 @@ export class GuideoServer {
 
     constructor(private settings: IServerOptions) {
         this.app = express();
+
+        this.app.use('/guides/*', async (req, res, next) => {
+            // get id token
+            const idToken: string = "";
+            let success = true;
+            let err = Error("nothing set");
+
+            try {
+                const decodedIdToken: auth.DecodedIdToken = await auth().verifyIdToken(idToken);
+                const uid: string = decodedIdToken.uid;
+                req.params.uid = uid;
+            } catch (error) {
+                success = false;
+                err.message = "Token not valid!";
+            }
+            
+            if (success) next(err)
+        }); 
 
         let corsOptions: CorsOptions = {
             origin: '*',

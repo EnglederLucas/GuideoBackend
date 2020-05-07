@@ -3,17 +3,16 @@ import { GuideEndpoint, UserEndpoint, RatingEndpoint, TagEndpoint } from './appl
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
-import { IDataInitializer } from './core/contracts';
-
-import { InMemoryDataInitializer } from './persistence/initializers';
 import { UnitOfWork } from './persistence/firebase/unitofwork';
+
+// import { IDataInitializer } from './core/contracts';
+// import { InMemoryDataInitializer } from './persistence/initializers';
 
 import * as admin from 'firebase-admin';
 
 const port: number = 3030;
 const enableCors: boolean = true;
-// const unitOfWork: UnitOfWork = new UnitOfWork();
-const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
+// const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
 var serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
 
@@ -25,9 +24,9 @@ admin.initializeApp({
 var db = admin.firestore();
 const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
 
-console.log('> initialize data ...');
-const result: number = dataInitializer.initDataSync();
-console.log(`> ${result} entries were initizialized`);
+// console.log('> initialize data ...');
+// const result: number = dataInitializer.initDataSync();
+// console.log(`> ${result} entries were initizialized`);
 
 // unitOfWork.users.addRange(dataInitializer.getUsers());
 // unitOfWork.guides.addRange(dataInitializer.getGuides());
