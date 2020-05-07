@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import cors, { CorsOptions } from 'cors';
 import { IRoutable } from './contracts';
-import { auth } from 'firebase-admin';
+import { Middleware } from "./middleware";
 
 export interface IStaticPathDefinition {
     route: string;
@@ -10,9 +10,10 @@ export interface IStaticPathDefinition {
 
 export interface IServerOptions {
     port: number;
-    routables: IRoutable[];
+    routables?: IRoutable[];
     enableCors: boolean;
-    staticPaths: IStaticPathDefinition[];
+    staticPaths?: IStaticPathDefinition[];
+    middlewares?: Middleware[];
 }
 
 export class GuideoServer {
@@ -20,24 +21,6 @@ export class GuideoServer {
 
     constructor(private settings: IServerOptions) {
         this.app = express();
-
-        this.app.use('/guides/*', async (req, res, next) => {
-            // get id token
-            const idToken: string = "";
-            let success = true;
-            let err = Error("nothing set");
-
-            try {
-                const decodedIdToken: auth.DecodedIdToken = await auth().verifyIdToken(idToken);
-                const uid: string = decodedIdToken.uid;
-                req.params.uid = uid;
-            } catch (error) {
-                success = false;
-                err.message = "Token not valid!";
-            }
-            
-            if (success) next(err)
-        }); 
 
         let corsOptions: CorsOptions = {
             origin: '*',
@@ -48,10 +31,14 @@ export class GuideoServer {
             this.app.use(cors(corsOptions));
         }    
 
-        if (settings.routables !== null)
+        if (settings.middlewares !== undefined) {
+            this.addMiddlewares(settings.middlewares);
+        }
+
+        if (settings.routables !== undefined)
             this.initRoutes(settings.routables);
 
-        if (settings.staticPaths !== null) {
+        if (settings.staticPaths !== undefined) {
             this.provideStatics(settings.staticPaths);
         }
     }
@@ -74,6 +61,10 @@ export class GuideoServer {
                 this.app.use(definition.route, express.static(path));
             });
         });
+    }
+
+    private addMiddlewares(middlewares: Middleware[]): void {
+        middlewares.forEach(m => this.app.use(m.route, m.handler));
     }
 
     public start(): void {

@@ -1,14 +1,16 @@
 import { GuideoServer } from './application/GuideoServer';
-import { GuideEndpoint, UserEndpoint, RatingEndpoint, TagEndpoint } from './application/rest/endpoints';
+import { verifyUserToken } from './application/middleware';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint } from './application/endpoints';
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
 import { UnitOfWork } from './persistence/firebase/unitofwork';
 
+import * as admin from 'firebase-admin';
+
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
 
-import * as admin from 'firebase-admin';
 
 const port: number = 3030;
 const enableCors: boolean = true;
@@ -43,8 +45,11 @@ const server: GuideoServer = new GuideoServer({
         new RatingEndpoint(new RatingController(unitOfWork))
     ],
     enableCors: enableCors,
-    staticPaths: [
+    staticPaths:  [
         { route: '/', paths: [ `${__dirname}\\..\\public` ] }
+    ],
+    middlewares: [
+        { route: '/', handler: verifyUserToken }
     ]
 });
 
