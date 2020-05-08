@@ -8,7 +8,8 @@
     "tsc": "tsc",
     "tscw": "tsc -w",
     "start": "node ./build/app.js",
-    "startw": "nodemon"
+    "startw": "nodemon",
+    "debug": "nodemon --inspect ./build/app.js"
   },
   "author": "Lukas Wirth",
   "license": "ISC",

@@ -1,5 +1,5 @@
 import { GuideController } from "../../logic/controllers";
-import { BaseEndpoint } from './endpoint';
+import { BaseEndpoint } from './base-endpoint';
 
 export class GuideEndpoint extends BaseEndpoint {
     
@@ -7,7 +7,7 @@ export class GuideEndpoint extends BaseEndpoint {
         super('guides');
     }
 
-    protected initRoutes(): void {
+     protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try{
                 res.send(await this.guideController.getAll());
@@ -56,5 +56,5 @@ export class GuideEndpoint extends BaseEndpoint {
                 res.send(ex);
             }
         })
-    }
+     }
 }
