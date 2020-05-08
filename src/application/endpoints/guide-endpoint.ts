@@ -1,19 +1,13 @@
-import { Router } from "express";
 import { GuideController } from "../../logic/controllers";
-import { IRoutable } from "../contracts";
+import { BaseEndpoint } from './endpoint';
 
-export class GuideEndpoint implements IRoutable {
-    private router: Router = Router();
-    private initialized = false;
-    private readonly basePath = 'guides';
+export class GuideEndpoint extends BaseEndpoint {
     
     constructor(private guideController: GuideController) {
+        super('guides');
     }
 
-    private initRoutes(): void {
-        if (this.initialized)
-            return;
-
+    protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try{
                 res.send(await this.guideController.getAll());
@@ -36,7 +30,7 @@ export class GuideEndpoint implements IRoutable {
         this.router.get('/byName', async (req, res) => {
             const guideName = req.query.guidename;
 
-            try{
+            try {
                 res.send(await this.guideController.getGuidesByName(guideName));
             } catch(ex){
                 res.send(ex);
@@ -62,18 +56,5 @@ export class GuideEndpoint implements IRoutable {
                 res.send(ex);
             }
         })
-
-        this.initialized = true;
-    }
-
-    getRouter(): Router {
-        if (!this.initialized)
-            this.initRoutes();
-
-        return this.router;
-    }
-
-    getBasePath(): string {
-        return this.basePath;
     }
 }

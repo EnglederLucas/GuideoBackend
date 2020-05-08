@@ -1,19 +1,13 @@
-import { IRoutable } from "../contracts";
-import { Router } from "express";
 import { TagController } from "../../logic/controllers";
+import { BaseEndpoint } from './endpoint';
 
-export class TagEndpoint implements IRoutable {
-    private router: Router = Router();
-    private initialized = false;
-    private readonly basePath = 'tags';
+export class TagEndpoint extends BaseEndpoint {
     
     constructor(private tagController: TagController) {
+        super('tags');
     }
 
-    private initRoutes(): void {
-        if (this.initialized)
-            return;
-
+    protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
 
             try{
@@ -33,18 +27,5 @@ export class TagEndpoint implements IRoutable {
                 res.send(ex);
             }
         });
-
-        this.initialized = true;
-    }
-
-    getRouter(): Router {
-        if (!this.initialized)
-            this.initRoutes();
-
-        return this.router;
-    }
-
-    getBasePath(): string {
-        return this.basePath;
     }
 }

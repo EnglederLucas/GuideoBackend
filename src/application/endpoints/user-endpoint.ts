@@ -1,20 +1,12 @@
-import { Router } from 'express';
-import { IRoutable } from '../contracts';
 import { UserController } from '../../logic/controllers';
+import { BaseEndpoint } from './endpoint';
 
-export class UserEndpoint implements IRoutable {
-    private router: Router = Router();
-    private initialized = false;
-    private readonly basePath = 'users';
-
+export class UserEndpoint extends BaseEndpoint {
     constructor(private userController: UserController) {
-
+        super('users');
     }
 
-    private initRoutes(): void {
-        if (this.initialized)
-            return;
-
+    protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try {
                 res.send(await this.userController.getAll());
@@ -38,18 +30,5 @@ export class UserEndpoint implements IRoutable {
         this.router.post('/register', async (req, res) => {
             // TODO
         });
-
-        this.initialized = true;
-    }
-
-    getRouter(): Router {
-        if (!this.initialized)
-            this.initRoutes();
-
-        return this.router;
-    }
-
-    getBasePath(): string {
-        return this.basePath;
     }
 }

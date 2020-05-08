@@ -1,19 +1,13 @@
-import { Router } from "express";
 import { RatingController } from "../../logic/controllers";
-import { IRoutable } from "../contracts";
+import { BaseEndpoint } from './endpoint';
 
-export class RatingEndpoint implements IRoutable {
-    private router: Router = Router();
-    private initialized = false;
-    private readonly basePath = 'ratings';
+export class RatingEndpoint extends BaseEndpoint {
     
     constructor(private ratingController: RatingController) {
+        super('ratings');
     }
 
-    private initRoutes(): void {
-        if (this.initialized)
-            return;
-
+    protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try{
                 res.send(await this.ratingController.getAll());
@@ -52,18 +46,5 @@ export class RatingEndpoint implements IRoutable {
                 res.send(ex);
             }
         })
-      
-        this.initialized = true;
-    }
-
-    getRouter(): Router {
-        if (!this.initialized)
-            this.initRoutes();
-
-        return this.router;
-    }
-
-    getBasePath(): string {
-        return this.basePath;
     }
 }
