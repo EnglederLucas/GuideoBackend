@@ -7,7 +7,6 @@ export abstract class BaseEndpoint implements IRoutable {
     private initialized = false;
 
     constructor(private readonly basePath: string) {
-        console.log(`In Constructor: ${this.router.toString()}`)
     }
 
     getRouter(): Router {
