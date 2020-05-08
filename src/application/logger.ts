@@ -1,8 +1,13 @@
-import morgan, { TokenIndexer, FormatFn } from "morgan";
-import { RequestHandler, Request, Response } from 'express';
+import morgan from "morgan";
+import { RequestHandler } from 'express';
+import chalk from "chalk";
 
 export class Logger {
     static getRoutingLogger(): RequestHandler {
-        return morgan('<< Server-Routing >> [:method] :url [:status] [:response-time ms] - :res[content-length]');
+        return morgan(`${chalk.blue('<< Server-Routing >>')} [:method] :url [:status] [:response-time ms] - :res[content-length]`);
+    }
+
+    static log(text: string): void {
+        console.log(`${chalk.blue('<< Server >>')} `, text);
     }
 }

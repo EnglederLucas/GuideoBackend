@@ -2,6 +2,7 @@ import express, { Application } from "express";
 import cors, { CorsOptions } from 'cors';
 import { IRoutable } from './contracts';
 import { Middleware } from "./middleware";
+import { Logger as $Log } from './logger';
 
 export interface IStaticPathDefinition {
     route: string;
@@ -69,7 +70,7 @@ export class GuideoServer {
 
     public start(): void {
         this.app.listen(this.settings.port, () => {
-            console.log(`server startet at port ${this.settings.port}`);
+            $Log.log(`server startet at port ${this.settings.port}`);
         });
     }
 }

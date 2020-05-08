@@ -56,8 +56,8 @@ const server: GuideoServer = new GuideoServer({
 });
 
 
-if (enableCors) console.log('> cors enabled');
+if (enableCors) $Log.log('cors enabled');
 
-console.log(`${__dirname}\\..\\public`);
+$Log.log(`${__dirname}\\..\\public`);
 
 server.start();
