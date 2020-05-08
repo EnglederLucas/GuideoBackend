@@ -1,6 +1,7 @@
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint } from './application/endpoints';
+import { Logger as $Log } from './application/logger';
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
@@ -49,7 +50,8 @@ const server: GuideoServer = new GuideoServer({
         { route: '/', paths: [ `${__dirname}\\..\\public` ] }
     ],
     middlewares: [
-        { route: '/', handler: verifyUserToken }
+        // { route: '/', handler: verifyUserToken },
+        { route: '/', handler: $Log.getRoutingLogger() }
     ]
 });
 
