@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { GuideController, UserController, RatingController, TagController } from '../../logic/controllers';
 import { IRoutable } from '../contracts';
+import { IUser } from '../../core/models';
 
 export class GuideEndpoint implements IRoutable {
     private router: Router = Router();
@@ -111,8 +112,19 @@ export class UserEndpoint implements IRoutable {
             }
         });
 
+        //Bodyparser needed!
         this.router.post('/register', async (req, res) => {
-            // TODO
+            //console.log(req.body.user)
+            //const user: IUser = req.body.user;
+            
+            //console.log(user.name);
+
+            try {
+                //res.send(await this.userController.add(user));
+            }
+            catch(ex) {
+                res.send(ex)
+            }
         });
 
         this.initialized = true;
@@ -152,8 +164,7 @@ export class TagEndpoint implements IRoutable {
             }
         });
 
-        //Not working yet
-        this.router.get('/averageRatingOfGuide', async (req, res) => {
+        this.router.get('/byName', async (req, res) => {
             const tagName = req.query.tagname;
 
             try{
@@ -198,8 +209,7 @@ export class RatingEndpoint implements IRoutable {
             }
         });
 
-        //Not working yet
-        this.router.get('/averageRatingOfGuide', async (req, res) => {
+        this.router.get('/averageOfGuide', async (req, res) => {
             const guideName = req.query.guidename;
             
             try{

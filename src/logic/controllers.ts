@@ -1,5 +1,5 @@
 import { IUnitOfWork } from '../core/contracts';
-import { IGuide, ITag, IRating } from '../core/models';
+import { IGuide, ITag, IRating, IUser } from '../core/models';
 import { UserDto } from '../core/data-transfer-objects';
 
 import { GuideDto } from "./data-transfer-objects";
@@ -41,7 +41,7 @@ export class GuideController {
         for (const g of guides) {
             const dto: GuideDto = new GuideDto(
                 g,
-                await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
+                await Number(this.unitOfWork.ratings.getAverageRatingOfGuide(g.name))
             );
 
             result.push(dto);
@@ -63,6 +63,10 @@ export class UserController {
 
     async getUserByName(name: string): Promise<UserDto>{
         return await this.unitOfWork.users.getUserByName(name);
+    }
+
+    async add(user: IUser): Promise<void>{
+        await this.unitOfWork.users.add(user);
     }
 }
 
@@ -89,7 +93,7 @@ export class RatingController {
         return await this.unitOfWork.ratings.getAll();
     }
 
-    async getAverageRatingOfGuide(guideName: string): Promise<number> {
+    async getAverageRatingOfGuide(guideName: string): Promise<string> {
         return await this.unitOfWork.ratings.getAverageRatingOfGuide(guideName);
     }
 

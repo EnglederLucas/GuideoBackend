@@ -35,17 +35,21 @@ export class UserRepository implements IUserRepository {
     }
 
     async add(item: IUser): Promise<void> {
-        const userRecord: auth.UserRecord = await this.fbAuth.createUser({
+        /*const userRecord: auth.UserRecord = await this.fbAuth.createUser({
             displayName: item.name,
             email: item.email,
             emailVerified: false,
             password: item.password
-        });
-        
-        const setUser: firestore.WriteResult = await this.usersRef.doc(userRecord.uid).set({
+        });*/
+
+        console.log('AddUserCall');
+
+        const setUser = await this.usersRef.doc(item.id).set({
             name: item.name,
-            description: item.description !== undefined ? item.description : ""
+            description: item.description !== undefined ? item.description : "No description."
         });
+
+        console.log('User successfully added');
     }
 
     async addRange(items: IUser[]): Promise<void> {
@@ -69,7 +73,6 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -97,7 +100,6 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('name','==',name).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -109,7 +111,6 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -121,7 +122,6 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('userName','==',userName).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -133,7 +133,6 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -200,8 +199,11 @@ export class TagRepository implements ITagRepository {
     async getTagByName(name: string): Promise<ITag> {
         let tag: ITag;
 
-        let snapshot = await this.tagsRef.get();
-        tag = { name: snapshot.docs[0].data.name };
+        let snapshot = await this.tagsRef.where('name','==',name).get();
+        snapshot.docs.forEach(element => {  
+            console.log(element.data().name);
+        });
+        tag = { name: snapshot.docs[0].data().name };
 
         return tag;
     }
@@ -227,17 +229,27 @@ export class RatingRepository implements IRatingRepository {
         this.ratingsRef = db.collection('ratings');
     }
 
-    async getAverageRatingOfGuide(guideName: string): Promise<number> {
+    async getAverageRatingOfGuide(guideName: string): Promise<string> {
+        let sum: number = 0;
         let average: number;
 
-        let snapshot = await this.ratingsRef
-            .where('guideName', '==', guideName)
-            .get();
+        console.log("Before getAverageRatingOfGuideQuery");
+        console.log(guideName);
 
-        let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
+        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
+
+        console.log(snapshot.docs.length)
+
+        snapshot.docs.forEach(element => {
+            sum += element.data().rating
+        });
+
         average = sum / snapshot.docs.length;
 
-        return average;
+        console.log(sum);
+        console.log(average);
+
+        return average.toString();
     }
 
     async getRatingsOfGuide(guideName: string): Promise<IRating[]> {
@@ -245,7 +257,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
         snapshot.forEach(doc => {
-            ratings.push(this.convertDataToRating(doc));
+            ratings.push(this.convertDataToRating(doc.data()));
         });
 
         return ratings;
@@ -256,7 +268,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.where('userName', '==', userName).get();
         snapshot.forEach(doc => {
-            ratings.push(this.convertDataToRating(doc));
+            ratings.push(this.convertDataToRating(doc.data()));
         });
 
         return ratings;
@@ -267,7 +279,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.get();
         snapshot.forEach(doc => {
-            ratings.push(this.convertDataToRating(doc));
+            ratings.push(this.convertDataToRating(doc.data()));
         })
 
         return ratings;
@@ -288,9 +300,10 @@ export class RatingRepository implements IRatingRepository {
     }
 
     private convertDataToRating(data: firestore.DocumentData): IRating {
+
         const rating: IRating = {
-            user: data.user as string,
-            guide: data.guide as string,
+            user: data.userName as string,
+            guide: data.guideName as string,
             rating: data.rating as number
         }
 
