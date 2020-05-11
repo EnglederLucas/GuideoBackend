@@ -1,10 +1,24 @@
 import { GuideController } from "../../logic/controllers";
 import { BaseEndpoint } from './base-endpoint';
+import { Get, Endpoint } from '../utils/express';
+import { Request, Response } from 'express';
+import $Log from '../../utils/logger';
 
+@Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
     
     constructor(private guideController: GuideController) {
         super('guides');
+    }
+
+    @Get('/')
+    async getAll(req: Request, res: Response) {
+        try{
+            $Log.logger.debug('yeah i am here');
+            res.send(await this.guideController.getAll());
+        } catch(ex){
+            res.send(ex);
+        }
     }
 
      protected initRoutes(): void {

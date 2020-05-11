@@ -1,7 +1,7 @@
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint } from './application/endpoints';
-import { Logger as $Log } from './application/logger';
+import $Log from "./utils/logger";
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
@@ -56,8 +56,8 @@ const server: GuideoServer = new GuideoServer({
 });
 
 
-if (enableCors) $Log.log('cors enabled');
+if (enableCors) $Log.logger.info('cors enabled');
 
-$Log.log(`${__dirname}\\..\\public`);
+$Log.logger.info(`${__dirname}\\..\\public`);
 
 server.start();
