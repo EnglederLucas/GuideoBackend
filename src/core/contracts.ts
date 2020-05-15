@@ -10,7 +10,7 @@ export interface IGenericRepository<TEntity, TId> {
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
     getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
-    getAverageRatingOfGuide(guideName: string): Promise<number>;
+    getAverageRatingOfGuide(guideName: string): Promise<string>;
     getRatingsOfUser(userName: string) : Promise<IRating[]>;
 }
 
