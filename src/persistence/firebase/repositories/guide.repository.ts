@@ -1,6 +1,7 @@
 import { firestore } from "firebase-admin";
 import { IGuide } from "../../../core/models";
 import { IGuideRepository } from "../../../core/contracts";
+import $Log from '../../../utils/logger';
 
 export class GuideRepository implements IGuideRepository {
 
@@ -15,7 +16,7 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            $Log.logger.debug(`${doc.id} => ${doc.data()}`);
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -43,7 +44,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('name','==',name).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            $Log.logger.debug(`${doc.id} => ${doc.data()}`);
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -55,7 +56,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            $Log.logger.debug(`${doc.id} => ${doc.data()}`);
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -67,7 +68,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('userName','==',userName).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            $Log.logger.debug(`${doc.id} => ${doc.data()}`);
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
@@ -79,7 +80,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
 
         snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+            $Log.logger.debug(`${doc.id} => ${doc.data()}`);
             guides.push(this.convertDataToGuide(doc.data()));
         });
 
