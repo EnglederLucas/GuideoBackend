@@ -1,6 +1,4 @@
-import morgan from "morgan";
 import { RequestHandler, Response, NextFunction, Request } from 'express';
-import chalk from "chalk";
 import { Logger } from "@tsed/logger";
 
 export default class Log {

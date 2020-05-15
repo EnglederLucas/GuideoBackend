@@ -1,5 +1,5 @@
 import { GuideController } from "../../logic/controllers";
-import { BaseEndpoint } from './base-endpoint';
+import { BaseEndpoint } from './base.endpoint';
 import { Get, Endpoint } from '../utils/express';
 import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
@@ -14,7 +14,8 @@ export class GuideEndpoint extends BaseEndpoint {
     @Get('/')
     async getAll(req: Request, res: Response) {
         try{
-            $Log.logger.debug('yeah i am here');
+            // $Log.logger.debug('yeah i am here');
+            $Log.logger.debug(this.guideController === undefined ? 'oho' : this.guideController.toString());
             res.send(await this.guideController.getAll());
         } catch(ex){
             res.send(ex);

@@ -2,6 +2,7 @@ import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
+import bodyParser from "body-parser";
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
@@ -11,7 +12,6 @@ import * as admin from 'firebase-admin';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
-
 
 const port: number = 3030;
 const enableCors: boolean = true;
@@ -51,7 +51,8 @@ const server: GuideoServer = new GuideoServer({
     ],
     middlewares: [
         // { route: '/', handler: verifyUserToken },
-        { route: '/', handler: $Log.getRoutingLogger() }
+        { route: '/', handler: $Log.getRoutingLogger() },
+        { route: '/', handler: bodyParser.json() }
     ]
 });
 
