@@ -17,8 +17,7 @@ export class TagEndpoint extends BaseEndpoint {
             }
         });
 
-        //Not working yet
-        this.router.get('/averageRatingOfGuide', async (req, res) => {
+        this.router.get('/byName', async (req, res) => {
             const tagName = req.query.tagname;
 
             try{

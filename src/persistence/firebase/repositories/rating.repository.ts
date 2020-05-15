@@ -10,17 +10,29 @@ export class RatingRepository implements IRatingRepository {
         this.ratingsRef = db.collection('ratings');
     }
 
-    async getAverageRatingOfGuide(guideName: string): Promise<number> {
+    async getAll(): Promise<IRating[]> {
+        let ratings: IRating[] = [];
+
+        let snapshot = await this.ratingsRef.get();
+        snapshot.forEach(doc => {
+            ratings.push(this.convertDataToRating(doc));
+        })
+
+        return ratings;
+    }
+
+    async getAverageRatingOfGuide(guideName: string): Promise<string> {
+        let sum: number = 0;
         let average: number;
 
-        let snapshot = await this.ratingsRef
-            .where('guideName', '==', guideName)
-            .get();
+        let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
 
-        let sum: number = snapshot.docs.reduce((p, c) => p + c.data().number, 0);
+        snapshot.docs.forEach(element => {
+            sum += element.data().rating
+        });
         average = sum / snapshot.docs.length;
 
-        return average;
+        return average.toString();
     }
 
     async getRatingsOfGuide(guideName: string): Promise<IRating[]> {
@@ -41,17 +53,6 @@ export class RatingRepository implements IRatingRepository {
         snapshot.forEach(doc => {
             ratings.push(this.convertDataToRating(doc));
         });
-
-        return ratings;
-    }
-
-    async getAll(): Promise<IRating[]> {
-        let ratings: IRating[] = [];
-
-        let snapshot = await this.ratingsRef.get();
-        snapshot.forEach(doc => {
-            ratings.push(this.convertDataToRating(doc));
-        })
 
         return ratings;
     }

@@ -32,17 +32,21 @@ export class UserRepository implements IUserRepository {
     }
 
     async add(item: IUser): Promise<void> {
-        const userRecord: auth.UserRecord = await this.fbAuth.createUser({
+        /*const userRecord: auth.UserRecord = await this.fbAuth.createUser({
             displayName: item.name,
             email: item.email,
             emailVerified: false,
             password: item.password
-        });
+        });*/
         
-        const setUser: firestore.WriteResult = await this.usersRef.doc(userRecord.uid).set({
+        console.log('AddUserCall');
+
+        const setUser = await this.usersRef.doc(item.id).set({
             name: item.name,
-            description: item.description !== undefined ? item.description : ""
+            description: item.description !== undefined ? item.description : "No description."
         });
+
+        console.log('User successfully added');
     }
 
     async addRange(items: IUser[]): Promise<void> {

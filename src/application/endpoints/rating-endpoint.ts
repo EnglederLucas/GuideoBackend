@@ -16,8 +16,7 @@ export class RatingEndpoint extends BaseEndpoint {
             }
         });
 
-        //Not working yet
-        this.router.get('/averageRatingOfGuide', async (req, res) => {
+        this.router.get('/averageOfGuide', async (req, res) => {
             const guideName = req.query.guidename;
             
             try{

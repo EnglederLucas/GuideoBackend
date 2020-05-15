@@ -27,8 +27,19 @@ export class UserEndpoint extends BaseEndpoint {
             }
         });
 
+        //Bodyparser needed!
         this.router.post('/register', async (req, res) => {
-            // TODO
+            //console.log(req.body.user)
+            //const user: IUser = req.body.user;
+            
+            //console.log(user.name);
+
+            try {
+                //res.send(await this.userController.add(user));
+            }
+            catch(ex) {
+                res.send(ex)
+            }
         });
     }
 }
