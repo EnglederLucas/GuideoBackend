@@ -1,5 +1,5 @@
 import { TagController } from "../../logic/controllers";
-import { BaseEndpoint } from './base-endpoint';
+import { BaseEndpoint } from './base.endpoint';
 
 export class TagEndpoint extends BaseEndpoint {
     

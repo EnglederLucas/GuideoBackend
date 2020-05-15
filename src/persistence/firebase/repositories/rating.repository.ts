@@ -76,7 +76,7 @@ export class RatingRepository implements IRatingRepository {
             user: data.user as string,
             guide: data.guide as string,
             rating: data.rating as number
-        }
+        };
 
         return rating;
     }
