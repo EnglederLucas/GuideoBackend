@@ -21,18 +21,19 @@ export class RatingRepository implements IRatingRepository {
         return ratings;
     }
 
-    async getAverageRatingOfGuide(guideName: string): Promise<string> {
+    async getAverageRatingOfGuide(guideName: string): Promise<number> {
         let sum: number = 0;
-        let average: number;
-
+        let average = 0;
         let snapshot = await this.ratingsRef.where('guideName', '==', guideName).get();
 
-        snapshot.docs.forEach(element => {
-            sum += element.data().rating
-        });
-        average = sum / snapshot.docs.length;
-
-        return average.toString();
+        if (snapshot.docs.length != 0) {
+            snapshot.docs.forEach(element => {
+                sum += element.data().rating
+            });
+            average = sum / snapshot.docs.length;
+        }
+    
+        return average;
     }
 
     async getRatingsOfGuide(guideName: string): Promise<IRating[]> {

@@ -44,7 +44,7 @@ export class GuideController {
         for (const g of guides) {
             const dto: GuideDto = new GuideDto(
                 g,
-                parseInt(await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name))
+                await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
             );
 
             result.push(dto);

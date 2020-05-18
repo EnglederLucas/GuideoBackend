@@ -20,7 +20,7 @@ export class RatingEndpoint extends BaseEndpoint {
             const guideName = req.query.guidename;
             
             try{
-                res.send(await this.ratingController.getAverageRatingOfGuide(guideName));
+                res.status(200).send((await this.ratingController.getAverageRatingOfGuide(guideName)).toString());
             } catch(ex){
                 res.send(ex);
             }
