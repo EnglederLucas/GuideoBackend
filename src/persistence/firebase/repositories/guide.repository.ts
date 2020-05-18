@@ -22,6 +22,16 @@ export class GuideRepository implements IGuideRepository {
         return guides;
     }
 
+    async getById(id: string): Promise<IGuide> {
+        const doc: firestore.DocumentSnapshot = await this.guidesRef.doc(id).get();
+        const data: firestore.DocumentData | undefined = doc.data();
+
+        if(!doc.exists || data == undefined)
+            throw new Error(`Can not find guide with id ${id}`);
+
+        return this.convertDataToGuide(data);
+    }
+
     // maybe later
     // async getTopGuides(limit: number): Promise<GuideDto[]> {
     //     let guides: GuideDto[] = [];

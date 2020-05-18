@@ -5,7 +5,7 @@ export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
     add(item: TEntity): Promise<void>;
     addRange(items: TEntity[]): Promise<void>;
-    // getById(id: TId): Promise<TEntity>;
+    getById(id: TId): Promise<TEntity>;
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {

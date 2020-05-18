@@ -60,23 +60,23 @@ export class InMemoryDataInitializer implements IDataInitializer {
         );
 
         this.ratings.push(
-            { user: 'thelegend27', guide: 'Callcenter access 3000', rating: 3 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 2 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 3 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 5 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 4 },
-            { user: 'maxmuster', guide: 'Callcenter access 3000', rating: 1 }
+            { userId: 'thelegend27', guideId: 'Callcenter access 3000', rating: 3 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 2 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 3 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
+            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 }
         );
 
         return this.users.length

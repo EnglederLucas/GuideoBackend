@@ -13,6 +13,9 @@ import * as admin from 'firebase-admin';
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
 
+$Log.logTitle();
+$Log.logger.info("start initializing server ...");
+
 const port: number = 3030;
 const enableCors: boolean = true;
 // const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
@@ -27,15 +30,15 @@ admin.initializeApp({
 var db = admin.firestore();
 const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
 
-// console.log('> initialize data ...');
+// $Log.logger.info('> initialize data ...');
 // const result: number = dataInitializer.initDataSync();
-// console.log(`> ${result} entries were initizialized`);
+// $Log.logger.info(`> ${result} entries were initizialized`);
 
 // unitOfWork.users.addRange(dataInitializer.getUsers());
 // unitOfWork.guides.addRange(dataInitializer.getGuides());
 // unitOfWork.tags.addRange(dataInitializer.getTags());
 // unitOfWork.ratings.addRange(dataInitializer.getRatings());
-// console.log('> added data to database');
+// $Log.logger.info('> added data to database');
 
 const server: GuideoServer = new GuideoServer({
     port: port,
@@ -55,7 +58,6 @@ const server: GuideoServer = new GuideoServer({
         { route: '/', handler: bodyParser.json() }
     ]
 });
-
 
 if (enableCors) $Log.logger.info('cors enabled');
 
