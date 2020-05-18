@@ -42,14 +42,15 @@ export class UserEndpoint extends BaseEndpoint {
     }
 
     private mapToUser(obj: any): UserDto {
-        let { username, name, email, description } = obj;
+        let { id, username, name, email, description } = obj;
 
+        if(id === undefined) throw new Error("no id defined")
         if (username === undefined) throw new Error("no username defined");
         if (name === undefined) name = '';
-        if (email === undefined) throw new Error("no email defined");
+        if (email === undefined) email = '';
         if (description === undefined) description = '';
         
-        return {username, name, email, description} as UserDto
+        return {id, username, name, email, description} as UserDto
         
     }
 }

@@ -16,7 +16,7 @@ export class UserRepository implements IUserRepository {
 
         let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
-            users.push({username: doc.id, name: doc.data().name, email: doc.data().email, description: doc.data().description});
+            users.push({id: doc.id, username: doc.data().username, name: doc.data().name, email: doc.data().email, description: doc.data().description});
         });
 
         return users;
@@ -26,13 +26,14 @@ export class UserRepository implements IUserRepository {
         let user: UserDto;
 
         let snapshot = await this.usersRef.where('name','==',name).get();
-        user = {username: snapshot.docs[0].id, name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
+        user = {id: snapshot.docs[0].id, username: snapshot.docs[0].data().username, name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
 
         return user;
     }
 
     async add(item: UserDto): Promise<void> {
-        const setUser = await this.usersRef.doc(item.username).set({
+        const setUser = await this.usersRef.doc(item.id).set({
+            username: item.username,
             name: item.name !== undefined ? item.name : "No name.",
             email: item.email !== undefined? item.email : "No email.",
             description: item.description !== undefined ? item.description : "No description."
