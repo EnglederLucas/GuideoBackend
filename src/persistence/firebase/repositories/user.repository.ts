@@ -7,7 +7,7 @@ export class UserRepository implements IUserRepository {
 
     private readonly usersRef: firestore.CollectionReference;
 
-    constructor(private db: firestore.Firestore, private readonly fbAuth : auth.Auth){
+    constructor(private db: firestore.Firestore){
         this.usersRef = db.collection('users');
     }
 
@@ -16,7 +16,7 @@ export class UserRepository implements IUserRepository {
 
         let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
-            users.push({name: doc.data().name, email: doc.data().email, description: doc.data().description});
+            users.push({username: doc.id, name: doc.data().name, email: doc.data().email, description: doc.data().description});
         });
 
         return users;
@@ -26,30 +26,20 @@ export class UserRepository implements IUserRepository {
         let user: UserDto;
 
         let snapshot = await this.usersRef.where('name','==',name).get();
-        user = {name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
+        user = {username: snapshot.docs[0].id, name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
 
         return user;
     }
 
-    async add(item: IUser): Promise<void> {
-        /*const userRecord: auth.UserRecord = await this.fbAuth.createUser({
-            displayName: item.name,
-            email: item.email,
-            emailVerified: false,
-            password: item.password
-        });*/
-        
-        console.log('AddUserCall');
-
-        const setUser = await this.usersRef.doc(item.id).set({
-            name: item.name,
+    async add(item: UserDto): Promise<void> {
+        const setUser = await this.usersRef.doc(item.username).set({
+            name: item.name !== undefined ? item.name : "No name.",
+            email: item.email !== undefined? item.email : "No email.",
             description: item.description !== undefined ? item.description : "No description."
         });
-
-        console.log('User successfully added');
     }
 
-    async addRange(items: IUser[]): Promise<void> {
+    async addRange(items: UserDto[]): Promise<void> {
         items.forEach(item => {
             this.add(item);
         });

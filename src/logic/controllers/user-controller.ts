@@ -16,7 +16,7 @@ export class UserController {
         return await this.unitOfWork.users.getUserByName(name);
     }
 
-    async add(user: IUser): Promise<void>{
+    async add(user: UserDto): Promise<void>{
         await this.unitOfWork.users.add(user);
     }
 }

@@ -5,7 +5,7 @@ import { UnitOfWork } from './unitofwork';
 import { IGuide } from '../../core/models';
 
 const db: firestore.Firestore = admin.firestore();
-const unitOfWork: IUnitOfWork = new UnitOfWork(db, admin.auth());
+const unitOfWork: IUnitOfWork = new UnitOfWork(db);
 
 exports.myFunction = functions.firestore
     .document('ratings/{ratingsId}')
