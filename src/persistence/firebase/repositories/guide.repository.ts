@@ -1,5 +1,5 @@
 import { firestore } from "firebase-admin";
-import { IGuide } from "../../../core/models";
+import { IGuide } from '../../../core/models';
 import { IGuideRepository } from "../../../core/contracts";
 import $Log from '../../../utils/logger';
 
@@ -89,8 +89,8 @@ export class GuideRepository implements IGuideRepository {
             tags: item.tags,
             user: item.user,
             imageLink: item.imageLink,
-            rating: item.rating,
-            numofRatings: item.numOfRatings
+            rating: 0,
+            numofRatings: 0
         });
 
         // this.guidesRef.doc(setGuide.id).update({

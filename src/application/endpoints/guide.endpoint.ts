@@ -3,6 +3,8 @@ import { BaseEndpoint } from './base.endpoint';
 import { Get, Endpoint } from '../utils/express';
 import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
+import { PostGuideDto } from "../../core/data-transfer-objects";
+
 
 @Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
@@ -50,7 +52,7 @@ export class GuideEndpoint extends BaseEndpoint {
             } catch(ex){
                 res.send(ex);
             }
-        })
+        });
 
         this.router.get('/ofUser', async (req, res) => {
             const userName = req.query.username;
@@ -60,7 +62,7 @@ export class GuideEndpoint extends BaseEndpoint {
             } catch(ex){
                 res.send(ex);
             }
-        })
+        });
 
         this.router.get('/withTags', async (req, res) => {
             const tags = req.query.tags;
@@ -70,6 +72,28 @@ export class GuideEndpoint extends BaseEndpoint {
             } catch(ex){
                 res.send(ex);
             }
-        })
-     }
+        });
+
+        this.router.post('/', async (req, res) => {
+            try {
+                const guide: PostGuideDto = this.mapToGuide(req.body);
+                await this.guideController.addGuide(guide);
+                res.status(201).send("nice one");
+            } catch (err) {
+                res.status(400).send(err.toString());
+            }
+        });
+    }
+
+    private mapToGuide(obj: any): PostGuideDto {
+        let { name, description, tags, user, imageLink } = obj;
+
+        if (name === undefined) throw new Error("no name defined");
+        if (description === undefined) description = '';
+        if (tags === undefined || !(tags instanceof Array)) tags = [];
+        if (user === undefined) throw new Error("User id is undefined");
+        if (imageLink === undefined) imageLink = '/deer.png';
+        
+        return new PostGuideDto(name, description, tags, user as string, imageLink);
+    }
 }

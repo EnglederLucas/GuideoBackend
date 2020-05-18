@@ -1,6 +1,7 @@
 import { IUnitOfWork } from "../../core/contracts";
 import { GuideDto } from "../data-transfer-objects";
 import { ITag, IGuide } from "../../core/models";
+import { PostGuideDto } from '../../core/data-transfer-objects';
 
 export class GuideController {
 
@@ -32,6 +33,10 @@ export class GuideController {
         return await this.convertToDto(guides);
     }
 
+    async addGuide(guide: PostGuideDto): Promise<void> {
+        await this.unitOfWork.guides.add(guide.asGuide());
+    }
+
     // Das bei jeder Abfrage auszuführen ist zurzeit sehr ineffizient
     private async convertToDto(guides: IGuide[]) {
         const result: GuideDto[] = [];
@@ -39,7 +44,7 @@ export class GuideController {
         for (const g of guides) {
             const dto: GuideDto = new GuideDto(
                 g,
-                await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
+                parseInt(await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name))
             );
 
             result.push(dto);

@@ -70,12 +70,12 @@ export class GuideoServer {
     }
 
     public start(): void {
-        // this.app.listen(this.settings.port, () => {
-        //     $Log.logger.info(`server startet at port ${this.settings.port}`);
-        // });
-
-        ExpressService.app.listen(this.settings.port, () => {
+        this.app.listen(this.settings.port, () => {
             $Log.logger.info(`server startet at port ${this.settings.port}`);
         });
+
+        // ExpressService.app.listen(this.settings.port, () => {
+        //     $Log.logger.info(`server startet at port ${this.settings.port}`);
+        // });
     }
 }

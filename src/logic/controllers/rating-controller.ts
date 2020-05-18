@@ -11,7 +11,7 @@ export class RatingController {
     }
 
     async getAverageRatingOfGuide(guideName: string): Promise<number> {
-        return await this.unitOfWork.ratings.getAverageRatingOfGuide(guideName);
+        return parseInt(await this.unitOfWork.ratings.getAverageRatingOfGuide(guideName));
     }
 
     async getRatingsOfGuide(guideName: string): Promise<IRating[]> {
