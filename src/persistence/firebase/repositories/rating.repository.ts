@@ -64,7 +64,7 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async add(item: IRating): Promise<void> {
-        let setRating = this.ratingsRef.add({
+        let setRating = await this.ratingsRef.add({
             guideId: item.guideId,
             user: item.userId,
             ratingId: item.rating

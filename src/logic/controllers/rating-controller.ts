@@ -22,4 +22,7 @@ export class RatingController {
         return await this.unitOfWork.ratings.getRatingsOfUser(userName);
     }
 
+    async addRating(rating: IRating): Promise<void> {
+        await this.unitOfWork.ratings.add(rating);
+    }   
 }
