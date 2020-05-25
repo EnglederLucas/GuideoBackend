@@ -92,10 +92,6 @@ export class GuideRepository implements IGuideRepository {
             rating: 0,
             numofRatings: 0
         });
-
-        // this.guidesRef.doc(setGuide.id).update({
-        //     id: setGuide.id
-        // });
     }
 
     async addRange(items: IGuide[]): Promise<void> {

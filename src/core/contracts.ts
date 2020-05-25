@@ -28,8 +28,8 @@ export interface ITagRepository extends IGenericRepository<ITag, string> {
 export interface IUserRepository {
     getUserByName(name: string): Promise<UserDto>;
     getAll(): Promise<UserDto[]>;
-    add(item: IUser): Promise<void>;
-    addRange(items: IUser[]): Promise<void>;
+    add(item: UserDto): Promise<void>;
+    addRange(items: UserDto[]): Promise<void>;
 }
 
 export interface IUnitOfWork {

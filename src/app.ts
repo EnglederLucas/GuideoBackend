@@ -25,7 +25,7 @@ admin.initializeApp({
 });
 
 var db = admin.firestore();
-const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
+const unitOfWork: UnitOfWork = new UnitOfWork(db);
 
 // console.log('> initialize data ...');
 // const result: number = dataInitializer.initDataSync();

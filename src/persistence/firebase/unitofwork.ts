@@ -8,9 +8,9 @@ export class UnitOfWork implements IUnitOfWork {
     public readonly tags: ITagRepository;
     public readonly ratings: IRatingRepository;
 
-    constructor(db: firestore.Firestore, fbAuth: auth.Auth) {
+    constructor(db: firestore.Firestore) {
         this.guides = new GuideRepository(db);
-        this.users = new UserRepository(db, fbAuth);
+        this.users = new UserRepository(db);
         this.tags = new TagRepository(db);
         this.ratings = new RatingRepository(db);
     }
