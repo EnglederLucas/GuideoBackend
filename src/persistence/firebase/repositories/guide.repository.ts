@@ -32,21 +32,21 @@ export class GuideRepository implements IGuideRepository {
         return this.convertDataToGuide(data, id);
     }
 
-    // maybe later
-    // async getTopGuides(limit: number): Promise<GuideDto[]> {
-    //     let guides: GuideDto[] = [];
+    async getTopGuides(limit: number): Promise<IGuide[]> {
+        let guides: IGuide[] = [];
         
-    //     let snapshot = await this.guidesRef
-    //         .orderBy('rating', "desc")
-    //         .limit(limit)
-    //         .get();
+        let snapshot = await this.guidesRef
+            .orderBy('rating', "desc")
+            .limit(limit)
+            .get();
         
-    //     snapshot.forEach(doc => {
-    //         // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, user: doc.data().user, imageLink: doc.data().imageLink});
-    //     });
+        snapshot.forEach(doc => {
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
+            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, user: doc.data().user, imageLink: doc.data().imageLink});
+        });
 
-    //     return guides;
-    // }
+        return guides;
+    }
 
     async getGuidesByName(name: string): Promise<IGuide[]> {
         let guides: IGuide[] = [];

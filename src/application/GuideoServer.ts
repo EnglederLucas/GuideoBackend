@@ -52,6 +52,7 @@ export class GuideoServer {
            res.send(
                '<div><a href="./api/guides">Test guides</a></div>' +
                '<div><a href="./api/guides/paged?pos=0&size=2">Test guides paged</a></div>' +
+               '<div><a href="./api/guides/top?limit=2">Top guides</a></div>' +
                '<div><a href="./api/ratings/best?limit=3&name=Callcenter+access+3000">ratings</a></div>'
             );
         });

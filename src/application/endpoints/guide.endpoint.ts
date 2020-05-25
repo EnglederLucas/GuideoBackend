@@ -44,6 +44,16 @@ export class GuideEndpoint extends BaseEndpoint {
             }
         });
 
+        this.router.get('/top', async (req, res) => {
+            const limit = parseInt(req.query.limit);
+
+            try {
+                res.status(200).send(await this.guideController.getTopGuides(limit));
+            } catch(err) {
+                res.status(401).send(err);
+            }
+        });
+
         this.router.get('/byName', async (req, res) => {
             const guideName = req.query.guidename;
 
