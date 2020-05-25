@@ -4,7 +4,7 @@ import { IUnitOfWork } from "../../core/contracts";
 import { UnitOfWork } from './unitofwork';
 
 const db: firestore.Firestore = admin.firestore();
-const unitOfWork: IUnitOfWork = new UnitOfWork(db, admin.auth());
+const unitOfWork: IUnitOfWork = new UnitOfWork(db);
 
 exports.myFunction = functions.firestore
     .document('ratings/{ratingsId}')

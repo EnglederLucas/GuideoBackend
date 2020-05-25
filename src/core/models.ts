@@ -1,7 +1,7 @@
 export interface IUser {
-    id: string;
-    name: string;
-    email: string;
+    username: string;
+    name?: string;
+    email?: string;
     password: string;
     description?: string;
 }
@@ -11,15 +11,15 @@ export interface IGuide {
     name: string;
     description?: string;
     tags?: ITag['name'][];      // übernimmt den typ von ITag.name und macht ein Array daraus
-    user: IUser['id'];          // übernimmt dne typ von IUser.name
+    user: IUser['username'];          // übernimmt dne typ von IUser.name
     imageLink?: string;
     rating: number;
     numOfRatings: number;
 }
 
 export interface IRating {
-    userId: IUser['id'];
-    guideId: IGuide['id'];
+    user: IUser['username'];
+    guide: IGuide['id'];
     rating: number;
 }
 

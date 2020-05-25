@@ -2,13 +2,11 @@ import { IGuide } from './models';
 
 
 export interface UserDto {
-    // id: string ?????
-    name: string;
-    email: string;
-    description: string;
-
-    // constructor(public name: string, public email: string, public description: string = "") {
-    // }
+    id: string;
+    username: string;
+    name?: string;
+    email?: string;
+    description?: string;
 }
 
 export class PostGuideDto {
