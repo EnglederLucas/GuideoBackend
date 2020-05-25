@@ -9,9 +9,9 @@ export class InMemoryDataInitializer implements IDataInitializer {
     
     initDataSync(): number {
         this.users.push(
-            { username: 'thelegend27', name: 'David Wirthinger', password: '1234567' , email: 'tl27@gmail.com' },
-            { username: 'maxmuster', name: 'Maximillian Kaindler', password: '5678901', email: 'mm@gmx.com' },
-            { username: 'luxdachef', name: 'Luckas Weitleder', password: 'mochmaguides', email: 'nono@bobo.com' }
+            { id: 'thelegend27', username: 'thelegend27', name: 'David Wirthinger', password: '1234567' , email: 'tl27@gmail.com' },
+            { id: 'thelegend27', username: 'maxmuster', name: 'Maximillian Kaindler', password: '5678901', email: 'mm@gmx.com' },
+            { id: 'thelegend27', username: 'luxdachef', name: 'Luckas Weitleder', password: 'mochmaguides', email: 'nono@bobo.com' }
         );
 
         this.tags.push(
