@@ -42,10 +42,7 @@ export class GuideController {
         const result: GuideDto[] = [];
 
         for (const g of guides) {
-            const dto: GuideDto = new GuideDto(
-                g,
-                await this.unitOfWork.ratings.getAverageRatingOfGuide(g.name)
-            );
+            const dto: GuideDto = new GuideDto(g);
 
             result.push(dto);
         }

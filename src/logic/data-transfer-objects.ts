@@ -8,7 +8,7 @@ export class GuideDto {
     private imageLink: string;
     private rating: number;
 
-    constructor({ name,description, tags, user, imageLink }: IGuide, rating: number) {
+    constructor({ name, description, tags, user, imageLink, rating }: IGuide) {
         this.name = name;
         this.description = description === undefined ? '' : description;
         this.tags = tags === undefined ? [] : tags;
