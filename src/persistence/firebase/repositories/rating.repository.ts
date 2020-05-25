@@ -10,6 +10,11 @@ export class RatingRepository implements IRatingRepository {
         this.ratingsRef = db.collection('ratings');
     }
 
+
+    getById(id: any): Promise<IRating> {
+        throw new Error("Method not implemented.");
+    }
+
     async getAll(): Promise<IRating[]> {
         let ratings: IRating[] = [];
 
@@ -59,10 +64,10 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async add(item: IRating): Promise<void> {
-        let setRating = this.ratingsRef.add({
-            guide: item.guide,
-            user: item.user,
-            rating: item.rating
+        let setRating = await this.ratingsRef.add({
+            guideId: item.guideId,
+            user: item.userId,
+            ratingId: item.rating
         });
     }
 
@@ -74,8 +79,8 @@ export class RatingRepository implements IRatingRepository {
 
     private convertDataToRating(data: firestore.DocumentData): IRating {
         const rating: IRating = {
-            user: data.user as string,
-            guide: data.guide as string,
+            userId: data.userId as string,
+            guideId: data.guideId as string,
             rating: data.rating as number
         };
 

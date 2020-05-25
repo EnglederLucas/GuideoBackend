@@ -1,5 +1,6 @@
 import { RatingController } from "../../logic/controllers";
 import { BaseEndpoint } from './base.endpoint';
+import { IRating } from "../../core/models";
 
 export class RatingEndpoint extends BaseEndpoint {
     
@@ -34,7 +35,7 @@ export class RatingEndpoint extends BaseEndpoint {
             } catch(ex){
                 res.send(ex);
             }
-        })
+        });
 
         this.router.get('/ofUser', async (req, res) => {
             const userName = req.query.username;
@@ -44,6 +45,34 @@ export class RatingEndpoint extends BaseEndpoint {
             } catch(ex){
                 res.send(ex);
             }
-        })
+        });
+
+        this.router.post('', async (req, res) => {
+            try {
+                const rating: IRating = this.mapToRating(req.body);
+                await this.ratingController.addRating(rating);
+                res.status(201).send("nice one");
+            } catch (err) {
+                res.status(400).send(err.toString());
+            }
+        });
+    }
+
+    private mapToRating(obj: any): IRating {
+        let { rating, guideId, userId } = obj;
+
+        if (rating === undefined) throw new Error("no rating defined");
+        if (guideId === undefined) throw new Error("no guide id defined");
+        if (userId === undefined) throw new Error("no user id defined");
+
+        if (typeof(rating) !== "number") throw new Error("rating has the wrong format")
+        if (typeof(guideId) !== "string") throw new Error("guideId has the wrong format")
+        if (typeof(userId) !== "string") throw new Error("userId has the wrong format")
+
+        return {
+            rating: rating,
+            guideId: guideId,
+            userId: userId
+        }
     }
 }

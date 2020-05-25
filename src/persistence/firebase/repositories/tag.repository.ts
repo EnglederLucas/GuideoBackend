@@ -9,6 +9,10 @@ export class TagRepository implements ITagRepository {
     constructor(private db: firestore.Firestore){
         this.tagsRef = db.collection('tags');
     }
+    
+    getById(id: string): Promise<ITag> {
+        throw new Error("Method not implemented.");
+    }
 
     async getAll(): Promise<ITag[]> {
         let tags: ITag[] = [];
