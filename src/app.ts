@@ -10,15 +10,15 @@ import { UnitOfWork } from './persistence/firebase/unitofwork';
 
 import * as admin from 'firebase-admin';
 
-// import { IDataInitializer } from './core/contracts';
-// import { InMemoryDataInitializer } from './persistence/initializers';
+import { IDataInitializer } from './core/contracts';
+import { InMemoryDataInitializer } from './persistence/initializers';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
 
 const port: number = 3030;
 const enableCors: boolean = true;
-// const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
+const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
 var serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
 
@@ -30,15 +30,15 @@ admin.initializeApp({
 var db = admin.firestore();
 const unitOfWork: UnitOfWork = new UnitOfWork(db, admin.auth());
 
-// $Log.logger.info('> initialize data ...');
-// const result: number = dataInitializer.initDataSync();
-// $Log.logger.info(`> ${result} entries were initizialized`);
+$Log.logger.info('> initialize data ...');
+const result: number = dataInitializer.initDataSync();
+$Log.logger.info(`> ${result} entries were initizialized`);
 
 // unitOfWork.users.addRange(dataInitializer.getUsers());
-// unitOfWork.guides.addRange(dataInitializer.getGuides());
+unitOfWork.guides.addRange(dataInitializer.getGuides());
 // unitOfWork.tags.addRange(dataInitializer.getTags());
 // unitOfWork.ratings.addRange(dataInitializer.getRatings());
-// $Log.logger.info('> added data to database');
+$Log.logger.info('> added data to database');
 
 const server: GuideoServer = new GuideoServer({
     port: port,

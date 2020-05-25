@@ -16,7 +16,7 @@ export class GuideRepository implements IGuideRepository {
 
         let snapshot = await this.guidesRef.get();
         snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data()));
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
         });
 
         return guides;
@@ -29,7 +29,7 @@ export class GuideRepository implements IGuideRepository {
         if(!doc.exists || data == undefined)
             throw new Error(`Can not find guide with id ${id}`);
 
-        return this.convertDataToGuide(data);
+        return this.convertDataToGuide(data, id);
     }
 
     // maybe later
@@ -53,7 +53,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('name','==',name).get();
 
         snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data()));
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
         });
 
         return guides;
@@ -64,7 +64,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
         snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data()));
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
         });
 
         return guides;
@@ -75,7 +75,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.where('userName','==',userName).get();
 
         snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data()));
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
         });
 
         return guides;
@@ -86,7 +86,7 @@ export class GuideRepository implements IGuideRepository {
         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
 
         snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data()));
+            guides.push(this.convertDataToGuide(doc.data(), doc.id));
         });
 
         return guides;
@@ -100,7 +100,7 @@ export class GuideRepository implements IGuideRepository {
             user: item.user,
             imageLink: item.imageLink,
             rating: 0,
-            numofRatings: 0
+            numOfRatings: 0
         });
 
         // this.guidesRef.doc(setGuide.id).update({
@@ -114,9 +114,27 @@ export class GuideRepository implements IGuideRepository {
         });
     }
 
-    private convertDataToGuide(data: firestore.DocumentData): IGuide {
+    async update(guide: IGuide): Promise<void> {
+
+        const batch: firestore.WriteBatch = this.db.batch();
+        const guideRef = this.guidesRef.doc(guide.id);
+
+        batch.update(guideRef, {
+            name: guide.name,
+            description: guide.description,
+            tags: guide.tags,
+            user: guide.user,
+            imageLink: guide.imageLink,
+            rating: guide.rating,
+            numOfRatings: guide.numOfRatings
+        });
+
+        const results: firestore.WriteResult[] = await batch.commit();
+    }
+
+    private convertDataToGuide(data: firestore.DocumentData, id: string): IGuide {
         const guide: IGuide = {
-            id: data.id as string,
+            id: id,
             name: data.name as string,
             description: data.description as string | undefined,
             tags: data.tags as string[],

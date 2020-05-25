@@ -9,6 +9,7 @@
     "tscw": "tsc -w",
     "start": "node ./build/app.js",
     "startw": "nodemon",
+    "start:dev": "nodemon",
     "debug": "nodemon --inspect ./build/app.js"
   },
   "author": "Lukas Wirth",

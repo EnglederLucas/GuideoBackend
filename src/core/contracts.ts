@@ -19,6 +19,7 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuidesOfUser(userName: string) : Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>;     // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
+    update(guide: IGuide): Promise<void>;
 }
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
