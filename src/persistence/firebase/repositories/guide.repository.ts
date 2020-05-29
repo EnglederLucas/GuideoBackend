@@ -99,6 +99,7 @@ export class GuideRepository implements IGuideRepository {
             tags: item.tags,
             user: item.user,
             imageLink: item.imageLink,
+            chronological: item.chronological,
             rating: 0,
             numOfRatings: 0
         });
@@ -121,6 +122,7 @@ export class GuideRepository implements IGuideRepository {
             tags: guide.tags,
             user: guide.user,
             imageLink: guide.imageLink,
+            chronological: guide.chronological,
             rating: guide.rating,
             numOfRatings: guide.numOfRatings
         });
@@ -136,6 +138,7 @@ export class GuideRepository implements IGuideRepository {
             tags: data.tags as string[],
             user: data.user as string,
             imageLink: data.imageLink as string | undefined,
+            chronological: data.chronological as boolean,
             rating: data.rating as number,
             numOfRatings: data.numOfRatings as number
         };

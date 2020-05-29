@@ -11,7 +11,7 @@ export interface UserDto {
 
 export class PostGuideDto {
 
-    constructor(public name: string, public description: string, public tags: string[], public user: string, public imageLink: string) {
+    constructor(public name: string, public description: string, public tags: string[], public user: string, public imageLink: string, public chronological: boolean) {
     }
 
     asGuide(): IGuide {
@@ -22,6 +22,7 @@ export class PostGuideDto {
             tags: this.tags,
             user: this.user,
             imageLink: this.imageLink,
+            chronological: this.chronological,
             rating: 0,
             numOfRatings: 0
         };

@@ -29,6 +29,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 imageLink: '/skyline.jpg',
                 tags: [this.tags[0].name, this.tags[3].name] ,
                 description: 'The guide of guides will guide you through the history of Linz and its beautifullness',
+                chronological: false,
                 rating: 0,
                 numOfRatings: 0
             },
@@ -39,6 +40,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 imageLink: '/Louvre_Museum.jpg',
                 tags: [this.tags[1].name],
                 description: 'A nonsense guide with nonsense content and nosense description',
+                chronological: false,
                 rating: 0,
                 numOfRatings: 0
             },
@@ -47,6 +49,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 name: 'Callcenter access 3000', user: 'luxdachef',
                 imageLink: '/AbbeyRoad.jpg', tags: [this.tags[2].name],
                 description: 'Sharing is caring. One of the basics of the master callcenter concern access 3000',
+                chronological: false,
                 rating: 0,
                 numOfRatings: 0
             },
@@ -55,6 +58,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 name: 'A man must do, what a man has to do', user: 'thelegend27',
                 imageLink: '/deer.png', tags: [this.tags[1].name, this.tags[3].name],
                 description: 'Behind the secrets of duty.',
+                chronological: false,
                 rating: 0,
                 numOfRatings: 0 }
         );

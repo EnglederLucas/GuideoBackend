@@ -16,6 +16,7 @@ export interface IGuide {
     imageLink?: string;
     rating: number;
     numOfRatings: number;
+    chronological: boolean;
 }
 
 export interface IRating {
