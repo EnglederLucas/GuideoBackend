@@ -86,14 +86,15 @@ export class GuideEndpoint extends BaseEndpoint {
     }
 
     private mapToGuide(obj: any): PostGuideDto {
-        let { name, description, tags, user, imageLink } = obj;
+        let { name, description, tags, user, imageLink, chronological } = obj;
 
         if (name === undefined) throw new Error("no name defined");
         if (description === undefined) description = '';
         if (tags === undefined || !(tags instanceof Array)) tags = [];
         if (user === undefined) throw new Error("User id is undefined");
         if (imageLink === undefined) imageLink = '/deer.png';
+        if (chronological === undefined) chronological = false;
         
-        return new PostGuideDto(name, description, tags, user as string, imageLink);
+        return new PostGuideDto(name, description, tags, user as string, imageLink, chronological);
     }
 }
