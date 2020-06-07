@@ -9,6 +9,7 @@ import { GuideController, UserController, RatingController, TagController } from
 import { UnitOfWork } from './persistence/firebase/unitofwork';
 
 import * as admin from 'firebase-admin';
+import { $log } from '@tsed/logger';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
@@ -38,7 +39,7 @@ const unitOfWork: UnitOfWork = new UnitOfWork(db);
 // unitOfWork.guides.addRange(dataInitializer.getGuides());
 // unitOfWork.tags.addRange(dataInitializer.getTags());
 // unitOfWork.ratings.addRange(dataInitializer.getRatings());
-$Log.logger.info('> added data to database');
+// $Log.logger.info('> added data to database');
 
 const server: GuideoServer = new GuideoServer({
     port: port,

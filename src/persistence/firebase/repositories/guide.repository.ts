@@ -42,7 +42,6 @@ export class GuideRepository implements IGuideRepository {
         
         snapshot.forEach(doc => {
             guides.push(this.convertDataToGuide(doc.data(), doc.id));
-            // guides.push({name: doc.data().name, description: doc.data().description, tags: doc.data().tags, user: doc.data().user, imageLink: doc.data().imageLink});
         });
 
         return guides;

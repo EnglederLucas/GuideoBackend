@@ -4,7 +4,7 @@ import { Get, Endpoint } from '../utils/express';
 import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
-
+import { check, query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
 
 @Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
@@ -24,7 +24,7 @@ export class GuideEndpoint extends BaseEndpoint {
         }
     }
 
-     protected initRoutes(): void {
+    protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try{
                 res.send(await this.guideController.getAll());
@@ -33,65 +33,121 @@ export class GuideEndpoint extends BaseEndpoint {
             }
         });
 
-        this.router.get('/paged', async (req, res) => {
-            const pos = parseInt(req.query.pos);
-            const size = parseInt(req.query.size);
+        this.router.get('/paged',
+            [ 
+                // checks if a pos attribute is in the query
+                query('pos', 'a position has to be defined').notEmpty(),
+                query('size', 'a size has to be defined').notEmpty()
+            ],
+            async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
 
-            try{
-                res.send(await this.guideController.getGuidesPaged(pos, size));
-            } catch(ex){
-                res.send(ex);
-            }
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
+                const pos = parseInt(req.query.pos);
+                const size = parseInt(req.query.size);
+
+                try{
+                    res.send(await this.guideController.getGuidesPaged(pos, size));
+                } catch(ex){
+                    res.send(ex);
+                }
         });
 
-        this.router.get('/top', async (req, res) => {
-            const limit = parseInt(req.query.limit);
+        this.router.get('/top',
+            [
+                query('limit', 'a limit has to be defined').notEmpty()
+            ],
+            async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
 
-            try {
-                res.status(200).send(await this.guideController.getTopGuides(limit));
-            } catch(err) {
-                res.status(401).send(err);
-            }
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
+                const limit = parseInt(req.query.limit);
+
+                try {
+                    res.status(200).send(await this.guideController.getTopGuides(limit));
+                } catch(err) {
+                    res.status(404).send(err);
+                }
         });
 
-        this.router.get('/byName', async (req, res) => {
-            const guideName = req.query.guidename;
+        this.router.get('/byName',
+            [
+                query('guidename', 'the name of the guide has to be defined with "guidename"').notEmpty()
+            ],
+            async (req: Request, res: Response) => {
+                const guideName = req.query.guidename;
 
-            try {
-                res.send(await this.guideController.getGuidesByName(guideName));
-            } catch(ex){
-                res.send(ex);
-            }
+                try {
+                    res.send(await this.guideController.getGuidesByName(guideName));
+                } catch(ex){
+                    res.send(ex);
+                }
         });
 
-        this.router.get('/ofUser', async (req, res) => {
-            const userName = req.query.username;
+        this.router.get('/ofUser',
+            [
+                query('username', 'the username has to be defined with "username"').notEmpty()
+            ],
+            async (req: Request, res: Response) => {
+                const userName = req.query.username;
 
-            try{
-                res.send(await this.guideController.getGuidesOfUser(userName));
-            } catch(ex){
-                res.send(ex);
-            }
+                try{
+                    res.send(await this.guideController.getGuidesOfUser(userName));
+                } catch(ex){
+                    res.send(ex);
+                }
         });
 
-        this.router.get('/withTags', async (req, res) => {
-            const tags = req.query.tags;
+        this.router.get('/withTags',
+            [
+                query('tags', 'tags has to be defined as an array').isArray()
+            ],
+            async (req: Request, res: Response) => {
 
-            try{
-                res.send(await this.guideController.getGuidesWithTags(tags));
-            } catch(ex){
-                res.send(ex);
-            }
+                // TODO: in a query? Really?
+                const tags = req.query.tags;
+
+                try{
+                    res.send(await this.guideController.getGuidesWithTags(tags));
+                } catch(ex){
+                    res.send(ex);
+                }
         });
 
-        this.router.post('/', async (req, res) => {
-            try {
-                const guide: PostGuideDto = this.mapToGuide(req.body);
-                await this.guideController.addGuide(guide);
-                res.status(201).send("nice one");
-            } catch (err) {
-                res.status(400).send(err.toString());
-            }
+        this.router.post('/',
+            checkSchema({
+                name: {
+                    isString: true
+                },
+                description: {
+                    isString: true
+                },
+                tags: {
+                    isArray: true
+                },
+                user: {
+                    isString: true
+                },
+                imageLink: {
+                    isString: true
+                }
+            }),
+            async (req: Request, res: Response) => {
+                try {
+                    const guide: PostGuideDto = this.mapToGuide(req.body);
+                    await this.guideController.addGuide(guide);
+                    res.status(201).send("nice one");
+                } catch (err) {
+                    res.status(400).send(err.toString());
+                }
         });
     }
 
