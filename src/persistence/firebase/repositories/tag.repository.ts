@@ -57,7 +57,7 @@ export class TagRepository implements ITagRepository {
 
     async add(item: ITag): Promise<void> {
         await this.tagsRef.add({
-            name: item.name,
+            name: item.name.toLowerCase(),
             numberOfUses: 0
         });
     }
