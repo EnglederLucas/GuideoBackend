@@ -51,13 +51,15 @@ const server: GuideoServer = new GuideoServer({
     ],
     enableCors: enableCors,
     staticPaths:  [
-        { route: '/', paths: [ `${__dirname}\\..\\public` ] }
+        { route: '/', paths: [ `${__dirname}\\..\\public\\img` ] }
     ],
     middlewares: [
         // { route: '/', handler: verifyUserToken },
         { route: '/', handler: $Log.getRoutingLogger() },
         { route: '/', handler: bodyParser.json() }
-    ]
+    ],
+    keyPath: `${__dirname}\\..\\public\\security\\key.pem`,
+    certPath: `${__dirname}\\..\\public\\security\\cert.pem`
 });
 
 if (enableCors) $Log.logger.info('cors enabled');
