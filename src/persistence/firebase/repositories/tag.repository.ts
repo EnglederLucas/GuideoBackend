@@ -19,7 +19,7 @@ export class TagRepository implements ITagRepository {
 
         let snapshot = await this.tagsRef.get();
         snapshot.forEach(doc => {
-            tags.push({name: doc.data().name});
+            tags.push(this.convertToTag(doc.data()));
         });
 
         return tags;
@@ -29,20 +29,49 @@ export class TagRepository implements ITagRepository {
         let tag: ITag;
 
         let snapshot = await this.tagsRef.where('name','==',name).get();
-        tag = { name: snapshot.docs[0].data().name };
+        tag = this.convertToTag(snapshot.docs[0].data());
 
         return tag;
     }
 
+    async getTagsBeginningWith(letters: string): Promise<ITag[]> {
+        const tags: ITag[] = [];
+
+        const snapshot = await this.tagsRef.where('name', '>=', letters).get();
+        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data())));
+
+        return tags;
+    }
+
+    async getTopUsedTags(limit: number): Promise<ITag[]> {
+        const tags: ITag[] = [];
+
+        const snapshot = await this.tagsRef
+            .orderBy('numberOfUses', 'desc')
+            .limit(limit)
+            .get();
+
+        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data())));
+        return tags;
+    }
+
     async add(item: ITag): Promise<void> {
-        let setTag = await this.tagsRef.add({
-            name: item.name
+        await this.tagsRef.add({
+            name: item.name,
+            numberOfUses: 0
         });
     }
 
     async addRange(items: ITag[]): Promise<void> {
-        items.forEach(item => {
-            this.add(item);
-        });
+        items.forEach(item => this.add(item));
+    }
+
+    private convertToTag(data: firestore.DocumentData): ITag {
+        const tag: ITag = {
+            name: data.name as string,
+            numberOfUses: parseInt(data.numberOfUses)
+        };
+
+        return tag;
     }
 }

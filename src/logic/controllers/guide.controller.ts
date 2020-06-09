@@ -42,7 +42,6 @@ export class GuideController {
         await this.unitOfWork.guides.add(guide.asGuide());
     }
 
-    // Das bei jeder Abfrage auszuführen ist zurzeit sehr ineffizient
     private convertToDto(guides: IGuide[]) {
         const result: GuideDto[] = [];
 

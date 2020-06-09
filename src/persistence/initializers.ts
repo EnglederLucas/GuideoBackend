@@ -15,10 +15,10 @@ export class InMemoryDataInitializer implements IDataInitializer {
         );
 
         this.tags.push(
-            { name: 'History' },
-            { name: 'Culture' },
-            { name: 'Technology' },
-            { name: 'irrelevant' }
+            { name: 'history', numberOfUses: 0 },
+            { name: 'culture', numberOfUses: 0 },
+            { name: 'technology', numberOfUses: 0 },
+            { name: 'irrelevant', numberOfUses: 0 }
         );
 
         this.guides.push(

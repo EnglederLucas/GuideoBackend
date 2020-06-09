@@ -83,6 +83,13 @@ export class GuideEndpoint extends BaseEndpoint {
                 query('guidename', 'the name of the guide has to be defined with "guidename"').notEmpty()
             ],
             async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
                 const guideName = req.query.guidename;
 
                 try {
@@ -97,6 +104,13 @@ export class GuideEndpoint extends BaseEndpoint {
                 query('username', 'the username has to be defined with "username"').notEmpty()
             ],
             async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
                 const userName = req.query.username;
 
                 try{
@@ -111,6 +125,12 @@ export class GuideEndpoint extends BaseEndpoint {
                 query('tags', 'tags has to be defined as an array').isArray()
             ],
             async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
 
                 // TODO: in a query? Really?
                 const tags = req.query.tags;
@@ -141,6 +161,13 @@ export class GuideEndpoint extends BaseEndpoint {
                 }
             }),
             async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
                 try {
                     const guide: PostGuideDto = this.mapToGuide(req.body);
                     await this.guideController.addGuide(guide);

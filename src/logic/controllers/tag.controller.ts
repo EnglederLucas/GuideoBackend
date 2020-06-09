@@ -13,4 +13,12 @@ export class TagController {
     async getTagByName(name: string): Promise<ITag> {
         return await this.unitOfWork.tags.getTagByName(name);
     }
+
+    async getTagsBeginningWith(letters: string): Promise<ITag[]> {
+        return await this.unitOfWork.tags.getTagsBeginningWith(letters);
+    }
+
+    async getTopUsedTags(limit: number): Promise<ITag[]> {
+        return await this.unitOfWork.tags.getTopUsedTags(limit);
+    }
 }

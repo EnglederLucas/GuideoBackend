@@ -25,6 +25,8 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag>;
+    getTagsBeginningWith(letters: string): Promise<ITag[]>;
+    getTopUsedTags(limit: number): Promise<ITag[]>;
 }
 
 export interface IUserRepository {
