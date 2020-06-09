@@ -11,13 +11,16 @@ export class GuideEndpoint extends BaseEndpoint {
     
     constructor(private guideController: GuideController) {
         super('guides');
+        $Log.logger.debug('finally guide Controller');
     }
 
     @Get('/')
     async getAll(req: Request, res: Response) {
         try{
-            // $Log.logger.debug('yeah i am here');
-            $Log.logger.debug(this.guideController === undefined ? 'oho' : this.guideController.toString());
+            $Log.logger.debug('yeah i am here');
+            // $Log.logger.debug(JSON.stringify(this));
+            $Log.logger.debug(this.guideController === undefined ? 'oho' : JSON.stringify(this.guideController));
+            $Log.logger.debug('after yeah');
             res.send(await this.guideController.getAll());
         } catch(ex){
             res.send(ex);
