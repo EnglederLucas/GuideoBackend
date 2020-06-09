@@ -2,6 +2,8 @@ import { UserController } from '../../logic/controllers';
 import { BaseEndpoint } from './base.endpoint';
 import { UserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
+import { Result, ValidationError, validationResult, query } from 'express-validator';
+import { Request, Response } from 'express';
 
 export class UserEndpoint extends BaseEndpoint {
     constructor(private userController: UserController) {
@@ -18,16 +20,24 @@ export class UserEndpoint extends BaseEndpoint {
             }
         });
 
-        this.router.get('/byName', async (req, res) => {
-            const userName = req.query.username;
+        this.router.get('/byName',
+            [
+                query('username', 'we need a username').isString().notEmpty()
+            ],
+            async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+                if (!error.isEmpty())  return res.status(400).json({ errors: error.array() });
 
-            try {
-                res.send(await this.userController.getUserByName(userName));
+                const userName = req.query.username;
+
+                try {
+                    res.send(await this.userController.getUserByName(userName));
+                }
+                catch(ex) {
+                    res.send(ex);
+                }
             }
-            catch(ex) {
-                res.send(ex);
-            }
-        });
+        );
 
 
         this.router.post('/', async (req, res) => {

@@ -1,5 +1,6 @@
 import { Application, Router } from "express";
 import express from 'express';
+import $Log from '../../utils/logger';
 
 /**
  * key: is the class name
@@ -42,6 +43,8 @@ export function Endpoint(path: string): ClassDecorator {
 export function Get(path: string): MethodDecorator {
     return function(target: Object, key: string | Symbol, descriptor: PropertyDescriptor) {
         const router: Router = ExpressService.getRouter(target.constructor.name);
-        router.get(path, descriptor.value);
+        // router.get(path, (req, res) => descriptor.value(req, res));
+        router.get(path, (req, res) => descriptor.value(req, res));
+        $Log.logger.debug('executing @Get function');
     };
 }

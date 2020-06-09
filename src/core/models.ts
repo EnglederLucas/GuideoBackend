@@ -27,4 +27,5 @@ export interface IRating {
 
 export interface ITag {
     name: string;
+    numberOfUses: number;
 }
