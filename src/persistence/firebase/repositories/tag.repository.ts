@@ -10,8 +10,14 @@ export class TagRepository implements ITagRepository {
         this.tagsRef = db.collection('tags');
     }
     
-    getById(id: string): Promise<ITag> {
-        throw new Error("Method not implemented.");
+    async getById(id: string): Promise<ITag> {
+        const doc: firestore.DocumentSnapshot = await this.tagsRef.doc(id).get();
+        const data: firestore.DocumentData | undefined = doc.data();
+
+        if(!doc.exists || data == undefined)
+            throw new Error(`Can not find guide with id ${id}`);
+
+        return this.convertToTag(data);
     }
 
     async getAll(): Promise<ITag[]> {

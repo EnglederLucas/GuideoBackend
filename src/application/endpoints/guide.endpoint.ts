@@ -36,8 +36,8 @@ export class GuideEndpoint extends BaseEndpoint {
         this.router.get('/paged',
             [ 
                 // checks if a pos attribute is in the query
-                query('pos', 'a position has to be defined').notEmpty(),
-                query('size', 'a size has to be defined').notEmpty()
+                query('pos', 'a position has to be defined').notEmpty().isInt(),
+                query('size', 'a size has to be defined').notEmpty().isInt()
             ],
             async (req: Request, res: Response) => {
                 const error: Result<ValidationError> = validationResult(req);
@@ -59,7 +59,7 @@ export class GuideEndpoint extends BaseEndpoint {
 
         this.router.get('/top',
             [
-                query('limit', 'a limit has to be defined').notEmpty()
+                query('limit', 'a limit has to be defined').notEmpty().isInt()
             ],
             async (req: Request, res: Response) => {
                 const error: Result<ValidationError> = validationResult(req);
@@ -80,7 +80,7 @@ export class GuideEndpoint extends BaseEndpoint {
 
         this.router.get('/byName',
             [
-                query('guidename', 'the name of the guide has to be defined with "guidename"').notEmpty()
+                query('guidename', 'the name of the guide has to be defined with "guidename"').notEmpty().isString()
             ],
             async (req: Request, res: Response) => {
                 const error: Result<ValidationError> = validationResult(req);
@@ -101,7 +101,7 @@ export class GuideEndpoint extends BaseEndpoint {
 
         this.router.get('/ofUser',
             [
-                query('username', 'the username has to be defined with "username"').notEmpty()
+                query('username', 'the username has to be defined with "username"').notEmpty().isString()
             ],
             async (req: Request, res: Response) => {
                 const error: Result<ValidationError> = validationResult(req);
