@@ -4,6 +4,8 @@ import { IRoutable } from './contracts';
 import { Middleware } from "./middleware";
 import $Log from '../utils/logger';
 import { ExpressService } from './utils/express';
+import * as https from 'https';
+import * as fs from 'fs';
 
 export interface IStaticPathDefinition {
     route: string;
@@ -16,13 +18,23 @@ export interface IServerOptions {
     enableCors: boolean;
     staticPaths?: IStaticPathDefinition[];
     middlewares?: Middleware[];
+    keyPath?: String;
+    certPath?: String;
 }
 
 export class GuideoServer {
     private app: Application;
+    private httpsServer: https.Server | undefined;
 
     constructor(private settings: IServerOptions) {
         this.app = express();
+
+        if (settings.keyPath !== undefined && settings.certPath !== undefined) {
+            const key: Buffer = fs.readFileSync(settings.keyPath as string);
+            const cert: Buffer = fs.readFileSync(settings.certPath as string);
+
+            this.httpsServer = https.createServer({ key, cert }, this.app);
+        }
 
         let corsOptions: CorsOptions = {
             origin: '*',
@@ -71,9 +83,17 @@ export class GuideoServer {
     }
 
     public start(): void {
-        this.app.listen(this.settings.port, () => {
-            $Log.logger.info(`server startet at port ${this.settings.port}`);
-        });
+        if (this.httpsServer !== undefined) {
+            this.httpsServer.listen(this.settings.port, () => {
+                $Log.logger.info(`server startet at port ${this.settings.port}`);
+            });
+        } else {
+            this.app.listen(this.settings.port, () => {
+                $Log.logger.info(`server startet at port ${this.settings.port}`);
+            });
+        }
+
+        
 
         // ExpressService.app.listen(this.settings.port, () => {
         //     $Log.logger.info(`server startet at port ${this.settings.port}`);
