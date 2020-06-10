@@ -4,19 +4,15 @@ import { Get, Endpoint } from '../utils/express';
 import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
-import { check, query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
-import { UploadImageDto } from '../../logic/data-transfer-objects';
+import { query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
 
-@Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
     
     constructor(private guideController: GuideController) {
         super('guides');
-        $Log.logger.debug('finally guide Controller');
     }
 
-    @Get('/')
-    async getAll(req: Request, res: Response) {
+    /*async getAll(req: Request, res: Response) {
         try{
             $Log.logger.debug('yeah i am here');
             // $Log.logger.debug(JSON.stringify(this));
@@ -26,7 +22,7 @@ export class GuideEndpoint extends BaseEndpoint {
         } catch(ex){
             res.send(ex);
         }
-    }
+    }*/
 
     protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
@@ -180,27 +176,6 @@ export class GuideEndpoint extends BaseEndpoint {
                     res.status(400).send(err.toString());
                 }
         });
-
-        this.router.post('/image', async (req, res) => {
-            try {
-                const dto: UploadImageDto = this.mapToUploadImageDto(req.body);
-                const pathToImage = await this.guideController.storeImage(dto);
-                res.status(200).send(pathToImage);
-            } catch(err) {
-                res.status(400).send(err);
-            }
-        });
-    }
-
-    private mapToUploadImageDto(obj: any): UploadImageDto {
-        let { userName, imageName, data } = obj;
-
-        if (userName === undefined) throw new Error("no username defined");
-        if (typeof userName !== 'string') throw new Error("username is not a string");
-        if (imageName === undefined) throw new Error("no imageName defined");
-        if (typeof imageName !== 'string') throw new Error("imageName is not a string");
-
-        return { userName, imageName, data };
     }
 
     private mapToGuide(obj: any): PostGuideDto {

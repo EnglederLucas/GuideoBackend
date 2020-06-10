@@ -1,11 +1,11 @@
-import { IUnitOfWork, IImageStorer } from '../../core/contracts';
-import { GuideDto, UploadImageDto } from '../data-transfer-objects';
+import { IUnitOfWork } from '../../core/contracts';
+import { GuideDto } from '../data-transfer-objects';
 import { ITag, IGuide } from "../../core/models";
 import { PostGuideDto } from '../../core/data-transfer-objects';
 
 export class GuideController {
 
-    constructor(private readonly unitOfWork: IUnitOfWork, private readonly imageStorer: IImageStorer) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     async getAll(): Promise<GuideDto[]> {
@@ -40,12 +40,6 @@ export class GuideController {
 
     async addGuide(guide: PostGuideDto): Promise<void> {
         await this.unitOfWork.guides.add(guide.asGuide());
-    }
-
-    async storeImage(imageDto: UploadImageDto): Promise<string> {
-        const path = `${imageDto.userName}\\${imageDto.imageName}`;
-        await this.imageStorer.storeImage(path, imageDto.data);
-        return path;
     }
 
     private convertToDto(guides: IGuide[]) {
