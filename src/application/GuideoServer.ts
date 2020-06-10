@@ -61,11 +61,30 @@ export class GuideoServer {
         routables.forEach(r => this.app.use(`/api/${ r.getBasePath() }`, r.getRouter()));
 
         this.app.get('/', (req, res) => {
-           res.send(
-               '<div><a href="./api/guides">Test guides</a></div>' +
-               '<div><a href="./api/guides/paged?pos=0&size=2">Test guides paged</a></div>' +
-               '<div><a href="./api/guides/top?limit=2">Top guides</a></div>' +
-               '<div><a href="./api/ratings/best?limit=3&name=Callcenter+access+3000">ratings</a></div>'
+           res.send(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <title>Upload Images to Server</title>
+                <meta charset="utf-8">
+            </head>
+            <body>
+            
+            <div><a href="./api/guides">Test guides</a></div>
+            <div><a href="./api/guides/paged?pos=0&size=2">Test guides paged</a></div>
+            <div><a href="./api/guides/top?limit=2">Top guides</a></div>
+            <div><a href="./api/ratings/best?limit=3&name=Callcenter+access+3000">ratings</a></div>
+
+            <h1>Upload Image</h1>
+             
+            <form action="/api/images/upload/hans" method="post" enctype="multipart/form-data">
+                    <input type="file" accept="image/*" name="image" >
+                    <input type="submit" value="upload">
+            </form>
+                        
+            
+            </body>
+            </html>`
             );
         });
     }
@@ -92,8 +111,6 @@ export class GuideoServer {
                 $Log.logger.info(`server startet at port ${this.settings.port}`);
             });
         }
-
-        
 
         // ExpressService.app.listen(this.settings.port, () => {
         //     $Log.logger.info(`server startet at port ${this.settings.port}`);

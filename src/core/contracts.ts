@@ -52,7 +52,3 @@ export interface IDataInitializer {
     getTags(): ITag[];
     getRatings(): IRating[];
 }
-
-export interface IImageStorer {
-    storeImage(path: string, data: any): Promise<void>;
-}
