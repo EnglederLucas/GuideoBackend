@@ -4,18 +4,15 @@ import { Get, Endpoint } from '../utils/express';
 import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
-import { check, query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
+import { query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
 
-@Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
     
     constructor(private guideController: GuideController) {
         super('guides');
-        $Log.logger.debug('finally guide Controller');
     }
 
-    @Get('/')
-    async getAll(req: Request, res: Response) {
+    /*async getAll(req: Request, res: Response) {
         try{
             $Log.logger.debug('yeah i am here');
             // $Log.logger.debug(JSON.stringify(this));
@@ -25,7 +22,7 @@ export class GuideEndpoint extends BaseEndpoint {
         } catch(ex){
             res.send(ex);
         }
-    }
+    }*/
 
     protected initRoutes(): void {
         this.router.get('/', async (req, res) => {

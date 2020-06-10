@@ -13,6 +13,7 @@ import { $log } from '@tsed/logger';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
+import { ImageEndpoint } from './application/endpoints/image.endpoint';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
@@ -47,14 +48,16 @@ const server: GuideoServer = new GuideoServer({
         new GuideEndpoint(new GuideController(unitOfWork)),
         new UserEndpoint(new UserController(unitOfWork)),
         new TagEndpoint(new TagController(unitOfWork)),
-        new RatingEndpoint(new RatingController(unitOfWork))
+        new RatingEndpoint(new RatingController(unitOfWork)),
+        new ImageEndpoint(`${__dirname}\\..\\public\\img`)
     ],
     enableCors: enableCors,
     staticPaths:  [
-        { route: '/', paths: [ `${__dirname}\\..\\public\\img` ] }
+        { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] }
     ],
     middlewares: [
-        // { route: '/', handler: verifyUserToken },
+        // { route: '/api', handler: verifyUserToken },
+        // { route: '/img', handler: verifyUserToken },
         { route: '/', handler: $Log.getRoutingLogger() },
         { route: '/', handler: bodyParser.json() }
     ],
