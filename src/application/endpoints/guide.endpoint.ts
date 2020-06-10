@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
 import { check, query, validationResult, ValidationError, Result, checkSchema } from "express-validator";
+import { UploadImageDto } from '../../logic/data-transfer-objects';
 
 @Endpoint('guides')
 export class GuideEndpoint extends BaseEndpoint {
@@ -179,6 +180,22 @@ export class GuideEndpoint extends BaseEndpoint {
                     res.status(400).send(err.toString());
                 }
         });
+
+        this.router.post('/image', async (req, res) => {
+            const dto: UploadImageDto = this.mapToUploadImageDto(req.body);
+            await this.guideController.storeImage(dto);
+        });
+    }
+
+    private mapToUploadImageDto(obj: any): UploadImageDto {
+        let { userName, imageName, data } = obj;
+
+        if (userName === undefined) throw new Error("no username defined");
+        if (typeof userName !== 'string') throw new Error("username is not a string");
+        if (imageName === undefined) throw new Error("no imageName defined");
+        if (typeof imageName !== 'string') throw new Error("imageName is not a string");
+
+        return { userName, imageName, data };
     }
 
     private mapToGuide(obj: any): PostGuideDto {

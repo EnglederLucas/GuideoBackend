@@ -17,3 +17,9 @@ export class GuideDto {
         this.rating = rating;
     }
 }
+
+export interface UploadImageDto {
+    userName: string;
+    imageName: string;
+    data: any;
+}

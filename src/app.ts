@@ -13,6 +13,7 @@ import { $log } from '@tsed/logger';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
+import { ImageStorer } from './application/services/image-storer';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
@@ -44,7 +45,7 @@ const unitOfWork: UnitOfWork = new UnitOfWork(db);
 const server: GuideoServer = new GuideoServer({
     port: port,
     routables: [ 
-        new GuideEndpoint(new GuideController(unitOfWork)),
+        new GuideEndpoint(new GuideController(unitOfWork, new ImageStorer(`${__dirname}\\..\\public\\img`))),
         new UserEndpoint(new UserController(unitOfWork)),
         new TagEndpoint(new TagController(unitOfWork)),
         new RatingEndpoint(new RatingController(unitOfWork))
