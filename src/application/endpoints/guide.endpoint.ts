@@ -182,8 +182,13 @@ export class GuideEndpoint extends BaseEndpoint {
         });
 
         this.router.post('/image', async (req, res) => {
-            const dto: UploadImageDto = this.mapToUploadImageDto(req.body);
-            await this.guideController.storeImage(dto);
+            try {
+                const dto: UploadImageDto = this.mapToUploadImageDto(req.body);
+                const pathToImage = await this.guideController.storeImage(dto);
+                res.status(200).send(pathToImage);
+            } catch(err) {
+                res.status(400).send(err);
+            }
         });
     }
 

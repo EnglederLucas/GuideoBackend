@@ -42,8 +42,10 @@ export class GuideController {
         await this.unitOfWork.guides.add(guide.asGuide());
     }
 
-    async storeImage(imageDto: UploadImageDto) {
-        await this.imageStorer.storeImage(`${imageDto.userName}\\${imageDto.imageName}`, imageDto.data);
+    async storeImage(imageDto: UploadImageDto): Promise<string> {
+        const path = `${imageDto.userName}\\${imageDto.imageName}`;
+        await this.imageStorer.storeImage(path, imageDto.data);
+        return path;
     }
 
     private convertToDto(guides: IGuide[]) {
