@@ -30,6 +30,7 @@ export interface ITagRepository extends IGenericRepository<ITag, string> {
 }
 
 export interface IUserRepository {
+    getById(id: string): Promise<UserDto>;
     getUserByName(name: string): Promise<UserDto>;
     getAll(): Promise<UserDto[]>;
     add(item: UserDto): Promise<void>;

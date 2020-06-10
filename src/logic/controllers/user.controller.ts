@@ -16,6 +16,10 @@ export class UserController {
         return await this.unitOfWork.users.getUserByName(name);
     }
 
+    async getById(id: string): Promise<UserDto> {
+        return await this.unitOfWork.users.getById(id);
+    }
+
     async add(user: UserDto): Promise<void>{
         await this.unitOfWork.users.add(user);
     }

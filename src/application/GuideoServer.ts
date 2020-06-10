@@ -78,8 +78,8 @@ export class GuideoServer {
             <h1>Upload Image</h1>
              
             <form action="/api/images/upload/hans" method="post" enctype="multipart/form-data">
-                    <input type="file" accept="image/*" name="image" >
-                    <input type="submit" value="upload">
+                <input type="file" accept="image/*" name="image" >
+                <input type="submit" value="upload">
             </form>
                         
             

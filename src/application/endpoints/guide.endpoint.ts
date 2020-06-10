@@ -27,9 +27,9 @@ export class GuideEndpoint extends BaseEndpoint {
     protected initRoutes(): void {
         this.router.get('/', async (req, res) => {
             try{
-                res.send(await this.guideController.getAll());
-            } catch(ex){
-                res.send(ex);
+                res.status(200).send(await this.guideController.getAll());
+            } catch(err){
+                res.status(500).send(err);
             }
         });
 

@@ -9,7 +9,7 @@ export class ImageEndpoint extends BaseEndpoint {
     private readonly renameAsync = promisify(rename);
     private readonly existsAsync = promisify(exists);
     private readonly mkdirAsync = promisify(mkdir);
-    private readonly unlinkAsync = promisify(unlink);
+    // private readonly unlinkAsync = promisify(unlink);
     private tempPath: string; 
 
     constructor(private imageMasterPath: string, tempPath: string | undefined = undefined) {
