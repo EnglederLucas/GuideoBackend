@@ -42,6 +42,35 @@ export class GuideController {
         await this.unitOfWork.guides.add(guide.asGuide());
     }
 
+    async update(guide: IGuide): Promise<void> {
+        const dbGuide = await this.unitOfWork.guides.getById(guide.id);
+
+        if (!guide.name) dbGuide.name = guide.name;
+        if (!guide.description) dbGuide.description = guide.description;
+        if (!guide.chronological) dbGuide.chronological = guide.chronological;
+        if (!guide.imageLink) dbGuide.imageLink = guide.imageLink;
+        if (!guide.tags) {
+            const oldTags = dbGuide.tags!!;
+            const newTags = guide.tags!!;
+            const finalTags: string[] = [];
+            
+            oldTags.forEach(tagName => {
+                if (newTags.includes(tagName)) {
+                    finalTags.push(tagName);
+                    newTags.splice(newTags.indexOf(tagName), 1);
+                } else {
+                    // reduce number of uses
+                }
+            });
+
+            // Nun sind alle gleich gebliebenen tags in newTags weg.
+            // jetzt sind nur noch die zu aktualisierenden da
+            newTags.forEach(tagName => {
+                // increase number of uses
+            });
+        }
+    }
+
     private convertToDto(guides: IGuide[]) {
         const result: GuideDto[] = [];
 
