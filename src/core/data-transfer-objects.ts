@@ -7,6 +7,7 @@ export interface UserDto {
     name?: string;
     email?: string;
     description?: string;
+    imageLink?: string;
 }
 
 export class PostGuideDto {

@@ -36,12 +36,12 @@ export class GuideoServer {
             this.httpsServer = https.createServer({ key, cert }, this.app);
         }
 
-        let corsOptions: CorsOptions = {
-            origin: '*',
-            optionsSuccessStatus: 200
-        };
-
         if (settings.enableCors) {
+            let corsOptions: CorsOptions = {
+                origin: '*',
+                optionsSuccessStatus: 200
+            };
+            
             this.app.use(cors(corsOptions));
         }    
 
