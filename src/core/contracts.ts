@@ -1,4 +1,4 @@
-import { IGuide, IRating, ITag, IUser } from './models';
+import { IGuide, IRating, ITag, IUser, ITrack } from './models';
 import { UserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
@@ -35,6 +35,13 @@ export interface IUserRepository {
     getAll(): Promise<UserDto[]>;
     add(item: UserDto): Promise<void>;
     addRange(items: UserDto[]): Promise<void>;
+}
+
+export interface ITrackRepository {
+    add(guideId: string, item: ITrack): Promise<void>;
+    addRange(guideId: string, items: ITrack[]): Promise<void>;
+    getByGuide(guideId: string): Promise<ITrack[]>;
+    getById(guideId: string, trackId: number): Promise<ITrack>;
 }
 
 export interface IUnitOfWork {
