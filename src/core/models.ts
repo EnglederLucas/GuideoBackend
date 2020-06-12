@@ -13,7 +13,7 @@ export interface IGuide {
     description?: string;
     tags?: ITag['name'][];      // übernimmt den typ von ITag.name und macht ein Array daraus
     user: IUser['id'];          // übernimmt dne typ von IUser.name
-    //tacks: ITrack[];
+    //tracks: ITrack[];
     imageLink?: string;
     rating: number;
     numOfRatings: number;
@@ -32,5 +32,5 @@ export interface ITag {
 }
 
 export interface ITrack {
-    id: number;
+    id: string;
 }

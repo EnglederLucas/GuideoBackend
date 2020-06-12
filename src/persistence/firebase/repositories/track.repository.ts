@@ -18,15 +18,28 @@ export class TrackRepository implements ITrackRepository{
     }
 
     async addRange(guideId: string, items: ITrack[]): Promise<void> {
-        throw new Error("Method not implemented.");
+        items.forEach(item => {
+            this.add(guideId, item);
+        });
     }
 
     async getByGuide(guideId: string): Promise<ITrack[]> {
-        throw new Error("Method not implemented.");
+        let tracks: ITrack[] = [];
+        let snapshot = await this.guidesRef.doc(guideId).collection('tracks').get();
+
+        snapshot.forEach(doc => {
+            tracks.push({id: doc.data().id});
+        });
+
+        return tracks;
     }
 
-    async getById(guideId: string, trackId: number): Promise<ITrack> {
-        throw new Error("Method not implemented.");
+    async getById(guideId: string, trackId: string): Promise<ITrack> {
+        let snapshot = await this.guidesRef.doc(guideId).collection('tracks').doc(trackId);
+
+        
+
+        throw new Error("Not implemented yet");
     }
 
 }

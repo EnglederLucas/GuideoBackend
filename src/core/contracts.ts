@@ -41,7 +41,7 @@ export interface ITrackRepository {
     add(guideId: string, item: ITrack): Promise<void>;
     addRange(guideId: string, items: ITrack[]): Promise<void>;
     getByGuide(guideId: string): Promise<ITrack[]>;
-    getById(guideId: string, trackId: number): Promise<ITrack>;
+    getById(guideId: string, trackId: string): Promise<ITrack>;
 }
 
 export interface IUnitOfWork {
