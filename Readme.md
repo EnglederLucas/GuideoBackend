@@ -27,7 +27,7 @@ openssl req -x509 -newkey rsa:2048 -keyout keytmp.pem -out cert.pem -days 365
 openssl rsa -in keytmp.pem -out key.pem
 ```
 
-3. Copy the files in the `public/security folder`
+3. Copy the files in the `public/security` folder
 
 Resources:
 * [medium](https://medium.com/@nitinpatel_20236/how-to-create-an-https-server-on-localhost-using-express-366435d61f28)

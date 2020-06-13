@@ -2,6 +2,7 @@ import { IUnitOfWork } from '../../core/contracts';
 import { GuideDto } from '../data-transfer-objects';
 import { ITag, IGuide } from "../../core/models";
 import { PostGuideDto } from '../../core/data-transfer-objects';
+import { Deprecated } from '../../utils/decorators';
 
 export class GuideController {
 
