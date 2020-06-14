@@ -158,6 +158,9 @@ export class GuideEndpoint extends BaseEndpoint {
                 },
                 imageLink: {
                     isString: true
+                },
+                chronological: {
+                    isBoolean: true
                 }
             }),
             async (req: Request, res: Response) => {
