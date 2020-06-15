@@ -66,9 +66,9 @@ export class UserEndpoint extends BaseEndpoint {
 
         if(id === undefined) throw new Error("no id defined")
         if (username === undefined) throw new Error("no username defined");
-        if (name === undefined) name = '';
-        if (email === undefined) email = '';
-        if (description === undefined) description = '';
+        // if (name === undefined) name = '';
+        // if (email === undefined) email = '';
+        // if (description === undefined) description = '';
         
         return {id, username, name, email, description} as UserDto    
     }

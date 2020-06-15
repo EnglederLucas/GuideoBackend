@@ -28,21 +28,18 @@ export class ImageEndpoint extends BaseEndpoint {
                     return;
                 }
                 
-                const userName = req.params['userName'];
-                // $Log.logger.debug(`userName: ${userName}`);
+                const userPath = `${this.imageMasterPath}\\${req.params['userName']}`;
 
-                if (!await this.existsAsync(`${this.imageMasterPath}\\${userName}`)) {
-                    await this.mkdirAsync(`${this.imageMasterPath}\\${userName}`);
-                }
+                if (!await this.existsAsync(userPath)) await this.mkdirAsync(userPath);
 
                 const tempPath = req.file.path;
-                // $Log.logger.debug(`tempPath: ${tempPath}`);
-                const targetPath = `${this.imageMasterPath}\\${userName}\\${req.file.originalname}`;
-                // $Log.logger.debug(`target: ${targetPath}`);
+                const targetPath = `${userPath}\\${req.file.originalname}`;
 
+                // rename/move the stored image to the users folder
                 await this.renameAsync(tempPath, targetPath);
                 // await this.unlinkAsync(tempPath);
 
+                // generate the link for the guide object
                 const imageRoute = '/' + targetPath
                     .substring(targetPath.indexOf('img'))
                     .replace('\\', '/');

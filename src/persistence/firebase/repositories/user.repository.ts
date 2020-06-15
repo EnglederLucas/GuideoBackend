@@ -48,7 +48,8 @@ export class UserRepository implements IUserRepository {
             username: item.username,
             name: item.name !== undefined ? item.name : "No name.",
             email: item.email !== undefined? item.email : "No email.",
-            description: item.description !== undefined ? item.description : "No description."
+            description: item.description !== undefined ? item.description : "No description.",
+            imageLink: item.imageLink !== undefined ? item.imageLink : '/img/deer.png'
         });
     }
 
@@ -62,9 +63,10 @@ export class UserRepository implements IUserRepository {
         const user: UserDto = {
             id: id,
             name: data.name as string,
-            username: data.name as string, 
+            username: data.username as string, 
             email: data.email as string,
-            description: data.description as string
+            description: data.description as string,
+            imageLink: data.imageLink as string
         };
 
         return user;

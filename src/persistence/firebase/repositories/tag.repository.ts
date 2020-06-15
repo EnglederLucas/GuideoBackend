@@ -72,6 +72,24 @@ export class TagRepository implements ITagRepository {
         items.forEach(item => this.add(item));
     }
 
+    async update(tag: ITag): Promise<void> {
+        const batch: firestore.WriteBatch = this.db.batch();
+        const tagRef = await this.getTagByName(tag.name);
+
+        // batch.update(guideRef, {
+        //     name: guide.name,
+        //     description: guide.description,
+        //     tags: guide.tags,
+        //     user: guide.user,
+        //     imageLink: guide.imageLink,
+        //     chronological: guide.chronological,
+        //     rating: guide.rating,
+        //     numOfRatings: guide.numOfRatings
+        // });
+
+        const results: firestore.WriteResult[] = await batch.commit();
+    }
+
     private convertToTag(data: firestore.DocumentData): ITag {
         const tag: ITag = {
             name: data.name as string,

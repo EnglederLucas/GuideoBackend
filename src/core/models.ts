@@ -5,6 +5,7 @@ export interface IUser {
     email?: string;
     password: string;
     description?: string;
+    imageLink?: string;
 }
 
 export interface IGuide {
