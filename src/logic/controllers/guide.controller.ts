@@ -50,7 +50,7 @@ export class GuideController {
         if (!guide.description) dbGuide.description = guide.description;
         if (!guide.chronological) dbGuide.chronological = guide.chronological;
         if (!guide.imageLink) dbGuide.imageLink = guide.imageLink;
-        if (!guide.tags) {
+        if (guide.tags) {
             const oldTags = dbGuide.tags!!;
             const newTags = guide.tags!!;
             const finalTags: string[] = [];
