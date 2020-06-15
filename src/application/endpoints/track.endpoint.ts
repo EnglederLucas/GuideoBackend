@@ -1,6 +1,7 @@
 import { BaseEndpoint } from './base.endpoint';
 import { TrackController } from '../../logic/controllers/track.controller';
 import { ITrack } from '../../core/models';
+import { ConsoleAppender } from '@tsed/logger';
 
 export class TrackEndpoint extends BaseEndpoint {
 
@@ -12,6 +13,8 @@ export class TrackEndpoint extends BaseEndpoint {
         this.router.get('/byGuide', async (req, res) => {
             const guideId = req.query.guideId;
 
+            //$Log.logger.info(`byGuide call on TrackEndpoint`);
+            console.log('byGuide-Call on TrackEndpoint');
             try{
                 res.status(200).send(await this.trackController.getByGuide(guideId));
             } catch(ex){

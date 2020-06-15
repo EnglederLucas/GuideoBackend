@@ -11,9 +11,9 @@ export class TrackRepository implements ITrackRepository{
     }
 
     async add(guideId: string, item: ITrack): Promise<void> {
-        let setTrack = await this.guidesRef.doc().collection('tracks').add({
+        let setTrack = await this.guidesRef.doc(guideId).collection('tracks').add({
             item
-        })
+        });
         setTrack.set({id: setTrack.id});
     }
 
