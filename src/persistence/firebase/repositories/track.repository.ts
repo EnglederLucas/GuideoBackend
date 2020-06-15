@@ -12,7 +12,7 @@ export class TrackRepository implements ITrackRepository{
 
     async add(guideId: string, item: ITrack): Promise<void> {
         let setTrack = await this.guidesRef.doc().collection('tracks').add({
-            
+            item
         })
         setTrack.set({id: setTrack.id});
     }
@@ -28,18 +28,22 @@ export class TrackRepository implements ITrackRepository{
         let snapshot = await this.guidesRef.doc(guideId).collection('tracks').get();
 
         snapshot.forEach(doc => {
-            tracks.push({id: doc.data().id});
+            tracks.push({id: doc.data().id, description: doc.data().description});
         });
 
         return tracks;
     }
 
     async getById(guideId: string, trackId: string): Promise<ITrack> {
-        let snapshot = await this.guidesRef.doc(guideId).collection('tracks').doc(trackId);
+        const doc = await this.guidesRef.doc(guideId).collection('tracks').doc(trackId).get();
+        const data: firestore.DocumentData | undefined = doc.data();
 
-        
+        if(!doc.exists || data == undefined)
+            throw new Error(`Can not find track with id ${trackId} in guide with id ${guideId}`);
 
-        throw new Error("Not implemented yet");
+        let track: ITrack = {id: data.id, description: data.description};
+
+        return track;
     }
 
 }

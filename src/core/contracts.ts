@@ -49,6 +49,7 @@ export interface IUnitOfWork {
     readonly tags: ITagRepository;
     readonly users: IUserRepository;
     readonly ratings: IRatingRepository;
+    readonly tracks: ITrackRepository;
 }
 
 export interface IDataInitializer {
