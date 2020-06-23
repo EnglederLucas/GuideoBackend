@@ -47,10 +47,10 @@ const server: GuideoServer = new GuideoServer({
     port: port,
     routables: [ 
         new GuideEndpoint(new GuideController(unitOfWork)),
-        // new UserEndpoint(new UserController(unitOfWork)),
-        // new TagEndpoint(new TagController(unitOfWork)),
-        // new RatingEndpoint(new RatingController(unitOfWork)),
-        // new ImageEndpoint(`${__dirname}\\..\\public\\img`)
+        new UserEndpoint(new UserController(unitOfWork)),
+        new TagEndpoint(new TagController(unitOfWork)),
+        new RatingEndpoint(new RatingController(unitOfWork)),
+        new ImageEndpoint(`${__dirname}\\..\\public\\img`)
     ],
     enableCors: enableCors,
     staticPaths:  [

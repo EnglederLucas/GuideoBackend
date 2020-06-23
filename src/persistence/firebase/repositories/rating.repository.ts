@@ -23,7 +23,7 @@ export class RatingRepository implements IRatingRepository {
 
         let snapshot = await this.ratingsRef.get();
         snapshot.forEach(doc => {
-            ratings.push(this.convertDataToRating(doc));
+            ratings.push(this.convertDataToRating(doc.data()));
         })
 
         return ratings;

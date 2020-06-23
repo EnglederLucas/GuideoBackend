@@ -5,16 +5,11 @@ import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
 import { Endpoint, Get, Validate, Post } from "../utils/express-decorators/decorators";
 import { Ok, Failed, JsonResponse, BadRequest, Created } from '../utils/express-decorators/models';
-import { BaseEndpoint } from './base.endpoint';
 
 @Endpoint('guides')
-export class GuideEndpoint extends BaseEndpoint {
-    protected initRoutes(): void {
-        throw new Error("Method not implemented.");
-    }
+export class GuideEndpoint {
     
     constructor(private guideController: GuideController) {
-        super('guides');
     }
 
     @Get('/')

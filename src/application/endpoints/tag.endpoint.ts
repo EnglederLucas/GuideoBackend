@@ -1,75 +1,56 @@
 import { TagController } from "../../logic/controllers";
-import { BaseEndpoint } from './base.endpoint';
-import { query, Result, ValidationError, validationResult } from 'express-validator';
+import { query } from 'express-validator';
 import { Request, Response } from 'express';
+import { BadRequest, Ok } from '../utils/express-decorators/models';
+import { Get, Endpoint, Validate } from "../utils/express-decorators/decorators";
 
-export class TagEndpoint extends BaseEndpoint {
+@Endpoint('tags')
+export class TagEndpoint {
     
     constructor(private tagController: TagController) {
-        super('tags');
     }
 
-    protected initRoutes(): void {
-        this.router.get('/', async (req, res) => {
+    @Get('/')
+    async getAll(req: Request, res: Response) {
+        try{
+            return new Ok(await this.tagController.getAll());
+        } catch(ex){
+            return new BadRequest(ex);
+        }
+    }
 
-            try{
-                res.send(await this.tagController.getAll());
-            } catch(ex){
-                res.send(ex);
-            }
-        });
+    @Get('/byname')
+    async getByName(req: Request, res: Response) {
+        const tagName = req.query.tagname;
 
-        this.router.get('/byName', async (req, res) => {
-            const tagName = req.query.tagname;
+        try{
+            return new Ok(await this.tagController.getTagByName(tagName));
+        } catch(ex){
+            return new BadRequest(ex);
+        }
+    }
 
-            try{
-                res.send(await this.tagController.getTagByName(tagName));
-            } catch(ex){
-                res.send(ex);
-            }
-        });
-
-        this.router.get('/startingWith',
-            [
-                query('letters', 'need letters to calculate').isString()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
-
-                if (!error.isEmpty()) {
-                    // 400 -> BadRequest
-                    return res.status(400).json({ errors: error.array() });
-                }
-
-                const letters: string = req.query.letters;
+    @Get('/startingWith')
+    @Validate(query('letters', 'need letters to calculate').isString())
+    async getWhichStartsWith(req: Request, res: Response) {
+        const letters: string = req.query.letters;
                 
-                try {
-                    res.status(200).send(await this.tagController.getTagsBeginningWith(letters));
-                } catch(err) {
-                    res.status(404).send(err);
-                }
-        });
+        try {
+            return new Ok(await this.tagController.getTagsBeginningWith(letters));
+        } catch(err) {
+            return new BadRequest(err);
+        }
+    }
 
-        this.router.get('/topUsed',
-            [
-                query('limit', 'need limit').isNumeric()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
+    @Get('/topUsed')
+    @Validate(query('limit', 'need limit').isNumeric())
+    async getTopUsed(req: Request, res: Response) {
+        const limit: number = parseInt(req.query.limit);
 
-                if (!error.isEmpty()) {
-                    // 400 -> BadRequest
-                    return res.status(400).json({ errors: error.array() });
-                }
-
-                const limit: number = parseInt(req.query.limit);
-
-                try {
-                    res.status(200).send(await this.tagController.getTopUsedTags(limit));
-                } catch(err) {
-                    res.status(404).send(err);
-                }
-            }
-        );
+        try {
+            return new Ok(await this.tagController.getTopUsedTags(limit));
+        } catch(err) {
+            return new BadRequest(err);
+        }
     }
 }
