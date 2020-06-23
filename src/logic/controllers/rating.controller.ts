@@ -19,8 +19,12 @@ export class RatingController {
         return await this.unitOfWork.ratings.getRatingsOfGuide(guideName);
     }
 
-    async getRatingsOfUser(userName: string){
+    async getRatingsOfUser(userName: string): Promise<IRating[]> {
         return await this.unitOfWork.ratings.getRatingsOfUser(userName);
+    }
+
+    async getSpecificOf(guideId: string, userId: string): Promise<IRating> {
+        throw 'nothing';
     }
 
     async addRating(rating: IRating): Promise<void> {

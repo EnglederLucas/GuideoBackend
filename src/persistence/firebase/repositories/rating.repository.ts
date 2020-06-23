@@ -1,13 +1,16 @@
 import { firestore } from "firebase-admin";
 import { IRating } from "../../../core/models";
 import { IRatingRepository } from "../../../core/contracts";
+import $Log from "../../../utils/logger";
 
 export class RatingRepository implements IRatingRepository {
 
     private readonly ratingsRef: firestore.CollectionReference;
+    private readonly guidesRef: firestore.CollectionReference;
 
     constructor(private db: firestore.Firestore){
         this.ratingsRef = db.collection('ratings');
+        this.guidesRef = db.collection('guides');
     }
 
 
@@ -63,12 +66,34 @@ export class RatingRepository implements IRatingRepository {
         return ratings;
     }
 
+    async getSpecificOf(guideId: string, userId: string): Promise<IRating | undefined> {
+        let ratings: IRating[] = [];
+        
+        let snapshot = await this.ratingsRef
+            .where('guideId', '==', guideId)
+            .where('user', '==', userId)
+            .get();
+
+        snapshot.forEach(doc => ratings.push(this.convertDataToRating(doc.data())));
+
+        if (ratings.length > 1) {
+            $Log.logger.error('More than one ratings for the same guide and the same user!');
+        }
+
+        return ratings.pop();
+    }
+
     async add(item: IRating): Promise<void> {
         let setRating = await this.ratingsRef.add({
             guideId: item.guideId,
-            user: item.userId,
-            ratingId: item.rating
+            userId: item.userId,
+            rating: item.rating
         });
+
+        // this.guidesRef.doc(item.guideId).collection('ratings').add({
+        //     userId: item.userId,
+        //     rating: item.rating
+        // });
     }
 
     async addRange(items: IRating[]): Promise<void> {

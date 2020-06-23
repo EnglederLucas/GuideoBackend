@@ -73,6 +73,26 @@ export class RatingEndpoint extends BaseEndpoint {
             }
         );
 
+        this.router.get('specific',
+            [
+                query('userId', 'need a userId in the query').notEmpty().isString(),
+                query('guideId', 'need a guideId in the query').notEmpty().isString()
+            ],
+            async (req: Request, res: Response) => {
+                const error: Result<ValidationError> = validationResult(req);
+
+                if (!error.isEmpty()) {
+                    // 400 -> BadRequest
+                    return res.status(400).json({ errors: error.array() });
+                }
+
+                const userId = req.query.userId;
+                const guideId = req.query.guideId;
+
+                // logic
+            }
+        );
+
         this.router.post('/', async (req, res) => {
             try {
                 const rating: IRating = this.mapToRating(req.body);
