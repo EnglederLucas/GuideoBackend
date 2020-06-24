@@ -14,10 +14,10 @@ export class UserEndpoint {
     @Get('/')
     async getAll(req: Request, res: Response) {
         try {
-            return new Ok(await this.userController.getAll());
+            return Ok(await this.userController.getAll());
         }
         catch(ex) {
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -27,10 +27,10 @@ export class UserEndpoint {
         const userName = req.query.username;
 
         try {
-            return new Ok(await this.userController.getUserByName(userName));
+            return Ok(await this.userController.getUserByName(userName));
         }
         catch(ex) {
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -39,10 +39,10 @@ export class UserEndpoint {
         const id = req.params['id'];
 
         try {
-            return new Ok(await this.userController.getById(id));
+            return Ok(await this.userController.getById(id));
         }
         catch(ex) {
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -51,9 +51,9 @@ export class UserEndpoint {
         try {
             const user: UserDto = this.mapToUser(req.body);
             await this.userController.add(user);
-            return new Created("user inserted");
+            return Created("user inserted");
         } catch (err) {
-            return new BadRequest(err.toString());
+            return BadRequest(err.toString());
         }
     }
 

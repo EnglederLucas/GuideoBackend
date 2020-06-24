@@ -14,9 +14,9 @@ export class RatingEndpoint {
     @Get('/')
     async getAll(req: Request, res: Response) {
         try{
-            return new Ok(await this.ratingController.getAll());
+            return Ok(await this.ratingController.getAll());
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -39,9 +39,9 @@ export class RatingEndpoint {
         const guideName = req.query.guidename;
 
         try{
-            return new Ok(await this.ratingController.getRatingsOfGuide(guideName));
+            return Ok(await this.ratingController.getRatingsOfGuide(guideName));
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -51,9 +51,9 @@ export class RatingEndpoint {
         const userName = req.query.username;
 
         try{
-            return new Ok(await this.ratingController.getRatingsOfUser(userName));
+            return Ok(await this.ratingController.getRatingsOfUser(userName));
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -72,9 +72,9 @@ export class RatingEndpoint {
         try {
             const rating: IRating = this.mapToRating(req.body);
             await this.ratingController.addRating(rating);
-            return new Created("nice one");
+            return Created("nice one");
         } catch (err) {
-            return new BadRequest(err.toString());
+            return BadRequest(err.toString());
         }
     }
 

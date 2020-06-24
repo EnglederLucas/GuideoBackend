@@ -13,9 +13,9 @@ export class TagEndpoint {
     @Get('/')
     async getAll(req: Request, res: Response) {
         try{
-            return new Ok(await this.tagController.getAll());
+            return Ok(await this.tagController.getAll());
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -24,9 +24,9 @@ export class TagEndpoint {
         const tagName = req.query.tagname;
 
         try{
-            return new Ok(await this.tagController.getTagByName(tagName));
+            return Ok(await this.tagController.getTagByName(tagName));
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -36,9 +36,9 @@ export class TagEndpoint {
         const letters: string = req.query.letters;
                 
         try {
-            return new Ok(await this.tagController.getTagsBeginningWith(letters));
+            return Ok(await this.tagController.getTagsBeginningWith(letters));
         } catch(err) {
-            return new BadRequest(err);
+            return BadRequest(err);
         }
     }
 
@@ -48,9 +48,9 @@ export class TagEndpoint {
         const limit: number = parseInt(req.query.limit);
 
         try {
-            return new Ok(await this.tagController.getTopUsedTags(limit));
+            return Ok(await this.tagController.getTopUsedTags(limit));
         } catch(err) {
-            return new BadRequest(err);
+            return BadRequest(err);
         }
     }
 }

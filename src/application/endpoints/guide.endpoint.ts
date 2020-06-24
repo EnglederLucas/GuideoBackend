@@ -16,9 +16,9 @@ export class GuideEndpoint {
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
         try{
             const result = await this.guideController.getAll();
-            return new Ok(result);
+            return Ok(result);
         } catch(err){
-            return new Failed(err.toString());
+            return Failed(err.toString());
         }
     }
 
@@ -30,9 +30,9 @@ export class GuideEndpoint {
         const size = parseInt(req.query.size);
 
         try{
-            return new Ok(await this.guideController.getGuidesPaged(pos, size));
+            return Ok(await this.guideController.getGuidesPaged(pos, size));
         } catch(ex){
-            return new Failed(ex);
+            return Failed(ex);
         }
     }
 
@@ -42,9 +42,9 @@ export class GuideEndpoint {
         const limit = parseInt(req.query.limit);
 
         try {
-            return new Ok(await this.guideController.getTopGuides(limit));
+            return Ok(await this.guideController.getTopGuides(limit));
         } catch(err) {
-            return new BadRequest(err);
+            return BadRequest(err);
         }
     }
 
@@ -54,9 +54,9 @@ export class GuideEndpoint {
         const guideName = req.query.guidename;
 
         try {
-            return new Ok(await this.guideController.getGuidesByName(guideName));
+            return Ok(await this.guideController.getGuidesByName(guideName));
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -66,9 +66,9 @@ export class GuideEndpoint {
         const userName = req.query.username;
 
         try{
-            return new Ok(await this.guideController.getGuidesOfUser(userName));
+            return Ok(await this.guideController.getGuidesOfUser(userName));
         } catch(ex){
-            return new BadRequest(ex);
+            return BadRequest(ex);
         }
     }
 
@@ -110,9 +110,9 @@ export class GuideEndpoint {
         try {
             const guide: PostGuideDto = this.mapToGuide(req.body);
             await this.guideController.addGuide(guide);
-            return new Created('nice one');
+            return Created('nice one');
         } catch (err) {
-            return new BadRequest(err.toString());
+            return BadRequest(err.toString());
         }
     }
 
