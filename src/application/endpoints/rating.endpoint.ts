@@ -1,87 +1,81 @@
 import { RatingController } from "../../logic/controllers";
-import { BaseEndpoint } from './base.endpoint';
 import { IRating } from "../../core/models";
 import { Request, Response } from 'express';
-import { query, Result, ValidationError, validationResult } from 'express-validator';
+import { query } from 'express-validator';
+import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
+import { Ok, BadRequest, Created } from '../utils/express-decorators/models';
 
-export class RatingEndpoint extends BaseEndpoint {
+@Endpoint('ratings')
+export class RatingEndpoint {
     
     constructor(private ratingController: RatingController) {
-        super('ratings');
     }
 
-    protected initRoutes(): void {
-        this.router.get('/', async (req, res) => {
-            try{
-                res.send(await this.ratingController.getAll());
-            } catch(ex){
-                res.send(ex);
-            }
-        });
+    @Get('/')
+    async getAll(req: Request, res: Response) {
+        try{
+            return Ok(await this.ratingController.getAll());
+        } catch(ex){
+            return BadRequest(ex);
+        }
+    }
 
-        this.router.get('/averageOfGuide',
-            [
-                query('guidename', 'a guidename has to be defined').isString().notEmpty()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
-                if (!error.isEmpty())  return res.status(400).json({ errors: error.array() });
-
-                const guideName = req.query.guidename;
+    // TODO: Do we need this?
+    // @Get('/averageOfGuide')
+    // @Validate(query('guidename', 'a guidename has to be defined').isString())
+    // async getAverageOfGuide(req: Request, res: Response) {
+    //     const guideName = req.query.guidename;
                 
-                try{
-                    res.status(200).send((await this.ratingController.getAverageRatingOfGuide(guideName)).toString());
-                } catch(ex){
-                    res.send(ex);
-                }
-            }
-        );
+    //     try{
+    //         res.status(200).send((await this.ratingController.getAverageRatingOfGuide(guideName)).toString());
+    //     } catch(ex){
+    //         res.send(ex);
+    //     }
+    // }
 
-        this.router.get('/ofGuide',
-            [
-                query('guidename', 'a guidename has to be defined').isString().notEmpty()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
-                if (!error.isEmpty())  return res.status(400).json({ errors: error.array() });
+    @Get('/ofGuide')
+    @Validate(query('guidename', 'a guidename has to be defined').isString())
+    async getRatingsOfGuide(req: Request, res: Response) {
+        const guideName = req.query.guidename;
 
-                const guideName = req.query.guidename;
+        try{
+            return Ok(await this.ratingController.getRatingsOfGuide(guideName));
+        } catch(ex){
+            return BadRequest(ex);
+        }
+    }
 
-                try{
-                    res.send(await this.ratingController.getRatingsOfGuide(guideName));
-                } catch(ex){
-                    res.send(ex);
-                }
-            }
-        );
+    @Get('/ofUser')
+    @Validate(query('username', 'a username has to be defined').isString())
+    async getRatingsOfUser(req: Request, res: Response) {
+        const userName = req.query.username;
 
-        this.router.get('/ofUser',
-            [
-                query('username', 'a username has to be defined').isString().notEmpty()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
-                if (!error.isEmpty())  return res.status(400).json({ errors: error.array() });
-                
-                const userName = req.query.username;
+        try{
+            return Ok(await this.ratingController.getRatingsOfUser(userName));
+        } catch(ex){
+            return BadRequest(ex);
+        }
+    }
 
-                try{
-                    res.send(await this.ratingController.getRatingsOfUser(userName));
-                } catch(ex){
-                    res.send(ex);
-                }
-            }
-        );
+    @Get('/specific')
+    @Validate(query('userId', 'need a userId in the query').isString())
+    @Validate(query('guideId', 'need a guideId in the query').isString())
+    async getSpecific(req: Request, res: Response) {
+        const userId = req.query.userId;
+        const guideId = req.query.guideId;
 
-        this.router.post('/', async (req, res) => {
-            try {
-                const rating: IRating = this.mapToRating(req.body);
-                await this.ratingController.addRating(rating);
-                res.status(201).send("nice one");
-            } catch (err) {
-                res.status(400).send(err.toString());
-            }
-        });
+        // logic
+    }
+
+    @Post('/')
+    async addRating(req: Request, res: Response) {
+        try {
+            const rating: IRating = this.mapToRating(req.body);
+            await this.ratingController.addRating(rating);
+            return Created("nice one");
+        } catch (err) {
+            return BadRequest(err.toString());
+        }
     }
 
     private mapToRating(obj: any): IRating {

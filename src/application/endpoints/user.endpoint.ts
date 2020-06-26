@@ -1,64 +1,60 @@
 import { UserController } from '../../logic/controllers';
-import { BaseEndpoint } from './base.endpoint';
 import { UserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
-import { Result, ValidationError, validationResult, query } from 'express-validator';
+import { query } from 'express-validator';
 import { Request, Response } from 'express';
+import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
+import { BadRequest, Ok, Created } from '../utils/express-decorators/models';
 
-export class UserEndpoint extends BaseEndpoint {
+@Endpoint('users')
+export class UserEndpoint {
     constructor(private userController: UserController) {
-        super('users');
     }
 
-    protected initRoutes(): void {
-        this.router.get('/', async (req, res) => {
-            try {
-                res.send(await this.userController.getAll());
-            }
-            catch(ex) {
-                res.send(ex);
-            }
-        });
+    @Get('/')
+    async getAll(req: Request, res: Response) {
+        try {
+            return Ok(await this.userController.getAll());
+        }
+        catch(ex) {
+            return BadRequest(ex);
+        }
+    }
 
-        this.router.get('/byName',
-            [
-                query('username', 'we need a username').isString().notEmpty()
-            ],
-            async (req: Request, res: Response) => {
-                const error: Result<ValidationError> = validationResult(req);
-                if (!error.isEmpty())  return res.status(400).json({ errors: error.array() });
+    @Get('/byName')
+    @Validate(query('username', 'we need a username').isString())
+    async getByName(req: Request, res: Response) {
+        const userName = req.query.username;
 
-                const userName = req.query.username;
+        try {
+            return Ok(await this.userController.getUserByName(userName));
+        }
+        catch(ex) {
+            return BadRequest(ex);
+        }
+    }
 
-                try {
-                    res.send(await this.userController.getUserByName(userName));
-                }
-                catch(ex) {
-                    res.send(ex);
-                }
-            }
-        );
+    @Get('/:id')
+    async getById(req: Request, res: Response) {
+        const id = req.params['id'];
 
-        this.router.get('/:id', async (req, res) => {
-            const id = req.params['id'];
+        try {
+            return Ok(await this.userController.getById(id));
+        }
+        catch(ex) {
+            return BadRequest(ex);
+        }
+    }
 
-            try {
-                res.status(200).send(await this.userController.getById(id));
-            }
-            catch(ex) {
-                res.status(404).send(ex);
-            }
-        });
-
-        this.router.post('/', async (req, res) => {
-            try {
-                const user: UserDto = this.mapToUser(req.body);
-                await this.userController.add(user);
-                res.status(201).send("user inserted");
-            } catch (err) {
-                res.status(400).send(err.toString());
-            }
-        });
+    @Post('/')
+    async addUser(req: Request, res: Response) {
+        try {
+            const user: UserDto = this.mapToUser(req.body);
+            await this.userController.add(user);
+            return Created("user inserted");
+        } catch (err) {
+            return BadRequest(err.toString());
+        }
     }
 
     private mapToUser(obj: any): UserDto {

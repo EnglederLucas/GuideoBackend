@@ -1,8 +1,8 @@
+import 'reflect-metadata';
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
-import bodyParser from "body-parser";
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
 
@@ -14,6 +14,7 @@ import { $log } from '@tsed/logger';
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
 import { ImageEndpoint } from './application/endpoints/image.endpoint';
+import express from 'express';
 import { TrackController } from './logic/controllers/track.controller';
 
 $Log.logTitle();
@@ -61,7 +62,7 @@ const server: GuideoServer = new GuideoServer({
         // { route: '/api', handler: verifyUserToken },
         // { route: '/img', handler: verifyUserToken },
         { route: '/', handler: $Log.getRoutingLogger() },
-        { route: '/', handler: bodyParser.json() }
+        { route: '/', handler: express.json() }
     ],
     keyPath: `${__dirname}\\..\\public\\security\\key.pem`,
     certPath: `${__dirname}\\..\\public\\security\\cert.pem`

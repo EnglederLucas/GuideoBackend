@@ -1,7 +1,6 @@
-import { IRoutable } from '../contracts';
 import { Router } from 'express';
 
-export abstract class BaseEndpoint implements IRoutable {
+export abstract class BaseEndpoint {
 
     protected readonly router: Router = Router();
     private initialized = false;

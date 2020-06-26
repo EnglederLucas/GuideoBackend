@@ -1,11 +1,11 @@
 import express, { Application } from "express";
 import cors, { CorsOptions } from 'cors';
-import { IRoutable } from './contracts';
 import { Middleware } from "./middleware";
 import $Log from '../utils/logger';
-import { ExpressService } from './utils/express';
 import * as https from 'https';
 import * as fs from 'fs';
+import { createEndpoint } from './utils/express-decorators/creation';
+import { BaseEndpoint } from './endpoints/base.endpoint';
 
 export interface IStaticPathDefinition {
     route: string;
@@ -14,7 +14,7 @@ export interface IStaticPathDefinition {
 
 export interface IServerOptions {
     port: number;
-    routables?: IRoutable[];
+    routables?: any[];
     enableCors: boolean;
     staticPaths?: IStaticPathDefinition[];
     middlewares?: Middleware[];
@@ -57,8 +57,14 @@ export class GuideoServer {
         }
     }
 
-    private initRoutes(routables: IRoutable[]): void {
-        routables.forEach(r => this.app.use(`/api/${ r.getBasePath() }`, r.getRouter()));
+    private initRoutes(routables: any[]): void {
+        routables.forEach(r => {
+            if (r instanceof BaseEndpoint) {
+                this.app.use(`/api/${ r.getBasePath() }`, r.getRouter())
+            } else {
+                createEndpoint(r, this.app);
+            }
+        });
 
         this.app.get('/', (req, res) => {
            res.send(`
@@ -111,9 +117,5 @@ export class GuideoServer {
                 $Log.logger.info(`server started at port ${this.settings.port}`);
             });
         }
-
-        // ExpressService.app.listen(this.settings.port, () => {
-        //     $Log.logger.info(`server startet at port ${this.settings.port}`);
-        // });
     }
 }
