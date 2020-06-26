@@ -1,7 +1,6 @@
 import { BaseEndpoint } from './base.endpoint';
 import { TrackController } from '../../logic/controllers/track.controller';
 import { ITrack } from '../../core/models';
-import { ConsoleAppender } from '@tsed/logger';
 
 export class TrackEndpoint extends BaseEndpoint {
 
