@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { query } from 'express-validator';
 import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
 import { Ok, BadRequest, Created } from '../utils/express-decorators/models';
+import { user } from "firebase-functions/lib/providers/auth";
 
 @Endpoint('ratings')
 export class RatingEndpoint {
@@ -64,7 +65,13 @@ export class RatingEndpoint {
         const userId = req.query.userId;
         const guideId = req.query.guideId;
 
-        // logic
+        const result: IRating | undefined = await this.ratingController.getSpecificOf(guideId, userId);
+
+        if (result === undefined) {
+            return BadRequest(`no rating found for guide ${guideId} and user ${userId}`);
+        }
+
+        return Ok(result);
     }
 
     @Post('/')

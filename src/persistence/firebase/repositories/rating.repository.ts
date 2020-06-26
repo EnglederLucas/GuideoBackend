@@ -71,7 +71,7 @@ export class RatingRepository implements IRatingRepository {
         
         let snapshot = await this.ratingsRef
             .where('guideId', '==', guideId)
-            .where('user', '==', userId)
+            .where('userId', '==', userId)
             .get();
 
         snapshot.forEach(doc => ratings.push(this.convertDataToRating(doc.data())));
