@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
-import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint } from './application/endpoints';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
@@ -51,7 +51,7 @@ const server: GuideoServer = new GuideoServer({
         new UserEndpoint(new UserController(unitOfWork)),
         new TagEndpoint(new TagController(unitOfWork)),
         new RatingEndpoint(new RatingController(unitOfWork)),
-        new TrackEndpoint(new TrackController(unitOfWork)),
+        new TrackDBEndpoint(new TrackController(unitOfWork)),
         new ImageEndpoint(`${__dirname}\\..\\public\\img`)
     ],
     enableCors: enableCors,
