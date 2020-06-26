@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
-import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint } from './application/endpoints';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
 import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
@@ -15,6 +15,7 @@ import { $log } from '@tsed/logger';
 // import { InMemoryDataInitializer } from './persistence/initializers';
 import { ImageEndpoint } from './application/endpoints/image.endpoint';
 import express from 'express';
+import { TrackController } from './logic/controllers/track.controller';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
@@ -50,6 +51,7 @@ const server: GuideoServer = new GuideoServer({
         new UserEndpoint(new UserController(unitOfWork)),
         new TagEndpoint(new TagController(unitOfWork)),
         new RatingEndpoint(new RatingController(unitOfWork)),
+        new TrackEndpoint(new TrackController(unitOfWork)),
         new ImageEndpoint(`${__dirname}\\..\\public\\img`)
     ],
     enableCors: enableCors,

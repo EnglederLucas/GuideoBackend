@@ -110,11 +110,11 @@ export class GuideoServer {
     public start(): void {
         if (this.httpsServer !== undefined) {
             this.httpsServer.listen(this.settings.port, () => {
-                $Log.logger.info(`server startet at port ${this.settings.port}`);
+                $Log.logger.info(`server started at port ${this.settings.port}`);
             });
         } else {
             this.app.listen(this.settings.port, () => {
-                $Log.logger.info(`server startet at port ${this.settings.port}`);
+                $Log.logger.info(`server started at port ${this.settings.port}`);
             });
         }
     }

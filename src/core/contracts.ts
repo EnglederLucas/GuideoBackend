@@ -1,4 +1,4 @@
-import { IGuide, IRating, ITag, IUser } from './models';
+import { IGuide, IRating, ITag, IUser, ITrack } from './models';
 import { UserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
@@ -37,11 +37,19 @@ export interface IUserRepository {
     addRange(items: UserDto[]): Promise<void>;
 }
 
+export interface ITrackRepository {
+    add(guideId: string, item: ITrack): Promise<void>;
+    addRange(guideId: string, items: ITrack[]): Promise<void>;
+    getByGuide(guideId: string): Promise<ITrack[]>;
+    getById(guideId: string, trackId: string): Promise<ITrack>;
+}
+
 export interface IUnitOfWork {
     readonly guides: IGuideRepository;
     readonly tags: ITagRepository;
     readonly users: IUserRepository;
     readonly ratings: IRatingRepository;
+    readonly tracks: ITrackRepository;
 }
 
 export interface IDataInitializer {
