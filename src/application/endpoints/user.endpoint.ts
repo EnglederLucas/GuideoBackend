@@ -70,7 +70,7 @@ export class UserEndpoint extends BaseEndpoint {
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
         
-        return {id, username, name, email, description} as UserDto    
+        return {id, username, name, email, description} as UserDto; 
     }
 
 }
