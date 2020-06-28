@@ -28,6 +28,7 @@ export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag>;
     getTagsBeginningWith(letters: string): Promise<ITag[]>;
     getTopUsedTags(limit: number): Promise<ITag[]>;
+    update(tag: ITag): Promise<void>;
 }
 
 export interface IUserRepository {

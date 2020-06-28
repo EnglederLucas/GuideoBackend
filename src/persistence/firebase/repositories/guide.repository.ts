@@ -111,7 +111,6 @@ export class GuideRepository implements IGuideRepository {
     }
 
     async update(guide: IGuide): Promise<void> {
-
         const batch: firestore.WriteBatch = this.db.batch();
         const guideRef = this.guidesRef.doc(guide.id);
 
@@ -127,6 +126,7 @@ export class GuideRepository implements IGuideRepository {
         });
 
         const results: firestore.WriteResult[] = await batch.commit();
+        $Log.logger.debug(`result length: ${results.length}`);
     }
 
     private convertDataToGuide(data: firestore.DocumentData, id: string): IGuide {
