@@ -40,6 +40,14 @@ export class GuideController {
     }
 
     async addGuide(guide: PostGuideDto): Promise<void> {
+        const newGuide = guide.asGuide();
+
+        newGuide.tags?.forEach(async tagName => {
+            const tag = await this.unitOfWork.tags.getTagByName(tagName);
+            tag.numberOfUses++;
+            await this.unitOfWork.tags.update(tag);
+        });
+
         await this.unitOfWork.guides.add(guide.asGuide());
     }
 
@@ -55,19 +63,27 @@ export class GuideController {
             const newTags = guide.tags!!;
             const finalTags: string[] = [];
             
-            oldTags.forEach(tagName => {
+            oldTags.forEach(async tagName => {
                 if (newTags.includes(tagName)) {
+                    // this tag is also contained in the newer version of the guide
+                    // therefore nothing should happen with this tag
                     finalTags.push(tagName);
                     newTags.splice(newTags.indexOf(tagName), 1);
                 } else {
                     // reduce number of uses
+                    const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                    tag.numberOfUses--;
+                    await this.unitOfWork.tags.update(tag);
                 }
             });
 
             // Nun sind alle gleich gebliebenen tags in newTags weg.
             // jetzt sind nur noch die zu aktualisierenden da
-            newTags.forEach(tagName => {
+            newTags.forEach(async tagName => {
                 // increase number of uses
+                const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                tag.numberOfUses++;
+                await this.unitOfWork.tags.update(tag);
             });
         }
     }

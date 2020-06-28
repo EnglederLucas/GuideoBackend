@@ -10,6 +10,7 @@ export class TagRepository implements ITagRepository {
         this.tagsRef = db.collection('tags');
     }
     
+    // TODO: maybe remove?
     async getById(id: string): Promise<ITag> {
         const doc: firestore.DocumentSnapshot = await this.tagsRef.doc(id).get();
         const data: firestore.DocumentData | undefined = doc.data();
@@ -17,7 +18,7 @@ export class TagRepository implements ITagRepository {
         if(!doc.exists || data == undefined)
             throw new Error(`Can not find guide with id ${id}`);
 
-        return this.convertToTag(data);
+        return this.convertToTag(data, id);
     }
 
     async getAll(): Promise<ITag[]> {
@@ -25,26 +26,27 @@ export class TagRepository implements ITagRepository {
 
         let snapshot = await this.tagsRef.get();
         snapshot.forEach(doc => {
-            tags.push(this.convertToTag(doc.data()));
+            tags.push(this.convertToTag(doc.data(), doc.id));
         });
 
         return tags;
     }
 
     async getTagByName(name: string): Promise<ITag> {
-        let tag: ITag;
+        const doc: firestore.DocumentSnapshot = await this.tagsRef.doc(name).get();
+        const data: firestore.DocumentData | undefined = doc.data();
 
-        let snapshot = await this.tagsRef.where('name','==',name).get();
-        tag = this.convertToTag(snapshot.docs[0].data());
+        if(!doc.exists || data == undefined)
+            throw new Error(`Can not find guide with id ${name}`);
 
-        return tag;
+        return this.convertToTag(data, name);
     }
 
     async getTagsBeginningWith(letters: string): Promise<ITag[]> {
         const tags: ITag[] = [];
 
         const snapshot = await this.tagsRef.where('name', '>=', letters).get();
-        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data())));
+        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data(), doc.id)));
 
         return tags;
     }
@@ -57,14 +59,16 @@ export class TagRepository implements ITagRepository {
             .limit(limit)
             .get();
 
-        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data())));
+        snapshot.forEach(doc => tags.push(this.convertToTag(doc.data(), doc.id)));
         return tags;
     }
 
     async add(item: ITag): Promise<void> {
-        await this.tagsRef.add({
-            name: item.name.toLowerCase(),
-            numberOfUses: 0
+        const id = item.name.toLowerCase();
+
+        await this.tagsRef.doc(id).set({
+            name: id,   // is stille needed fo filter by beginning letters
+            numberOfUses: item.numberOfUses
         });
     }
 
@@ -74,25 +78,21 @@ export class TagRepository implements ITagRepository {
 
     async update(tag: ITag): Promise<void> {
         const batch: firestore.WriteBatch = this.db.batch();
-        const tagRef = await this.getTagByName(tag.name);
 
-        // batch.update(guideRef, {
-        //     name: guide.name,
-        //     description: guide.description,
-        //     tags: guide.tags,
-        //     user: guide.user,
-        //     imageLink: guide.imageLink,
-        //     chronological: guide.chronological,
-        //     rating: guide.rating,
-        //     numOfRatings: guide.numOfRatings
-        // });
+        const id = tag.name.toLowerCase();
+        const tagRef = this.tagsRef.doc(id);
+
+        batch.update(tagRef, {
+            name: id,
+            numberOfUses: tag.numberOfUses
+        });
 
         const results: firestore.WriteResult[] = await batch.commit();
     }
 
-    private convertToTag(data: firestore.DocumentData): ITag {
+    private convertToTag(data: firestore.DocumentData, name: string): ITag {
         const tag: ITag = {
-            name: data.name as string,
+            name: name,
             numberOfUses: parseInt(data.numberOfUses)
         };
 

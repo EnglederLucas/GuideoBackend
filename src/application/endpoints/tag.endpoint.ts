@@ -2,7 +2,7 @@ import { TagController } from "../../logic/controllers";
 import { query } from 'express-validator';
 import { Request, Response } from 'express';
 import { BadRequest, Ok } from '../utils/express-decorators/models';
-import { Get, Endpoint, Validate } from "../utils/express-decorators/decorators";
+import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
 
 @Endpoint('tags')
 export class TagEndpoint {
@@ -52,5 +52,15 @@ export class TagEndpoint {
         } catch(err) {
             return BadRequest(err);
         }
+    }
+
+    @Post('/')
+    async add(req: Request, res: Response) {
+        const tagName = req.body.tagName;
+
+        return Ok(await this.tagController.add({
+            name: tagName,
+            numberOfUses: 0
+        }));
     }
 }

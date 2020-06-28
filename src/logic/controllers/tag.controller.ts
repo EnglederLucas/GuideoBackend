@@ -21,4 +21,8 @@ export class TagController {
     async getTopUsedTags(limit: number): Promise<ITag[]> {
         return await this.unitOfWork.tags.getTopUsedTags(limit);
     }
+
+    async add(item: ITag): Promise<void> {
+        return await this.unitOfWork.tags.add(item);
+    }
 }
