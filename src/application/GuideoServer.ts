@@ -4,7 +4,7 @@ import { Middleware } from "./middleware";
 import $Log from '../utils/logger';
 import * as https from 'https';
 import * as fs from 'fs';
-import { createEndpoint } from './utils/express-decorators/creation';
+import { createEndpoint, createDocsFor } from './utils/express-decorators/creation';
 import { BaseEndpoint } from './endpoints/base.endpoint';
 
 export interface IStaticPathDefinition {
@@ -63,6 +63,7 @@ export class GuideoServer {
                 this.app.use(`/api/${ r.getBasePath() }`, r.getRouter())
             } else {
                 createEndpoint(r, this.app);
+                // $Log.logger.debug(`\n${createDocsFor(r)}\n`);
             }
         });
 
