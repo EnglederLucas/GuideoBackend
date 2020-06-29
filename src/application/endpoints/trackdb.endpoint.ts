@@ -6,7 +6,7 @@ import { JsonResponse, BadRequest, Ok, Created } from '../utils/express-decorato
 
 import { query, checkSchema } from 'express-validator';
 
-@Endpoint('tracks')
+@Endpoint('tracksdb')
 export class TrackDBEndpoint {
 
     constructor(private trackController: TrackController) {
