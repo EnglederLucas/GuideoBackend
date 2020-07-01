@@ -14,7 +14,7 @@ export interface IStaticPathDefinition {
 
 export interface IServerOptions {
     port: number;
-    routables?: any[];
+    endpoints?: any[];
     enableCors: boolean;
     staticPaths?: IStaticPathDefinition[];
     middlewares?: Middleware[];
@@ -25,6 +25,7 @@ export interface IServerOptions {
 export class GuideoServer {
     private app: Application;
     private httpsServer: https.Server | undefined;
+    private endpoints: any[] | undefined;
 
     constructor(private settings: IServerOptions) {
         this.app = express();
@@ -49,8 +50,11 @@ export class GuideoServer {
             this.addMiddlewares(settings.middlewares);
         }
 
-        if (settings.routables !== undefined)
-            this.initRoutes(settings.routables);
+        if (settings.endpoints !== undefined) {
+            this.endpoints = settings.endpoints;
+            this.initRoutes(settings.endpoints);
+        }
+            
 
         if (settings.staticPaths !== undefined) {
             this.provideStatics(settings.staticPaths);
@@ -118,5 +122,29 @@ export class GuideoServer {
                 $Log.logger.info(`server started at port ${this.settings.port}`);
             });
         }
+    }
+
+    createDocumentation() {
+        if (!this.endpoints)
+            throw new Error('no endpoints defined!');
+
+        const result = [ 
+            '<!DOCTYPE html>',
+            '<html>',
+            '<head>',
+            '<title>Guideo Docs</title>',
+            '<meta charset="utf-8" />',
+            '<link href="style.css" rel="stylesheet" />',
+            '</head>',
+            '<body>',
+            '<main>'
+        ];
+
+        this.endpoints?.forEach(endpoint => {
+            result.push(createDocsFor(endpoint));
+        });
+
+        result.push('</main>', '</body>', '</html>');
+        return result.join('\n');
     }
 }
