@@ -5,7 +5,7 @@ import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
-import { GuideController, UserController, RatingController, TagController, TrackController } from "./logic/controllers";
+import { TrackController } from "./logic/controllers";
 
 import { UnitOfWork } from './persistence/firebase/unitofwork';
 
@@ -50,10 +50,10 @@ async function main() {
     const server: GuideoServer = new GuideoServer({
         port: port,
         endpoints: [ 
-            new GuideEndpoint(new GuideController(unitOfWork)),
-            new UserEndpoint(new UserController(unitOfWork)),
-            new TagEndpoint(new TagController(unitOfWork)),
-            new RatingEndpoint(new RatingController(unitOfWork)),
+            new GuideEndpoint(unitOfWork),
+            new UserEndpoint(unitOfWork),
+            new TagEndpoint(unitOfWork),
+            new RatingEndpoint(unitOfWork),
             new TrackEndpoint(new TrackController(unitOfWork)),
             new ImageEndpoint(`${__dirname}\\..\\public\\img`)
         ],
