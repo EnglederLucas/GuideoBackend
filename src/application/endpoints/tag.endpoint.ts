@@ -1,8 +1,9 @@
 import { TagController } from "../../logic/controllers";
 import { query } from 'express-validator';
 import { Request, Response } from 'express';
-import { BadRequest, Ok } from '../utils/express-decorators/models';
-import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
+
+import { Endpoint, Get, Validate, Post } from "../../nexos-express/decorators";
+import { Ok, BadRequest  } from "../../nexos-express/models";
 
 @Endpoint('tags')
 export class TagEndpoint {

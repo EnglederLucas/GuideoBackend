@@ -3,8 +3,9 @@ import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
-import { Endpoint, Get, Validate, Post, Put, Description } from "../utils/express-decorators/decorators";
-import { Ok, Failed, JsonResponse, BadRequest, Created } from '../utils/express-decorators/models';
+
+import { Endpoint, Get, Validate, Post, Put, RouteDescription } from "../../nexos-express/decorators";
+import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";
 
 @Endpoint('guides')
 export class GuideEndpoint {
@@ -13,13 +14,13 @@ export class GuideEndpoint {
     }
 
     @Get('/')
-    @Description('Returns all available guides')
+    @RouteDescription('Returns all available guides')
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
         try{
             const result = await this.guideController.getAll();
             return Ok(result);
         } catch(err){
-            return Failed(err.toString());
+            return InternalServerError(err.toString());
         }
     }
 
@@ -33,7 +34,7 @@ export class GuideEndpoint {
         try{
             return Ok(await this.guideController.getGuidesPaged(pos, size));
         } catch(ex){
-            return Failed(ex);
+            return InternalServerError(ex);
         }
     }
 

@@ -2,9 +2,9 @@ import { RatingController } from "../../logic/controllers";
 import { IRating } from "../../core/models";
 import { Request, Response } from 'express';
 import { query } from 'express-validator';
-import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
-import { Ok, BadRequest, Created } from '../utils/express-decorators/models';
-import { user } from "firebase-functions/lib/providers/auth";
+
+import { Endpoint, Get, Validate, Post } from "../../nexos-express/decorators";
+import { Ok, BadRequest, Created  } from "../../nexos-express/models";
 
 @Endpoint('ratings')
 export class RatingEndpoint {

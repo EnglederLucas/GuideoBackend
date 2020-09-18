@@ -3,8 +3,9 @@ import { UserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
 import { query } from 'express-validator';
 import { Request, Response } from 'express';
-import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
-import { BadRequest, Ok, Created } from '../utils/express-decorators/models';
+
+import { Endpoint, Get, Validate, Post } from "../../nexos-express/decorators";
+import { Ok, BadRequest, Created  } from "../../nexos-express/models";
 
 @Endpoint('users')
 export class UserEndpoint {
