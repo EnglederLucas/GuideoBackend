@@ -26,7 +26,7 @@ export class TrackEndpoint extends BaseEndpoint{
                     res.status(400).send('no track sent!');
                     return;
                 }
-                
+                console.log("Upload: "+req.params.guideId);
                 const guidePath = `${this.trackMasterPath}\\${req.params['guideId']}`;
 
                 if (!await this.existsAsync(guidePath)) await this.mkdirAsync(guidePath);
@@ -34,15 +34,19 @@ export class TrackEndpoint extends BaseEndpoint{
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}\\${req.file.originalname}`;
 
+                console.log("Targetpath: "+targetPath);
+
                 // rename/move the stored track to the guides folder
                 await this.renameAsync(tempPath, targetPath);
 
                 // generate the link for the guide object
-                const imageRoute = '/' + targetPath
+                const trackRoute = '/' + targetPath
                     .substring(targetPath.indexOf('mp3'))
                     .replace('\\', '/');
 
-                res.status(200).send(imageRoute);
+                console.log("Trackroute: "+trackRoute);
+
+                res.status(200).send(trackRoute);
             } catch(err) {
                 res.status(500).contentType('text/plain').send('Oops! An error occured, while storing the track\n error:' + err);
             }

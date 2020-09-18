@@ -16,6 +16,7 @@ import { $log } from '@tsed/logger';
 import { ImageEndpoint } from './application/endpoints/image.endpoint';
 import express from 'express';
 import { TrackController } from './logic/controllers/track.controller';
+import { TrackEndpoint } from './application/endpoints/track.endpoint';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
@@ -52,7 +53,8 @@ const server: GuideoServer = new GuideoServer({
         new TagEndpoint(new TagController(unitOfWork)),
         new RatingEndpoint(new RatingController(unitOfWork)),
         new TrackDBEndpoint(new TrackController(unitOfWork)),
-        new ImageEndpoint(`${__dirname}\\..\\public\\img`)
+        new ImageEndpoint(`${__dirname}\\..\\public\\img`),
+        new TrackEndpoint(`${__dirname}\\..\\public\\tracks`)
     ],
     enableCors: enableCors,
     staticPaths:  [

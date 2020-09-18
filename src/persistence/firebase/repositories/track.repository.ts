@@ -27,7 +27,7 @@ export class TrackRepository implements ITrackRepository{
         let snapshot = await this.guidesRef.doc(guideId).collection('tracks').get();
 
         snapshot.forEach(doc => {
-            tracks.push({id: doc.data().id, description: doc.data().description});
+            tracks.push({id: doc.data().id, trackLink: doc.data().trackLink, description: doc.data().description});
         });
 
         return tracks;
@@ -40,7 +40,7 @@ export class TrackRepository implements ITrackRepository{
         if(!doc.exists || data == undefined)
             throw new Error(`Can not find track with id ${trackId} in guide with id ${guideId}`);
 
-        let track: ITrack = {id: data.id, description: data.description};
+        let track: ITrack = {id: data.id, trackLink: data.trackLink, description: data.description};
 
         return track;
     }
