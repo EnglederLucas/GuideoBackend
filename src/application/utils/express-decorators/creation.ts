@@ -4,6 +4,7 @@ import { Result, ValidationError, validationResult } from "express-validator";
 import { StatusCode, JsonResponse } from "./models";
 import { endpointPathKey } from "./decorators/routing";
 import { injectRouterKey } from "./decorators/other";
+import { descriptionKey, getDescriptionMetadata } from './decorators/documentation';
 
 export const createEndpoint = (instance: any, app: Application) => {
     const router = Router();
@@ -66,6 +67,7 @@ export const createDocsFor = (instance: any): string => {
             </div>
             <div>
                 <p>${def.path}</p>
+                <p>${getDescriptionMetadata(instance.constructor, def.methodName)}</p>
             </div>
         </section>
         `);

@@ -59,7 +59,8 @@ async function main() {
         ],
         enableCors: enableCors,
         staticPaths:  [
-            { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] }
+            { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
+            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] }
         ],
         middlewares: [
             // { route: '/api', handler: verifyUserToken },

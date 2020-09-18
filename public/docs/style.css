@@ -9,10 +9,15 @@ main {
 }
 
 .endpoint-def {
-    border: 5px solid lightgray;
+    border: 2px solid lightgray;
     border-radius: 10px;
     margin-bottom: 1em;
     padding: 0 1em;
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.4);
+}
+
+.hide section {
+    display: none;
 }
 
 .get {
@@ -42,19 +47,22 @@ main {
 
 .route div:last-child {
     margin: 0 0 0 2em;
-    background-color: rgb(90, 90, 90);
-    border-radius: 7px;
+    
     width: 60%;
-    color: white;
-
-    padding: 0 0 0 1em;
-}
-
-.route div:last-child:hover {
-    background-color: rgb(104, 104, 104);
 }
 
 .route div:last-child p {
     font-size: 20px;
     margin: 0.5em;
+}
+
+.route div:last-child p:first-child {
+    border-radius: 7px;
+    color: white;
+    background-color: rgb(90, 90, 90);
+    padding: 1em;
+}
+
+.route div:last-child p:first-child:hover {
+    background-color: rgb(104, 104, 104);
 }

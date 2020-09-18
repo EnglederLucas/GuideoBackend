@@ -81,6 +81,7 @@ export class GuideoServer {
             </head>
             <body>
             
+            <div><a href="./docs/v1.html">Endpoint Documentation</a></div>
             <div><a href="./api/guides">Test guides</a></div>
             <div><a href="./api/guides/paged?pos=0&size=2">Test guides paged</a></div>
             <div><a href="./api/guides/top?limit=2">Top guides</a></div>
