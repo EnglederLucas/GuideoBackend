@@ -1,24 +1,28 @@
-import { GuideController } from "../../logic/controllers";
 import { Request, Response } from 'express';
-import $Log from '../../utils/logger';
-import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
+import $Log from '../../utils/logger';
 
-import { Endpoint, Get, Validate, Post, Put, RouteDescription } from "../../nexos-express/decorators";
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query } from "../../nexos-express/decorators";
 import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";
+
+import { IUnitOfWork } from '../../core/contracts';
+import { IGuide } from '../../core/models';
+import { PostGuideDto } from "../../core/data-transfer-objects";
+
+import { GuideDto } from "../data-transfer-objects";
 
 @Endpoint('guides')
 export class GuideEndpoint {
     
-    constructor(private guideController: GuideController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/')
     @RouteDescription('Returns all available guides')
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
         try{
-            const result = await this.guideController.getAll();
-            return Ok(result);
+            const guides: IGuide[] = await this.unitOfWork.guides.getAll();
+            return Ok(this.convertToDto(guides));
         } catch(err){
             return InternalServerError(err.toString());
         }
@@ -27,12 +31,13 @@ export class GuideEndpoint {
     @Get('/paged')
     @Validate(query('pos', 'a position has to be defined').isInt())
     @Validate(query('size', 'a size has to be defined').isInt())
-    async getPaged(req: Request, res: Response) {
-        const pos = parseInt(req.query.pos);
-        const size = parseInt(req.query.size);
+    async getPaged( @Query('pos') pos: any, @Query('size') size: any, req: Request, res: Response) {
+        pos = parseInt(pos);
+        size = parseInt(size);
 
         try{
-            return Ok(await this.guideController.getGuidesPaged(pos, size));
+            const guides = await this.unitOfWork.guides.getGuidesPaged(pos, size);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
             return InternalServerError(ex);
         }
@@ -40,11 +45,12 @@ export class GuideEndpoint {
 
     @Get('/top')
     @Validate(query('limit', 'a limit has to be defined').isInt())
-    async getTop(req: Request, res: Response) {
-        const limit = parseInt(req.query.limit);
+    async getTop(@Query('limit') limit: any, req: Request, res: Response) {
+        limit = parseInt(limit);
 
         try {
-            return Ok(await this.guideController.getTopGuides(limit));
+            const guides = await this.unitOfWork.guides.getTopGuides(limit);
+            return Ok(this.convertToDto(guides));
         } catch(err) {
             return BadRequest(err);
         }
@@ -52,11 +58,10 @@ export class GuideEndpoint {
 
     @Get('/byName')
     @Validate(query('guidename', 'the name of the guide has to be defined with "guidename"').isString())
-    async getByName(req: Request, res: Response) {
-        const guideName = req.query.guidename;
-
+    async getByName(@Query('guidename') guideName: any, req: Request, res: Response) {
         try {
-            return Ok(await this.guideController.getGuidesByName(guideName));
+            const guides = await this.unitOfWork.guides.getGuidesByName(guideName);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
             return BadRequest(ex);
         }
@@ -64,11 +69,10 @@ export class GuideEndpoint {
 
     @Get('/ofUser')
     @Validate(query('username', 'the username has to be defined with "username"').isString())
-    async getOfUser(req: Request, res: Response) {
-        const userName = req.query.username;
-
+    async getOfUser(@Query('username') userName: any, req: Request, res: Response) {
         try{
-            return Ok(await this.guideController.getGuidesOfUser(userName));
+            const guides = await this.unitOfWork.guides.getGuidesOfUser(userName);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
             return BadRequest(ex);
         }
@@ -76,12 +80,12 @@ export class GuideEndpoint {
 
     @Get('/withTags')
     @Validate(query('tags', 'tags has to be defined as an array').isArray())
-    async getWithTags(req: Request, res: Response) {
+    async getWithTags(@Query('tags') tags: any, req: Request, res: Response) {
         // TODO: in a query? Really?
-        const tags = req.query.tags;
 
         try{
-            res.send(await this.guideController.getGuidesWithTags(tags));
+            const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
+            res.send(this.convertToDto(guides));
         } catch(ex){
             res.send(ex);
         }
@@ -110,11 +114,56 @@ export class GuideEndpoint {
     }))
     async addGuide(req: Request, res: Response) {
         try {
-            const guide: PostGuideDto = this.mapToGuide(req.body);
-            await this.guideController.addGuide(guide);
+            const guideDto: PostGuideDto = this.mapToGuide(req.body);
+            const guide = guideDto.asGuide();
+
+            guide.tags?.forEach(async tagName => {
+                const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                tag.numberOfUses++;
+                await this.unitOfWork.tags.update(tag);
+            });
+
+            await this.unitOfWork.guides.add(guide);
             return Created('nice one');
         } catch (err) {
             return BadRequest(err.toString());
+        }
+    }
+
+    async update(guide: IGuide): Promise<void> {
+        const dbGuide = await this.unitOfWork.guides.getById(guide.id);
+
+        if (!guide.name) dbGuide.name = guide.name;
+        if (!guide.description) dbGuide.description = guide.description;
+        if (!guide.chronological) dbGuide.chronological = guide.chronological;
+        if (!guide.imageLink) dbGuide.imageLink = guide.imageLink;
+        if (guide.tags) {
+            const oldTags = dbGuide.tags!!;
+            const newTags = guide.tags!!;
+            const finalTags: string[] = [];
+            
+            oldTags.forEach(async tagName => {
+                if (newTags.includes(tagName)) {
+                    // this tag is also contained in the newer version of the guide
+                    // therefore nothing should happen with this tag
+                    finalTags.push(tagName);
+                    newTags.splice(newTags.indexOf(tagName), 1);
+                } else {
+                    // reduce number of uses
+                    const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                    tag.numberOfUses--;
+                    await this.unitOfWork.tags.update(tag);
+                }
+            });
+
+            // Nun sind alle gleich gebliebenen tags in newTags weg.
+            // jetzt sind nur noch die zu aktualisierenden da
+            newTags.forEach(async tagName => {
+                // increase number of uses
+                const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                tag.numberOfUses++;
+                await this.unitOfWork.tags.update(tag);
+            });
         }
     }
 
@@ -129,5 +178,16 @@ export class GuideEndpoint {
         if (chronological === undefined) chronological = false;
         
         return new PostGuideDto(name, description, tags, user as string, imageLink, chronological);
+    }
+
+    private convertToDto(guides: IGuide[]) {
+        const result: GuideDto[] = [];
+
+        for (const g of guides) {
+            const dto: GuideDto = new GuideDto(g);
+            result.push(dto);
+        }
+
+        return result;
     }
 }

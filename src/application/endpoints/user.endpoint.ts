@@ -1,21 +1,21 @@
-import { UserController } from '../../logic/controllers';
 import { UserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
 import { query } from 'express-validator';
 import { Request, Response } from 'express';
 
-import { Endpoint, Get, Validate, Post } from "../../nexos-express/decorators";
+import { Endpoint, Get, Validate, Post, Query, Params } from "../../nexos-express/decorators";
 import { Ok, BadRequest, Created  } from "../../nexos-express/models";
+import { IUnitOfWork } from '../../core/contracts';
 
 @Endpoint('users')
 export class UserEndpoint {
-    constructor(private userController: UserController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/')
     async getAll(req: Request, res: Response) {
         try {
-            return Ok(await this.userController.getAll());
+            return Ok(await this.unitOfWork.users.getAll());
         }
         catch(ex) {
             return BadRequest(ex);
@@ -24,11 +24,9 @@ export class UserEndpoint {
 
     @Get('/byName')
     @Validate(query('username', 'we need a username').isString())
-    async getByName(req: Request, res: Response) {
-        const userName = req.query.username;
-
+    async getByName(@Query('username') userName: any, req: Request, res: Response) {
         try {
-            return Ok(await this.userController.getUserByName(userName));
+            return Ok(await this.unitOfWork.users.getUserByName(name));
         }
         catch(ex) {
             return BadRequest(ex);
@@ -36,11 +34,11 @@ export class UserEndpoint {
     }
 
     @Get('/:id')
-    async getById(req: Request, res: Response) {
-        const id = req.params['id'];
+    async getById(@Params('id') id: any, req: Request, res: Response) {
+        // const id = req.params['id'];
 
         try {
-            return Ok(await this.userController.getById(id));
+            return Ok(await this.unitOfWork.users.getById(id));
         }
         catch(ex) {
             return BadRequest(ex);
@@ -51,7 +49,7 @@ export class UserEndpoint {
     async addUser(req: Request, res: Response) {
         try {
             const user: UserDto = this.mapToUser(req.body);
-            await this.userController.add(user);
+            await this.unitOfWork.users.add(user)
             return Created("user inserted");
         } catch (err) {
             return BadRequest(err.toString());

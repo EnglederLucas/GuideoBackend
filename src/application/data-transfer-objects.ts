@@ -1,4 +1,4 @@
-import { IGuide, IUser } from '../core/models';
+import { IGuide } from "../core/models";
 
 export class GuideDto {
     private id: string;
