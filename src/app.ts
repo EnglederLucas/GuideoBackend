@@ -1,10 +1,10 @@
 import 'reflect-metadata';
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
-import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint } from './application/endpoints';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
-import { GuideController, UserController, RatingController, TagController } from "./logic/controllers";
+import { GuideController, UserController, RatingController, TagController, TrackController } from "./logic/controllers";
 
 import { UnitOfWork } from './persistence/firebase/unitofwork';
 
@@ -13,10 +13,7 @@ import { $log } from '@tsed/logger';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
-import { ImageEndpoint } from './application/endpoints/image.endpoint';
 import express from 'express';
-import { TrackController } from './logic/controllers/track.controller';
-import { TrackEndpoint } from './application/endpoints/track.endpoint';
 
 $Log.logTitle();
 $Log.logger.info("start initializing server ...");
