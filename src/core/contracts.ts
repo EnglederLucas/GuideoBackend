@@ -12,6 +12,7 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
     getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
     getAverageRatingOfGuide(guideName: string): Promise<number>;
     getRatingsOfUser(userName: string) : Promise<IRating[]>;
+    getSpecificOf(guideId: string, userId: string): Promise<IRating | undefined>;
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
@@ -27,6 +28,7 @@ export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag>;
     getTagsBeginningWith(letters: string): Promise<ITag[]>;
     getTopUsedTags(limit: number): Promise<ITag[]>;
+    update(tag: ITag): Promise<void>;
 }
 
 export interface IUserRepository {

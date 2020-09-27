@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import $Log from '../../utils/logger';
 import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
-import { Endpoint, Get, Validate, Post } from "../utils/express-decorators/decorators";
+import { Endpoint, Get, Validate, Post, Put, Description } from "../utils/express-decorators/decorators";
 import { Ok, Failed, JsonResponse, BadRequest, Created } from '../utils/express-decorators/models';
 
 @Endpoint('guides')
@@ -13,6 +13,7 @@ export class GuideEndpoint {
     }
 
     @Get('/')
+    @Description('Returns all available guides')
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
         try{
             const result = await this.guideController.getAll();

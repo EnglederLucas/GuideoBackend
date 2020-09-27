@@ -23,8 +23,8 @@ export class RatingController {
         return await this.unitOfWork.ratings.getRatingsOfUser(userName);
     }
 
-    async getSpecificOf(guideId: string, userId: string): Promise<IRating> {
-        throw 'nothing';
+    async getSpecificOf(guideId: string, userId: string): Promise<IRating | undefined> {
+        return await this.unitOfWork.ratings.getSpecificOf(guideId, userId);
     }
 
     async addRating(rating: IRating): Promise<void> {

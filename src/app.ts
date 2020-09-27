@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
@@ -9,42 +10,46 @@ import { GuideController, UserController, RatingController, TagController, Track
 import { UnitOfWork } from './persistence/firebase/unitofwork';
 
 import * as admin from 'firebase-admin';
-import { $log } from '@tsed/logger';
+import express from 'express';
+import { writeFile } from 'fs';
+import { promisify } from 'util';
 
 // import { IDataInitializer } from './core/contracts';
 // import { InMemoryDataInitializer } from './persistence/initializers';
-import express from 'express';
 
-$Log.logTitle();
-$Log.logger.info("start initializing server ...");
+const writeFileAsync = promisify(writeFile);
 
-const port: number = 3030;
-const enableCors: boolean = true;
-// const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
+async function main() {
+    $Log.logTitle();
+    $Log.logger.info("start initializing server ...");
 
-var serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
+    const port: number = 3030;
+    const enableCors: boolean = true;
+    // const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://vyzerdb.firebaseio.com"
-});
+    const serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
 
-var db = admin.firestore();
-const unitOfWork: UnitOfWork = new UnitOfWork(db);
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        databaseURL: "https://vyzerdb.firebaseio.com"
+    });
 
-// $Log.logger.info('> initialize data ...');
-// const result: number = dataInitializer.initDataSync();
-// $Log.logger.info(`> ${result} entries were initizialized`);
+    const db = admin.firestore();
+    const unitOfWork: UnitOfWork = new UnitOfWork(db);
 
-// unitOfWork.users.addRange(dataInitializer.getUsers());
-// unitOfWork.guides.addRange(dataInitializer.getGuides());
-// unitOfWork.tags.addRange(dataInitializer.getTags());
-// unitOfWork.ratings.addRange(dataInitializer.getRatings());
-// $Log.logger.info('> added data to database');
+    // $Log.logger.info('> initialize data ...');
+    // const result: number = dataInitializer.initDataSync();
+    // $Log.logger.info(`> ${result} entries were initizialized`);
 
-const server: GuideoServer = new GuideoServer({
-    port: port,
-    routables: [ 
+    // unitOfWork.users.addRange(dataInitializer.getUsers());
+    // unitOfWork.guides.addRange(dataInitializer.getGuides());
+    // unitOfWork.tags.addRange(dataInitializer.getTags());
+    // unitOfWork.ratings.addRange(dataInitializer.getRatings());
+    // $Log.logger.info('> added data to database');
+
+    const server: GuideoServer = new GuideoServer({
+        port: port,
+        endpoints: [ 
         new GuideEndpoint(new GuideController(unitOfWork)),
         new UserEndpoint(new UserController(unitOfWork)),
         new TagEndpoint(new TagController(unitOfWork)),
@@ -52,24 +57,31 @@ const server: GuideoServer = new GuideoServer({
         new TrackDBEndpoint(new TrackController(unitOfWork)),
         new ImageEndpoint(`${__dirname}\\..\\public\\img`),
         new TrackEndpoint(`${__dirname}\\..\\public\\tracks`)
-    ],
-    enableCors: enableCors,
-    staticPaths:  [
-        { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
-        { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
-    ],
-    middlewares: [
-        // { route: '/api', handler: verifyUserToken },
-        // { route: '/img', handler: verifyUserToken },
-        { route: '/', handler: $Log.getRoutingLogger() },
-        { route: '/', handler: express.json() }
-    ],
-    keyPath: `${__dirname}\\..\\public\\security\\key.pem`,
-    certPath: `${__dirname}\\..\\public\\security\\cert.pem`
-});
+        ],
+        enableCors: enableCors,
+        staticPaths:  [
+            { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
+            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] },
+            { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
+        ],
+        middlewares: [
+            // { route: '/api', handler: verifyUserToken },
+            // { route: '/img', handler: verifyUserToken },
+            { route: '/', handler: $Log.getRoutingLogger() },
+            { route: '/', handler: express.json() }
+        ],
+        keyPath: `${__dirname}\\..\\public\\security\\key.pem`,
+        certPath: `${__dirname}\\..\\public\\security\\cert.pem`
+    });
+    
+    if (enableCors) $Log.logger.info('cors enabled');
 
-if (enableCors) $Log.logger.info('cors enabled');
+    $Log.logger.info(`${__dirname}\\..\\public`);
 
-$Log.logger.info(`${__dirname}\\..\\public`);
+    await writeFileAsync(`${__dirname}\\..\\public\\docs\\v1.html`, server.createDocumentation(), 'utf-8');
 
-server.start();
+    server.start();
+}
+
+main()
+    .catch((err) => $Log.logger.error('something happened!\n' + err));
