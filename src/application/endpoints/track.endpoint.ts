@@ -3,6 +3,7 @@ import multer from 'multer';
 import { rename, exists, mkdir, unlink } from 'fs';
 import { promisify } from 'util';
 import $Log from '../../utils/logger';
+import { $log } from '@tsed/logger';
 
 export class TrackEndpoint extends BaseEndpoint{
 
@@ -18,7 +19,7 @@ export class TrackEndpoint extends BaseEndpoint{
     }
 
     protected initRoutes(): void {
-        const upload = multer({ dest: this.tempPath })
+        const upload = multer({ dest: this.tempPath });
 
         this.router.post('/upload/:guideId', upload.single('track'), async (req, res) => {
             try {
@@ -34,14 +35,16 @@ export class TrackEndpoint extends BaseEndpoint{
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}\\${req.file.originalname}`;
 
-                console.log("Targetpath: "+targetPath);
-
                 // rename/move the stored track to the guides folder
                 await this.renameAsync(tempPath, targetPath);
 
+                //console.log("guidePath: "+guidePath);
+                //console.log("trackMasterPath: "+this.trackMasterPath);
+                //console.log("req.file.originalname: "+req.file.originalname);
+                console.log("targetPath: "+targetPath);
                 // generate the link for the guide object
                 const trackRoute = '/' + targetPath
-                    .substring(targetPath.indexOf('mp3'))
+                    .substring(targetPath.indexOf('tracks'))
                     .replace('\\', '/');
 
                 console.log("Trackroute: "+trackRoute);

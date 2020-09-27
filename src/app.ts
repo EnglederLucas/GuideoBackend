@@ -58,7 +58,8 @@ const server: GuideoServer = new GuideoServer({
     ],
     enableCors: enableCors,
     staticPaths:  [
-        { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] }
+        { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
+        { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
     ],
     middlewares: [
         // { route: '/api', handler: verifyUserToken },

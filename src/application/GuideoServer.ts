@@ -60,7 +60,7 @@ export class GuideoServer {
     private initRoutes(routables: any[]): void {
         routables.forEach(r => {
             if (r instanceof BaseEndpoint) {
-                this.app.use(`/api/${ r.getBasePath() }`, r.getRouter())
+                this.app.use(`/api/${ r.getBasePath() }`, r.getRouter());
             } else {
                 createEndpoint(r, this.app);
             }
