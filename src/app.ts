@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
-import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
 import { GuideController, UserController, RatingController, TagController, TrackController } from "./logic/controllers";
@@ -50,17 +50,19 @@ async function main() {
     const server: GuideoServer = new GuideoServer({
         port: port,
         endpoints: [ 
-            new GuideEndpoint(new GuideController(unitOfWork)),
-            new UserEndpoint(new UserController(unitOfWork)),
-            new TagEndpoint(new TagController(unitOfWork)),
-            new RatingEndpoint(new RatingController(unitOfWork)),
-            new TrackEndpoint(new TrackController(unitOfWork)),
-            new ImageEndpoint(`${__dirname}\\..\\public\\img`)
+        new GuideEndpoint(new GuideController(unitOfWork)),
+        new UserEndpoint(new UserController(unitOfWork)),
+        new TagEndpoint(new TagController(unitOfWork)),
+        new RatingEndpoint(new RatingController(unitOfWork)),
+        new TrackDBEndpoint(new TrackController(unitOfWork)),
+        new ImageEndpoint(`${__dirname}\\..\\public\\img`),
+        new TrackEndpoint(`${__dirname}\\..\\public\\tracks`)
         ],
         enableCors: enableCors,
         staticPaths:  [
             { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
-            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] }
+            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] },
+            { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
         ],
         middlewares: [
             // { route: '/api', handler: verifyUserToken },

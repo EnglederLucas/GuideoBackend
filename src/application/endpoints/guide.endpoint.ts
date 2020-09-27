@@ -27,6 +27,7 @@ export class GuideEndpoint {
     @Validate(query('pos', 'a position has to be defined').isInt())
     @Validate(query('size', 'a size has to be defined').isInt())
     async getPaged(req: Request, res: Response) {
+        
         const pos = parseInt(req.query.pos);
         const size = parseInt(req.query.size);
 
