@@ -19,8 +19,9 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-validator": "^6.5.0",
-    "firebase-admin": "^8.9.2",
+    "firebase-admin": "^9.2.0",
     "firebase-functions": "^3.5.0",
+    "mp3-duration": "^1.1.0",
     "multer": "^1.4.2",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.19"

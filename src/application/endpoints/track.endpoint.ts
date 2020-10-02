@@ -21,15 +21,16 @@ export class TrackEndpoint extends BaseEndpoint{
     protected initRoutes(): void {
         const upload = multer({ dest: this.tempPath });
 
-        this.router.post('/upload/:guideId', upload.single('track'), async (req, res) => {
+        this.router.post('/upload/', upload.single('track'), async (req, res) => {
             try {
                 if (!req.file) {
                     res.status(400).send('no track sent!');
                     return;
                 }
-                console.log("Upload: "+req.params.guideId);
-                const guidePath = `${this.trackMasterPath}\\${req.params['guideId']}`;
+                const userPath = `${this.trackMasterPath}\\${req.query.username}`;
+                const guidePath = `${userPath}\\${req.query.guideId}`;
 
+                if (!await this.existsAsync(userPath)) await this.mkdirAsync(userPath);
                 if (!await this.existsAsync(guidePath)) await this.mkdirAsync(guidePath);
 
                 const tempPath = req.file.path;
@@ -38,9 +39,6 @@ export class TrackEndpoint extends BaseEndpoint{
                 // rename/move the stored track to the guides folder
                 await this.renameAsync(tempPath, targetPath);
 
-                //console.log("guidePath: "+guidePath);
-                //console.log("trackMasterPath: "+this.trackMasterPath);
-                //console.log("req.file.originalname: "+req.file.originalname);
                 console.log("targetPath: "+targetPath);
                 // generate the link for the guide object
                 const trackRoute = '/' + targetPath
@@ -49,7 +47,13 @@ export class TrackEndpoint extends BaseEndpoint{
 
                 console.log("Trackroute: "+trackRoute);
 
-                res.status(200).send(trackRoute);
+                const fileName = req.file.filename;
+                var mp3Duration = require('mp3-duration');
+
+                const trackLength = await mp3Duration(`public\\${trackRoute}`);
+                const resObject = {fileName, trackLength, trackRoute};
+
+                res.status(200).send(resObject);
             } catch(err) {
                 res.status(500).contentType('text/plain').send('Oops! An error occured, while storing the track\n error:' + err);
             }
