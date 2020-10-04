@@ -1,5 +1,5 @@
 import { firestore, auth } from "firebase-admin";
-import { UserDto } from "../../../core/data-transfer-objects";
+import { IUserDto } from "../../../core/data-transfer-objects";
 import { IUser } from "../../../core/models";
 import { IUserRepository } from "../../../core/contracts";
 
@@ -11,20 +11,20 @@ export class UserRepository implements IUserRepository {
         this.usersRef = db.collection('users');
     }
 
-    async getAll(): Promise<UserDto[]> {
-        let users: UserDto[] = [];
+    async getAll(): Promise<IUserDto[]> {
+        let users: IUserDto[] = [];
 
         let snapshot = await this.usersRef.get();
         snapshot.forEach(doc => {
-            users.push({id: doc.id, username: doc.data().username, name: doc.data().name, email: doc.data().email, description: doc.data().description});
+            // users.push({id: doc.id, username: doc.data().username, name: doc.data().name, email: doc.data().email, description: doc.data().description});
             users.push(this.convertDataToUser(doc.data(), doc.id));
         });
 
         return users;
     }
 
-    async getUserByName(name: string): Promise<UserDto> {
-        let user: UserDto;
+    async getUserByName(name: string): Promise<IUserDto> {
+        let user: IUserDto;
 
         let snapshot = await this.usersRef.where('name','==',name).get();
         // user = {id: snapshot.docs[0].id, username: snapshot.docs[0].data().username, name: snapshot.docs[0].data().name, email: snapshot.docs[0].data().email, description: snapshot.docs[0].data().description};
@@ -33,7 +33,7 @@ export class UserRepository implements IUserRepository {
         return user;
     }
 
-    async getById(id: string): Promise<UserDto> {
+    async getById(id: string): Promise<IUserDto> {
         const doc: firestore.DocumentSnapshot = await this.usersRef.doc(id).get();
         const data: firestore.DocumentData | undefined = doc.data();
 
@@ -43,7 +43,7 @@ export class UserRepository implements IUserRepository {
         return this.convertDataToUser(data, id);
     }
 
-    async add(item: UserDto): Promise<void> {
+    async add(item: IUserDto): Promise<void> {
         const setUser = await this.usersRef.doc(item.id).set({
             username: item.username,
             name: item.name !== undefined ? item.name : "No name.",
@@ -53,14 +53,14 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    async addRange(items: UserDto[]): Promise<void> {
+    async addRange(items: IUserDto[]): Promise<void> {
         items.forEach(item => {
             this.add(item);
         });
     }
 
-    private convertDataToUser(data: firestore.DocumentData, id: string): UserDto {
-        const user: UserDto = {
+    private convertDataToUser(data: firestore.DocumentData, id: string): IUserDto {
+        const user: IUserDto = {
             id: id,
             name: data.name as string,
             username: data.username as string, 

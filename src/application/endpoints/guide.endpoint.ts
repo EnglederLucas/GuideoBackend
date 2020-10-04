@@ -35,7 +35,7 @@ export class GuideEndpoint {
         pos = parseInt(pos);
         size = parseInt(size);
 
-        try{
+        try {
             const guides = await this.unitOfWork.guides.getGuidesPaged(pos, size);
             return Ok(this.convertToDto(guides));
         } catch(ex){
@@ -119,18 +119,19 @@ export class GuideEndpoint {
 
             guide.tags?.forEach(async tagName => {
                 const tag = await this.unitOfWork.tags.getTagByName(tagName);
-                tag.numberOfUses++;
-                await this.unitOfWork.tags.update(tag);
+                // TODO: add Null Check
+                // tag.numberOfUses++;
+                // await this.unitOfWork.tags.update(tag);
             });
 
             await this.unitOfWork.guides.add(guide);
-            return Created('nice one');
+            return Created({ text: 'nice one' });
         } catch (err) {
             return BadRequest(err.toString());
         }
     }
 
-    async update(guide: IGuide): Promise<void> {
+    /*async update(guide: IGuide): Promise<void> {
         const dbGuide = await this.unitOfWork.guides.getById(guide.id);
 
         if (!guide.name) dbGuide.name = guide.name;
@@ -165,7 +166,7 @@ export class GuideEndpoint {
                 await this.unitOfWork.tags.update(tag);
             });
         }
-    }
+    }*/
 
     private mapToGuide(obj: any): PostGuideDto {
         let { name, description, tags, user, imageLink, chronological } = obj;

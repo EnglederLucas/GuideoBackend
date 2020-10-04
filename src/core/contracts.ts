@@ -1,17 +1,17 @@
 import { IGuide, IRating, ITag, IUser, ITrack } from './models';
-import { UserDto } from './data-transfer-objects';
+import { IUserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
     add(item: TEntity): Promise<void>;
     addRange(items: TEntity[]): Promise<void>;
-    getById(id: TId): Promise<TEntity>;
+    getById(id: TId): Promise<TEntity | null>;
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
-    getRatingsOfGuide(guideName: string) : Promise<IRating[]>;
-    getAverageRatingOfGuide(guideName: string): Promise<number>;
-    getRatingsOfUser(userName: string) : Promise<IRating[]>;
+    getRatingsOfGuide(guideId: string) : Promise<IRating[]>;
+    getAverageRatingOfGuide(guideId: string): Promise<number>;
+    getRatingsOfUser(userId: string) : Promise<IRating[]>;
     getSpecificOf(guideId: string, userId: string): Promise<IRating | undefined>;
 }
 
@@ -25,18 +25,18 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
 }
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
-    getTagByName(name: string): Promise<ITag>;
+    getTagByName(name: string): Promise<ITag | null>;
     getTagsBeginningWith(letters: string): Promise<ITag[]>;
     getTopUsedTags(limit: number): Promise<ITag[]>;
     update(tag: ITag): Promise<void>;
 }
 
 export interface IUserRepository {
-    getById(id: string): Promise<UserDto>;
-    getUserByName(name: string): Promise<UserDto>;
-    getAll(): Promise<UserDto[]>;
-    add(item: UserDto): Promise<void>;
-    addRange(items: UserDto[]): Promise<void>;
+    getById(id: string): Promise<IUserDto | null>;
+    getUserByName(name: string): Promise<IUserDto>;
+    getAll(): Promise<IUserDto[]>;
+    add(item: IUserDto): Promise<void>;
+    addRange(items: IUserDto[]): Promise<void>;
 }
 
 export interface ITrackRepository {

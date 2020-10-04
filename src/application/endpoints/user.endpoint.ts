@@ -1,4 +1,4 @@
-import { UserDto } from '../../core/data-transfer-objects';
+import { IUserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
 import { query } from 'express-validator';
 import { Request, Response } from 'express';
@@ -48,7 +48,7 @@ export class UserEndpoint {
     @Post('/')
     async addUser(req: Request, res: Response) {
         try {
-            const user: UserDto = this.mapToUser(req.body);
+            const user: IUserDto = this.mapToUser(req.body);
             await this.unitOfWork.users.add(user)
             return Created("user inserted");
         } catch (err) {
@@ -56,7 +56,7 @@ export class UserEndpoint {
         }
     }
 
-    private mapToUser(obj: any): UserDto {
+    private mapToUser(obj: any): IUserDto {
         let { id, username, name, email, description } = obj;
 
         if(id === undefined) throw new Error("no id defined")
@@ -65,7 +65,7 @@ export class UserEndpoint {
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
         
-        return {id, username, name, email, description} as UserDto; 
+        return {id, username, name, email, description} as IUserDto; 
     }
 
 }

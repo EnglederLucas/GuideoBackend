@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { query } from 'express-validator';
 
 import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
-import { Ok, BadRequest, Created  } from "../../nexos-express/models";
+import { Ok, BadRequest, Created, NotFound } from '../../nexos-express/models';
 import { IUnitOfWork } from "../../core/contracts";
 
 import $Log from '../../utils/logger';
@@ -76,7 +76,11 @@ export class RatingEndpoint {
 
             // $Log.logger.info('rating repo: fetch guide');
             // if guide not exists, this will raise an exception
-            const guide: IGuide = await this.unitOfWork.guides.getById(rating.guideId);
+            const guide: IGuide | null = await this.unitOfWork.guides.getById(rating.guideId);
+
+            if (guide === null || guide === undefined){
+                return NotFound({ msg: `No guide found with id ${rating.guideId}` });
+            }
 
             await this.unitOfWork.ratings.add(rating);
             // $Log.logger.info('rating repo: inserting rating');
@@ -94,7 +98,7 @@ export class RatingEndpoint {
             await this.unitOfWork.guides.update(guide);
             $Log.logger.info('rating repo: add rating finished');
 
-            return Created("nice one");
+            return Created({ msg: "nice one" });
         } catch (err) {
             return BadRequest(err.toString());
         }

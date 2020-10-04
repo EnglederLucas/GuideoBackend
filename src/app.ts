@@ -7,17 +7,18 @@ import $Log from "./utils/logger";
 
 import { TrackController } from "./logic/controllers";
 
-import { UnitOfWork } from './persistence/firebase/unitofwork';
+// import { UnitOfWork } from './persistence/firebase/unitofwork';
+import { UnitOfWork } from './persistence/mongo/unitofwork';
 
 import * as admin from 'firebase-admin';
 import express from 'express';
-import { writeFile } from 'fs';
-import { promisify } from 'util';
 
-// import { IDataInitializer } from './core/contracts';
-// import { InMemoryDataInitializer } from './persistence/initializers';
+import { connect, connection, connection as db } from "mongoose";
 
-const writeFileAsync = promisify(writeFile);
+import { IDataInitializer, IUnitOfWork } from './core/contracts';
+import { InMemoryDataInitializer } from './persistence/initializers';
+import { DbDataInitializer } from './persistence/initializers/db';
+import { Files } from './utils/async-methods';
 
 async function main() {
     $Log.logTitle();
@@ -25,7 +26,6 @@ async function main() {
 
     const port: number = 3030;
     const enableCors: boolean = true;
-    // const dataInitializer: IDataInitializer = new InMemoryDataInitializer();
 
     const serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
 
@@ -34,18 +34,41 @@ async function main() {
         databaseURL: "https://vyzerdb.firebaseio.com"
     });
 
-    const db = admin.firestore();
-    const unitOfWork: UnitOfWork = new UnitOfWork(db);
+    // connect to mongo db
+    await connect('mongodb://192.168.99.100:27017/guideo', {useNewUrlParser: true, useUnifiedTopology: true});
 
-    // $Log.logger.info('> initialize data ...');
-    // const result: number = dataInitializer.initDataSync();
-    // $Log.logger.info(`> ${result} entries were initizialized`);
+    // const db = admin.firestore();
+    // const unitOfWork: UnitOfWork = new UnitOfWork(db);
+    const unitOfWork: IUnitOfWork = new UnitOfWork()
+    const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
+
+    $Log.logger.info('> initialize data ...');
+    const result: number = await dataInitializer.initData();
+    $Log.logger.info(`> ${result} entries were initizialized`);
 
     // unitOfWork.users.addRange(dataInitializer.getUsers());
     // unitOfWork.guides.addRange(dataInitializer.getGuides());
     // unitOfWork.tags.addRange(dataInitializer.getTags());
     // unitOfWork.ratings.addRange(dataInitializer.getRatings());
-    // $Log.logger.info('> added data to database');
+
+    // dataInitializer.getRatings().forEach(async r => {
+    //     const guide = await unitOfWork.guides.getById(r.guideId);
+
+    //     if (guide === null || guide === undefined){
+    //         throw new Error(`No guide found with id ${r.guideId}`);
+    //     }
+
+    //     unitOfWork.ratings.add(r);
+    //     const newNumOfRatings = guide.numOfRatings + 1;
+    //     const oldRatingTotal = guide.rating * guide.numOfRatings;
+    //     const newAvgRating = Math.round((oldRatingTotal + r.rating) / newNumOfRatings); 
+
+    //     guide.rating = newAvgRating;
+    //     guide.numOfRatings = newNumOfRatings;
+    //     await unitOfWork.guides.update(guide);
+    // });
+
+    $Log.logger.info('> added data to database');
 
     const server: GuideoServer = new GuideoServer({
         port: port,
@@ -76,10 +99,17 @@ async function main() {
 
     $Log.logger.info(`${__dirname}\\..\\public`);
 
-    await writeFileAsync(`${__dirname}\\..\\public\\docs\\v1.html`, server.createDocumentation(), 'utf-8');
+    await Files.writeFileAsync(`${__dirname}\\..\\public\\docs\\v1.html`, server.createDocumentation(), 'utf-8');
 
     server.start();
 }
 
-main()
-    .catch((err) => $Log.logger.error('something happened!\n' + err));
+// main().catch((err) => $Log.logger.error('something happened!\n' + err));
+
+(async () => {
+    try {
+        await main();
+    } catch(err) {
+        $Log.logger.error('something happened!\n' + err);
+    }
+})();
