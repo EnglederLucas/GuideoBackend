@@ -3,7 +3,7 @@ import { UserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
-    add(item: TEntity): Promise<void>;
+    add(item: TEntity): Promise<string>;
     addRange(items: TEntity[]): Promise<void>;
     getById(id: TId): Promise<TEntity>;
 }

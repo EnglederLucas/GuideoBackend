@@ -91,7 +91,7 @@ export class GuideRepository implements IGuideRepository {
         return guides;
     }
 
-    async add(item: IGuide): Promise<void> {
+    async add(item: IGuide): Promise<string> {
         let setGuide = await this.guidesRef.add({
             name: item.name,
             description: item.description,
@@ -102,6 +102,7 @@ export class GuideRepository implements IGuideRepository {
             rating: 0,
             numOfRatings: 0
         });
+        return setGuide.id;
     }
 
     async addRange(items: IGuide[]): Promise<void> {

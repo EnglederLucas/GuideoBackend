@@ -5,6 +5,7 @@ import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
 import { Endpoint, Get, Validate, Post, Put, Description } from "../utils/express-decorators/decorators";
 import { Ok, Failed, JsonResponse, BadRequest, Created } from '../utils/express-decorators/models';
+import { IGuide } from '../../core/models';
 
 @Endpoint('guides')
 export class GuideEndpoint {
@@ -100,6 +101,34 @@ export class GuideEndpoint {
         },
         user: {
             isString: true
+        }
+    }))
+    async addGuide(req: Request, res: Response) {
+        try {
+            const guide: PostGuideDto = this.mapToPostGuide(req.body);
+            await this.guideController.addGuide(guide);
+            return Created('nice one');
+        } catch (err) {
+            return BadRequest(err.toString());
+        }
+    }
+
+    @Put('/')
+    @Validate(checkSchema({
+        guideId: {
+            isString: true
+        },
+        name: {
+            isString: true
+        },
+        description: {
+            isString: true
+        },
+        tags: {
+            isArray: true
+        },
+        user: {
+            isString: true
         },
         imageLink: {
             isString: true
@@ -108,17 +137,32 @@ export class GuideEndpoint {
             isBoolean: true
         }
     }))
-    async addGuide(req: Request, res: Response) {
+    async addGuideData(req: Request, res: Response) {
         try {
-            const guide: PostGuideDto = this.mapToGuide(req.body);
-            await this.guideController.addGuide(guide);
-            return Created('nice one');
+            const guide = this.mapToGuide(req.body);
+            await this.guideController.update(guide);
+            return new JsonResponse(202, null);
         } catch (err) {
             return BadRequest(err.toString());
         }
     }
 
-    private mapToGuide(obj: any): PostGuideDto {
+    private mapToGuide(obj: any): IGuide {
+        let { id, name, description, tags, user, imageLink, chronological } = obj;
+
+        if (id === undefined) throw new Error("no id defined");
+        if (name === undefined) throw new Error("no name defined");
+        if (description === undefined) description = '';
+        if (tags === undefined || !(tags instanceof Array)) tags = [];
+        if (user === undefined) throw new Error("User id is undefined");
+        if (imageLink === undefined) imageLink = '/deer.png';
+        if (chronological === undefined) chronological = false;
+        
+        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0};
+    }
+
+
+    private mapToPostGuide(obj: any): PostGuideDto {
         let { name, description, tags, user, imageLink, chronological } = obj;
 
         if (name === undefined) throw new Error("no name defined");

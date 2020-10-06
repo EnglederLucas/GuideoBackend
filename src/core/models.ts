@@ -34,6 +34,7 @@ export interface ITag {
 
 export interface ITrack {
     id: string;
+    trackName: string;
     description: string;
     trackLink: string;
 }
