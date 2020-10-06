@@ -1,63 +1,72 @@
-import { BaseEndpoint } from './base.endpoint';
-import multer from 'multer';
-import { rename, exists, mkdir, unlink } from 'fs';
-import { promisify } from 'util';
-import $Log from '../../utils/logger';
-import { $log } from '@tsed/logger';
+import { TrackController } from '../../logic/controllers/track.controller';
+import { Request, Response } from 'express';
+import { ITrack } from '../../core/models';
+import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
+import { JsonResponse, BadRequest, Ok, Created } from '../utils/express-decorators/models';
 
-export class TrackEndpoint extends BaseEndpoint{
+import { query, checkSchema } from 'express-validator';
 
-    private readonly renameAsync = promisify(rename);
-    private readonly existsAsync = promisify(exists);
-    private readonly mkdirAsync = promisify(mkdir);
-    private tempPath: string; 
+@Endpoint('tracks')
+export class TrackDBEndpoint {
 
-    constructor(private trackMasterPath: string, tempPath: string | undefined = undefined) {
-        super('tracks');
-
-        this.tempPath = tempPath === undefined ? trackMasterPath : tempPath;
+    constructor(private trackController: TrackController) {
     }
 
-    protected initRoutes(): void {
-        const upload = multer({ dest: this.tempPath });
+    @Get('/byGuide')
+    @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
+    async getByGuide(req: Request, res: Response): Promise<JsonResponse<any>> {
+        const guideId = req.query.guideId;
 
-        this.router.post('/upload/', upload.single('track'), async (req, res) => {
-            try {
-                if (!req.file) {
-                    res.status(400).send('no track sent!');
-                    return;
-                }
-                const userPath = `${this.trackMasterPath}\\${req.query.username}`;
-                const guidePath = `${userPath}\\${req.query.guideId}`;
+        //$Log.logger.info(`byGuide call on TrackEndpoint`);
+        console.log('byGuide-Call on TrackEndpoint');
+        try{
+            return Ok(await this.trackController.getByGuide(guideId));
+        } catch(err) {
+            return BadRequest(err);
+        }
+    };
 
-                if (!await this.existsAsync(userPath)) await this.mkdirAsync(userPath);
-                if (!await this.existsAsync(guidePath)) await this.mkdirAsync(guidePath);
+    @Get('/byId')
+    @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
+    @Validate(query('trackId', 'the id of the track has to be defined with "trackId"').isString())
+    async getById(req: Request, res: Response): Promise<JsonResponse<any>> {
+        const guideId = req.query.guideId;
+        const trackId = req.query.trackId;
 
-                const tempPath = req.file.path;
-                const targetPath = `${guidePath}\\${req.file.originalname}`;
+        try{
+            return Ok(await this.trackController.getById(guideId, trackId));
+        } catch(err) {
+            return BadRequest(err);
+        }
+    }
 
-                // rename/move the stored track to the guides folder
-                await this.renameAsync(tempPath, targetPath);
+    @Post('/')
+    @Validate(checkSchema({
+        id: {
+            isString: true
+        },
+        description: {
+            isString: true
+        }
+    }))
+    async addTrack(req: Request, res: Response){
+        try {
+            const guideId = req.query.guideId;
+            const track: ITrack = this.mapToTrack(req.body);
+            await this.trackController.addTrack(guideId, track);
+            return Created('Track inserted');
+        } catch (err) {
+            BadRequest(err);
+        }
+    }
 
-                console.log("targetPath: "+targetPath);
-                // generate the link for the guide object
-                const trackRoute = '/' + targetPath
-                    .substring(targetPath.indexOf('tracks'))
-                    .replace('\\', '/');
+    private mapToTrack(obj: any): ITrack{
+        let { id, description } = obj;
 
-                console.log("Trackroute: "+trackRoute);
-
-                const fileName = req.file.filename;
-                var mp3Duration = require('mp3-duration');
-
-                const trackLength = await mp3Duration(`public\\${trackRoute}`);
-                const resObject = {fileName, trackLength, trackRoute};
-
-                res.status(200).send(resObject);
-            } catch(err) {
-                res.status(500).contentType('text/plain').send('Oops! An error occured, while storing the track\n error:' + err);
-            }
-        });
+        if(id === undefined) throw new Error("No id defined");
+        if (description === undefined) description = '';
+        
+        return {id, description} as ITrack; 
     }
 
 }
