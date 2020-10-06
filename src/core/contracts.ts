@@ -52,6 +52,8 @@ export interface IUnitOfWork {
     readonly users: IUserRepository;
     readonly ratings: IRatingRepository;
     readonly tracks: ITrackRepository;
+
+    clearDatabase(): Promise<void>;
 }
 
 export interface IDataInitializer {

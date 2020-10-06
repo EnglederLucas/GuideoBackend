@@ -16,6 +16,6 @@ export class GuideDto {
         this.tags = tags === undefined ? [] : tags;
         this.user = user;
         this.imageLink = imageLink === undefined ? '' : imageLink;
-        this.rating = rating;
+        this.rating = rating
     }
 }

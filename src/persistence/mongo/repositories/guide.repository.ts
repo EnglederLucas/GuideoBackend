@@ -44,7 +44,8 @@ export class GuideRepository implements IGuideRepository {
     }
 
     async update(guide: IGuide): Promise<void> {
-        /*const x = */await DbGuide.replaceOne({ _id: guide.id }, guide).exec()
+       // /*const x = */await DbGuide.replaceOne({ _id: guide.id }, guide).exec()
+        await DbGuide.updateOne({ _id: guide.id }, guide).exec();
     }
 
     async add(item: IGuide): Promise<void> {
