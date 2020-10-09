@@ -1,6 +1,6 @@
 import { IUserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
-import { query } from 'express-validator';
+import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
 import { Endpoint, Get, Validate, Post, Query, Params } from "../../nexos-express/decorators";
@@ -46,6 +46,13 @@ export class UserEndpoint {
     }
 
     @Post('/')
+    @Validate(checkSchema({
+        id: { isString: true },
+        username: { isString: true },
+        name: { isString: true, optional: true },
+        email: { isString: true, optional: true },
+        description: { isString: true, optional: true }
+    }))
     async addUser(req: Request, res: Response) {
         try {
             const user: IUserDto = this.mapToUser(req.body);

@@ -1,6 +1,6 @@
 import { IGuide, IRating } from "../../core/models";
 import { Request, Response } from 'express';
-import { query } from 'express-validator';
+import { query, checkSchema } from 'express-validator';
 
 import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
 import { Ok, BadRequest, Created, NotFound } from '../../nexos-express/models';
@@ -70,6 +70,17 @@ export class RatingEndpoint {
     }
 
     @Post('/')
+    @Validate(checkSchema({
+        userId: {
+            isString: true
+        },
+        guideId: {
+            isString: true
+        },
+        rating: {
+            isNumeric: true
+        }
+    }))
     async addRating(req: Request, res: Response) {
         try {
             const rating: IRating = this.mapToRating(req.body);

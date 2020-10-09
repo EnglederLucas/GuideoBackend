@@ -1,4 +1,4 @@
-import { query } from 'express-validator';
+import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
 import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
@@ -52,6 +52,9 @@ export class TagEndpoint {
     }
 
     @Post('/')
+    @Validate(checkSchema({
+        name: { isString: true }
+    }))
     async add(req: Request, res: Response) {
         const tagName = req.body.tagName;
 
