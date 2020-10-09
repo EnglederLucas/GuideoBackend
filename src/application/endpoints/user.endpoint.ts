@@ -1,20 +1,21 @@
-import { UserController } from '../../logic/controllers';
-import { UserDto } from '../../core/data-transfer-objects';
+import { IUserDto } from '../../core/data-transfer-objects';
 import $Log from '../../utils/logger';
-import { query } from 'express-validator';
+import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
-import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
-import { BadRequest, Ok, Created } from '../utils/express-decorators/models';
+
+import { Endpoint, Get, Validate, Post, Query, Params } from "../../nexos-express/decorators";
+import { Ok, BadRequest, Created  } from "../../nexos-express/models";
+import { IUnitOfWork } from '../../core/contracts';
 
 @Endpoint('users')
 export class UserEndpoint {
-    constructor(private userController: UserController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/')
     async getAll(req: Request, res: Response) {
         try {
-            return Ok(await this.userController.getAll());
+            return Ok(await this.unitOfWork.users.getAll());
         }
         catch(ex) {
             return BadRequest(ex);
@@ -23,11 +24,9 @@ export class UserEndpoint {
 
     @Get('/byName')
     @Validate(query('username', 'we need a username').isString())
-    async getByName(req: Request, res: Response) {
-        const userName = req.query.username;
-
+    async getByName(@Query('username') userName: any, req: Request, res: Response) {
         try {
-            return Ok(await this.userController.getUserByName(userName));
+            return Ok(await this.unitOfWork.users.getUserByName(name));
         }
         catch(ex) {
             return BadRequest(ex);
@@ -35,11 +34,11 @@ export class UserEndpoint {
     }
 
     @Get('/:id')
-    async getById(req: Request, res: Response) {
-        const id = req.params['id'];
+    async getById(@Params('id') id: any, req: Request, res: Response) {
+        // const id = req.params['id'];
 
         try {
-            return Ok(await this.userController.getById(id));
+            return Ok(await this.unitOfWork.users.getById(id));
         }
         catch(ex) {
             return BadRequest(ex);
@@ -47,17 +46,24 @@ export class UserEndpoint {
     }
 
     @Post('/')
+    @Validate(checkSchema({
+        id: { isString: true },
+        username: { isString: true },
+        name: { isString: true, optional: true },
+        email: { isString: true, optional: true },
+        description: { isString: true, optional: true }
+    }))
     async addUser(req: Request, res: Response) {
         try {
-            const user: UserDto = this.mapToUser(req.body);
-            await this.userController.add(user);
+            const user: IUserDto = this.mapToUser(req.body);
+            await this.unitOfWork.users.add(user)
             return Created("user inserted");
         } catch (err) {
             return BadRequest(err.toString());
         }
     }
 
-    private mapToUser(obj: any): UserDto {
+    private mapToUser(obj: any): IUserDto {
         let { id, username, name, email, description } = obj;
 
         if(id === undefined) throw new Error("no id defined")
@@ -66,7 +72,7 @@ export class UserEndpoint {
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
         
-        return {id, username, name, email, description} as UserDto; 
+        return {id, username, name, email, description} as IUserDto; 
     }
 
 }

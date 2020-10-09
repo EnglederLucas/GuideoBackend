@@ -17,6 +17,9 @@ export class UnitOfWork implements IUnitOfWork {
         this.ratings = new RatingRepository(db);
         this.tracks = new TrackRepository(db);
     }
+    clearDatabase(): Promise<void> {
+        throw new Error('Method not implemented.');
+    }
 
 
 }
