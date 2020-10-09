@@ -33,6 +33,7 @@ export class ImageEndpoint extends BaseEndpoint {
                 await Files.renameAsync(tempPath, targetPath);
                 // await this.unlinkAsync(tempPath);
 
+                console.log(targetPath);
                 // generate the link for the guide object
                 const imageRoute = '/' + targetPath
                     .substring(targetPath.indexOf('img'))

@@ -2,7 +2,7 @@ import 'reflect-metadata';
 
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
-import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
+import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
 import { TrackController } from "./logic/controllers";
@@ -82,12 +82,14 @@ async function main() {
             new TagEndpoint(unitOfWork),
             new RatingEndpoint(unitOfWork),
             new TrackEndpoint(new TrackController(unitOfWork)),
-            new ImageEndpoint(`${__dirname}\\..\\public\\img`)
+            new ImageEndpoint(`${__dirname}\\..\\public\\img`),
+            new TrackEndpoint(`${__dirname}\\..\\public\\tracks`)
         ],
         enableCors: enableCors,
         staticPaths:  [
             { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
-            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] }
+            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] },
+            { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
         ],
         middlewares: [
             // { route: '/api', handler: verifyUserToken },
