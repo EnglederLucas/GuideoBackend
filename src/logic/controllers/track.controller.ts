@@ -11,11 +11,11 @@ export class TrackController {
     }
 
     async getById(guideId: string, trackId: string): Promise<ITrack> {
-        return await this.unitOfWork.tracks.getById(guideId, trackId);
+        return await this.unitOfWork.tracks.getById(trackId);
     }
 
-    async addTrack(guideId: string, item: ITrack): Promise<void> {
-        await this.unitOfWork.tracks.add(guideId, item);
+    async addTrack(item: ITrack): Promise<void> {
+        await this.unitOfWork.tracks.add(item);
     }
     
 }

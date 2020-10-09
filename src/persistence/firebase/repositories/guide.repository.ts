@@ -127,7 +127,6 @@ export class GuideRepository implements IGuideRepository {
         });
 
         const results: firestore.WriteResult[] = await batch.commit();
-        $Log.logger.debug(`result length: ${results.length}`);
     }
 
     private convertDataToGuide(data: firestore.DocumentData, id: string): IGuide {

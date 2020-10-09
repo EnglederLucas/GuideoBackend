@@ -39,11 +39,8 @@ export interface IUserRepository {
     addRange(items: UserDto[]): Promise<void>;
 }
 
-export interface ITrackRepository {
-    add(guideId: string, item: ITrack): Promise<void>;
-    addRange(guideId: string, items: ITrack[]): Promise<void>;
+export interface ITrackRepository extends IGenericRepository<ITrack, string> {
     getByGuide(guideId: string): Promise<ITrack[]>;
-    getById(guideId: string, trackId: string): Promise<ITrack>;
 }
 
 export interface IUnitOfWork {

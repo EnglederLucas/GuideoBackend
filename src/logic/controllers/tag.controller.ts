@@ -22,7 +22,7 @@ export class TagController {
         return await this.unitOfWork.tags.getTopUsedTags(limit);
     }
 
-    async add(item: ITag): Promise<void> {
+    async add(item: ITag): Promise<string> {
         return await this.unitOfWork.tags.add(item);
     }
 }

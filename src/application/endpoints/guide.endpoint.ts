@@ -106,8 +106,8 @@ export class GuideEndpoint {
     async addGuide(req: Request, res: Response) {
         try {
             const guide: PostGuideDto = this.mapToPostGuide(req.body);
-            await this.guideController.addGuide(guide);
-            return Created('nice one');
+            const guideId = await this.guideController.addGuide(guide);
+            return Created(guideId);
         } catch (err) {
             return BadRequest(err.toString());
         }
@@ -115,7 +115,7 @@ export class GuideEndpoint {
 
     @Put('/')
     @Validate(checkSchema({
-        guideId: {
+        id: {
             isString: true
         },
         name: {

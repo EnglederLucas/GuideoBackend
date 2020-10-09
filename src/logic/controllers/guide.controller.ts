@@ -39,7 +39,7 @@ export class GuideController {
         return this.convertToDto(guides);
     }
 
-    async addGuide(guide: PostGuideDto): Promise<void> {
+    async addGuide(guide: PostGuideDto): Promise<string> {
         const newGuide = guide.asGuide();
 
         newGuide.tags?.forEach(async tagName => {
@@ -48,16 +48,14 @@ export class GuideController {
             await this.unitOfWork.tags.update(tag);
         });
 
-        await this.unitOfWork.guides.add(guide.asGuide());
+        return await this.unitOfWork.guides.add(guide.asGuide());
     }
 
     async update(guide: IGuide): Promise<void> {
-        const dbGuide = await this.unitOfWork.guides.getById(guide.id);
-
-        if (!guide.name) dbGuide.name = guide.name;
-        if (!guide.description) dbGuide.description = guide.description;
-        if (!guide.chronological) dbGuide.chronological = guide.chronological;
-        if (!guide.imageLink) dbGuide.imageLink = guide.imageLink;
+        
+        await this.unitOfWork.guides.update(guide);
+        /*const dbGuide = await this.unitOfWork.guides.getById(guide.id);
+        
         if (guide.tags) {
             const oldTags = dbGuide.tags!!;
             const newTags = guide.tags!!;
@@ -85,7 +83,7 @@ export class GuideController {
                 tag.numberOfUses++;
                 await this.unitOfWork.tags.update(tag);
             });
-        }
+        }*/
     }
 
     private convertToDto(guides: IGuide[]) {

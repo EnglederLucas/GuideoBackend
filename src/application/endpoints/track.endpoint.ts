@@ -42,31 +42,38 @@ export class TrackDBEndpoint {
 
     @Post('/')
     @Validate(checkSchema({
-        id: {
+        guideId: {
+            isString: true
+        },
+        trackName: {
             isString: true
         },
         description: {
             isString: true
+        },
+        trackLink: {
+            isString:true
         }
     }))
     async addTrack(req: Request, res: Response){
         try {
-            const guideId = req.query.guideId;
             const track: ITrack = this.mapToTrack(req.body);
-            await this.trackController.addTrack(guideId, track);
+            await this.trackController.addTrack(track);
             return Created('Track inserted');
         } catch (err) {
-            BadRequest(err);
+            return BadRequest(err);
         }
     }
 
     private mapToTrack(obj: any): ITrack{
-        let { id, description } = obj;
+        let {guideId, trackName, description, trackLink} = obj;
 
-        if(id === undefined) throw new Error("No id defined");
-        if (description === undefined) description = '';
+        if(guideId === undefined) throw new Error("No guideid defined");
+        if(trackName === undefined) throw new Error("No trackName defined");
+        if(trackLink === undefined) throw new Error("No trackLink defined");
+        if(description === undefined) description = '';
         
-        return {id, description} as ITrack; 
+        return {guideId, trackName, description, trackLink} as ITrack; 
     }
 
 }
