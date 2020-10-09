@@ -5,8 +5,6 @@ import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
-import { TrackController } from "./logic/controllers";
-
 // import { UnitOfWork } from './persistence/firebase/unitofwork';
 import { UnitOfWork } from './persistence/mongo/unitofwork';
 
@@ -81,9 +79,9 @@ async function main() {
             new UserEndpoint(unitOfWork),
             new TagEndpoint(unitOfWork),
             new RatingEndpoint(unitOfWork),
-            new TrackEndpoint(new TrackController(unitOfWork)),
             new ImageEndpoint(`${__dirname}\\..\\public\\img`),
-            new TrackEndpoint(`${__dirname}\\..\\public\\tracks`)
+            new TrackEndpoint(`${__dirname}\\..\\public\\tracks`),
+            new TrackDBEndpoint(unitOfWork)
         ],
         enableCors: enableCors,
         staticPaths:  [

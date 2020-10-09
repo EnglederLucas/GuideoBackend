@@ -1,15 +1,15 @@
-import { TrackController } from '../../logic/controllers/track.controller';
 import { Request, Response } from 'express';
 import { ITrack } from '../../core/models';
-import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
-import { JsonResponse, BadRequest, Ok, Created } from '../utils/express-decorators/models';
+import { Endpoint, Get, Validate, Post } from '../../nexos-express/decorators';
+import { JsonResponse, BadRequest, Ok, Created } from '../../nexos-express/models';
 
 import { query, checkSchema } from 'express-validator';
+import { IUnitOfWork } from '../../core/contracts';
 
 @Endpoint('tracksdb')
 export class TrackDBEndpoint {
 
-    constructor(private trackController: TrackController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/byGuide')
@@ -20,7 +20,7 @@ export class TrackDBEndpoint {
         //$Log.logger.info(`byGuide call on TrackEndpoint`);
         console.log('byGuide-Call on TrackEndpoint');
         try{
-            return Ok(await this.trackController.getByGuide(guideId));
+            return Ok(await this.unitOfWork.tracks.getByGuide(guideId));
         } catch(err) {
             return BadRequest(err);
         }
@@ -34,7 +34,7 @@ export class TrackDBEndpoint {
         const trackId = req.query.trackId;
 
         try{
-            return Ok(await this.trackController.getById(guideId, trackId));
+            return Ok(await this.unitOfWork.tracks.getById(guideId, trackId));
         } catch(err) {
             return BadRequest(err);
         }
@@ -53,7 +53,7 @@ export class TrackDBEndpoint {
         try {
             const guideId = req.query.guideId;
             const track: ITrack = this.mapToTrack(req.body);
-            await this.trackController.addTrack(guideId, track);
+            await this.unitOfWork.tracks.add(guideId, track);
             return Created('Track inserted');
         } catch (err) {
             BadRequest(err);
