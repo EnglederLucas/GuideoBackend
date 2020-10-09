@@ -1,51 +1,56 @@
-import { GuideController } from "../../logic/controllers";
 import { Request, Response } from 'express';
-import $Log from '../../utils/logger';
-import { PostGuideDto } from "../../core/data-transfer-objects";
 import { query, checkSchema } from "express-validator";
-import { Endpoint, Get, Validate, Post, Put, Description } from "../utils/express-decorators/decorators";
-import { Ok, Failed, JsonResponse, BadRequest, Created } from '../utils/express-decorators/models';
+import $Log from '../../utils/logger';
+
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query } from "../../nexos-express/decorators";
+import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";
+
+import { IUnitOfWork } from '../../core/contracts';
 import { IGuide } from '../../core/models';
+import { PostGuideDto } from "../../core/data-transfer-objects";
+
+import { GuideDto } from "../data-transfer-objects";
 
 @Endpoint('guides')
 export class GuideEndpoint {
     
-    constructor(private guideController: GuideController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/')
-    @Description('Returns all available guides')
+    @RouteDescription('Returns all available guides')
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
         try{
-            const result = await this.guideController.getAll();
-            return Ok(result);
+            const guides: IGuide[] = await this.unitOfWork.guides.getAll();
+            return Ok(this.convertToDto(guides));
         } catch(err){
-            return Failed(err.toString());
+            return InternalServerError(err.toString());
         }
     }
 
     @Get('/paged')
     @Validate(query('pos', 'a position has to be defined').isInt())
     @Validate(query('size', 'a size has to be defined').isInt())
-    async getPaged(req: Request, res: Response) {
-        
-        const pos = parseInt(req.query.pos);
-        const size = parseInt(req.query.size);
+    async getPaged( @Query('pos') pos: any, @Query('size') size: any, req: Request, res: Response) {
+        pos = parseInt(pos);
+        size = parseInt(size);
 
-        try{
-            return Ok(await this.guideController.getGuidesPaged(pos, size));
+        try {
+            const guides = await this.unitOfWork.guides.getGuidesPaged(pos, size);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
-            return Failed(ex);
+            return InternalServerError(ex);
         }
     }
 
     @Get('/top')
     @Validate(query('limit', 'a limit has to be defined').isInt())
-    async getTop(req: Request, res: Response) {
-        const limit = parseInt(req.query.limit);
+    async getTop(@Query('limit') limit: any, req: Request, res: Response) {
+        limit = parseInt(limit);
 
         try {
-            return Ok(await this.guideController.getTopGuides(limit));
+            const guides = await this.unitOfWork.guides.getTopGuides(limit);
+            return Ok(this.convertToDto(guides));
         } catch(err) {
             return BadRequest(err);
         }
@@ -53,11 +58,10 @@ export class GuideEndpoint {
 
     @Get('/byName')
     @Validate(query('guidename', 'the name of the guide has to be defined with "guidename"').isString())
-    async getByName(req: Request, res: Response) {
-        const guideName = req.query.guidename;
-
+    async getByName(@Query('guidename') guideName: any, req: Request, res: Response) {
         try {
-            return Ok(await this.guideController.getGuidesByName(guideName));
+            const guides = await this.unitOfWork.guides.getGuidesByName(guideName);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
             return BadRequest(ex);
         }
@@ -65,11 +69,10 @@ export class GuideEndpoint {
 
     @Get('/ofUser')
     @Validate(query('username', 'the username has to be defined with "username"').isString())
-    async getOfUser(req: Request, res: Response) {
-        const userName = req.query.username;
-
+    async getOfUser(@Query('username') userName: any, req: Request, res: Response) {
         try{
-            return Ok(await this.guideController.getGuidesOfUser(userName));
+            const guides = await this.unitOfWork.guides.getGuidesOfUser(userName);
+            return Ok(this.convertToDto(guides));
         } catch(ex){
             return BadRequest(ex);
         }
@@ -77,12 +80,12 @@ export class GuideEndpoint {
 
     @Get('/withTags')
     @Validate(query('tags', 'tags has to be defined as an array').isArray())
-    async getWithTags(req: Request, res: Response) {
+    async getWithTags(@Query('tags') tags: any, req: Request, res: Response) {
         // TODO: in a query? Really?
-        const tags = req.query.tags;
 
         try{
-            res.send(await this.guideController.getGuidesWithTags(tags));
+            const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
+            res.send(this.convertToDto(guides));
         } catch(ex){
             res.send(ex);
         }
@@ -106,7 +109,7 @@ export class GuideEndpoint {
     async addGuide(req: Request, res: Response) {
         try {
             const guide: PostGuideDto = this.mapToPostGuide(req.body);
-            const guideId = await this.guideController.addGuide(guide);
+            const guideId = await this.unitOfWork.guides.add(guide.asGuide());
             return Created(guideId);
         } catch (err) {
             return BadRequest(err.toString());
@@ -140,7 +143,15 @@ export class GuideEndpoint {
     async addGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
-            await this.guideController.update(guide);
+            await this.unitOfWork.guides.update(guide);
+
+            guide.tags?.forEach(async tagName => {
+                const tag = await this.unitOfWork.tags.getTagByName(tagName);
+                // TODO: add Null Check
+                // tag.numberOfUses++;
+                // await this.unitOfWork.tags.update(tag);
+            });
+
             return new JsonResponse(202, null);
         } catch (err) {
             return BadRequest(err.toString());
@@ -161,7 +172,6 @@ export class GuideEndpoint {
         return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0};
     }
 
-
     private mapToPostGuide(obj: any): PostGuideDto {
         let { name, description, tags, user, imageLink, chronological } = obj;
 
@@ -173,5 +183,16 @@ export class GuideEndpoint {
         if (chronological === undefined) chronological = false;
         
         return new PostGuideDto(name, description, tags, user as string, imageLink, chronological);
+    }
+
+    private convertToDto(guides: IGuide[]) {
+        const result: GuideDto[] = [];
+
+        for (const g of guides) {
+            const dto: GuideDto = new GuideDto(g);
+            result.push(dto);
+        }
+
+        return result;
     }
 }

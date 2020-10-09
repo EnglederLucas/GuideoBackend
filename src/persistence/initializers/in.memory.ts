@@ -1,5 +1,5 @@
-import { IUser, IGuide, ITag, IRating } from '../core/models';
-import { IDataInitializer } from '../core/contracts';
+import { IUser, IGuide, ITag, IRating } from '../../core/models';
+import { IDataInitializer } from '../../core/contracts';
 
 export class InMemoryDataInitializer implements IDataInitializer {
     private users: IUser[] = [];
@@ -9,9 +9,9 @@ export class InMemoryDataInitializer implements IDataInitializer {
     
     initDataSync(): number {
         this.users.push(
-            { id: 'thelegend27', username: 'thelegend27', name: 'David Wirthinger', password: '1234567' , email: 'tl27@gmail.com' },
-            { id: 'thelegend27', username: 'maxmuster', name: 'Maximillian Kaindler', password: '5678901', email: 'mm@gmx.com' },
-            { id: 'thelegend27', username: 'luxdachef', name: 'Luckas Weitleder', password: 'mochmaguides', email: 'nono@bobo.com' }
+            { id: '1', username: 'thelegend27', name: 'David Wirthinger', password: '1234567' , email: 'tl27@gmail.com' },
+            { id: '2', username: 'maxmuster', name: 'Maximillian Kaindler', password: '5678901', email: 'mm@gmx.com' },
+            { id: '3', username: 'luxdachef', name: 'Luckas Weitleder', password: 'mochmaguides', email: 'nono@bobo.com' }
         );
 
         this.tags.push(
@@ -23,7 +23,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
 
         this.guides.push(
             { 
-                id: '',
+                id: '1',
                 name: 'History of Linz',
                 user: 'thelegend27',
                 imageLink: '/img/skyline.jpg',
@@ -34,7 +34,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 numOfRatings: 0
             },
             { 
-                id: '',
+                id: '2',
                 name: 'A Guide with name 2',
                 user: 'maxmuster',
                 imageLink: '/img/Louvre_Museum.jpg',
@@ -45,7 +45,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 numOfRatings: 0
             },
             { 
-                id: '',
+                id: '3',
                 name: 'Callcenter access 3000', user: 'luxdachef',
                 imageLink: '/img/AbbeyRoad.jpg', tags: [this.tags[2].name],
                 description: 'Sharing is caring. One of the basics of the master callcenter concern access 3000',
@@ -54,7 +54,7 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 numOfRatings: 0
             },
             { 
-                id: '',
+                id: '4',
                 name: 'A man must do, what a man has to do', user: 'thelegend27',
                 imageLink: '/img/deer.png', tags: [this.tags[1].name, this.tags[3].name],
                 description: 'Behind the secrets of duty.',
@@ -63,24 +63,26 @@ export class InMemoryDataInitializer implements IDataInitializer {
                 numOfRatings: 0 }
         );
 
+        
+
         this.ratings.push(
-            { userId: 'thelegend27', guideId: 'Callcenter access 3000', rating: 3 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 2 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 3 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 5 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 4 },
-            { userId: 'maxmuster', guideId: 'Callcenter access 3000', rating: 1 }
+            { userId: '1', guideId: '3', rating: 3 },
+            { userId: '2', guideId: '3', rating: 1 },
+            { userId: '3', guideId: '3', rating: 1 },
+            { userId: '1', guideId: '3', rating: 1 },
+            { userId: '2', guideId: '3', rating: 1 },
+            { userId: '3', guideId: '3', rating: 2 },
+            { userId: '1', guideId: '3', rating: 1 },
+            { userId: '2', guideId: '3', rating: 1 },
+            { userId: '3', guideId: '3', rating: 5 },
+            { userId: '1', guideId: '3', rating: 4 },
+            { userId: '2', guideId: '3', rating: 3 },
+            { userId: '3', guideId: '3', rating: 4 },
+            { userId: '1', guideId: '3', rating: 5 },
+            { userId: '2', guideId: '3', rating: 5 },
+            { userId: '3', guideId: '3', rating: 4 },
+            { userId: '1', guideId: '3', rating: 4 },
+            { userId: '2', guideId: '3', rating: 1 }
         );
 
         return this.users.length

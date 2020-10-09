@@ -1,15 +1,9 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
-import { rename, exists, mkdir, unlink } from 'fs';
-import { promisify } from 'util';
 import $Log from '../../utils/logger';
+import { Files } from '../../utils/async-methods';
 
 export class ImageEndpoint extends BaseEndpoint {
-
-    private readonly renameAsync = promisify(rename);
-    private readonly existsAsync = promisify(exists);
-    private readonly mkdirAsync = promisify(mkdir);
-    // private readonly unlinkAsync = promisify(unlink);
     private tempPath: string; 
 
     constructor(private imageMasterPath: string, tempPath: string | undefined = undefined) {
@@ -31,14 +25,14 @@ export class ImageEndpoint extends BaseEndpoint {
                 const userPath = `${this.imageMasterPath}\\${req.query.username}`;
                 const guidePath = `${userPath}\\${req.query.guideId}`;
 
-                if (!await this.existsAsync(userPath)) await this.mkdirAsync(userPath);
-                if (!await this.existsAsync(guidePath)) await this.mkdirAsync(guidePath);
+                if (!await Files.existsAsync(userPath)) await Files.mkdirAsync(userPath);
+                if (!await Files.existsAsync(guidePath)) await Files.mkdirAsync(guidePath);
 
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}\\${req.file.originalname}`;
 
                 // rename/move the stored image to the users folder
-                await this.renameAsync(tempPath, targetPath);
+                await Files.renameAsync(tempPath, targetPath);
                 // await this.unlinkAsync(tempPath);
 
                 console.log(targetPath);

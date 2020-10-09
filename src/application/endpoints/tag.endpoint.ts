@@ -1,30 +1,29 @@
-import { TagController } from "../../logic/controllers";
-import { query } from 'express-validator';
+import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
-import { BadRequest, Ok } from '../utils/express-decorators/models';
-import { Get, Endpoint, Validate, Post } from "../utils/express-decorators/decorators";
+
+import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
+import { Ok, BadRequest  } from "../../nexos-express/models";
+import { IUnitOfWork } from "../../core/contracts";
 
 @Endpoint('tags')
 export class TagEndpoint {
     
-    constructor(private tagController: TagController) {
+    constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
     @Get('/')
     async getAll(req: Request, res: Response) {
         try{
-            return Ok(await this.tagController.getAll());
+            return Ok(await this.unitOfWork.tags.getAll());
         } catch(ex){
             return BadRequest(ex);
         }
     }
 
     @Get('/byname')
-    async getByName(req: Request, res: Response) {
-        const tagName = req.query.tagname;
-
+    async getByName(@Query('tagname') tagName: any, req: Request, res: Response) {
         try{
-            return Ok(await this.tagController.getTagByName(tagName));
+            return Ok(await this.unitOfWork.tags.getTagByName(name));
         } catch(ex){
             return BadRequest(ex);
         }
@@ -32,11 +31,9 @@ export class TagEndpoint {
 
     @Get('/startingWith')
     @Validate(query('letters', 'need letters to calculate').isString())
-    async getWhichStartsWith(req: Request, res: Response) {
-        const letters: string = req.query.letters;
-                
+    async getWhichStartsWith(@Query('letters') letters: any, req: Request, res: Response) {
         try {
-            return Ok(await this.tagController.getTagsBeginningWith(letters));
+            return Ok(await this.unitOfWork.tags.getTagsBeginningWith(letters));
         } catch(err) {
             return BadRequest(err);
         }
@@ -44,21 +41,24 @@ export class TagEndpoint {
 
     @Get('/topUsed')
     @Validate(query('limit', 'need limit').isNumeric())
-    async getTopUsed(req: Request, res: Response) {
-        const limit: number = parseInt(req.query.limit);
+    async getTopUsed(@Query('limit') limit: any, req: Request, res: Response) {
+        limit = parseInt(limit);
 
         try {
-            return Ok(await this.tagController.getTopUsedTags(limit));
+            return Ok(await this.unitOfWork.tags.getTopUsedTags(limit));
         } catch(err) {
             return BadRequest(err);
         }
     }
 
     @Post('/')
+    @Validate(checkSchema({
+        tagName: { isString: true }
+    }))
     async add(req: Request, res: Response) {
         const tagName = req.body.tagName;
 
-        return Ok(await this.tagController.add({
+        return Ok(await this.unitOfWork.tags.add({
             name: tagName,
             numberOfUses: 0
         }));

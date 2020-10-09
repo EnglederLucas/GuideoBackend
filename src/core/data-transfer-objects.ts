@@ -1,13 +1,30 @@
-import { IGuide } from './models';
+import { IGuide, IUser } from './models';
 
-
-export interface UserDto {
+export interface IUserDto {
     id: string;
     username: string;
     name?: string;
     email?: string;
     description?: string;
     imageLink?: string;
+}
+
+export class UserDto implements IUserDto {
+    id: string;
+    username: string;
+    name: string | undefined;
+    email: string | undefined;
+    description: string | undefined;
+    imageLink: string | undefined;
+
+    constructor({ id, username, name, email, description, imageLink }: IUser ) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+        this.email = email;
+        this.description = description;
+        this.imageLink = imageLink;
+    }
 }
 
 export class PostGuideDto {

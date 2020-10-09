@@ -4,7 +4,7 @@ import { Middleware } from "./middleware";
 import $Log from '../utils/logger';
 import * as https from 'https';
 import * as fs from 'fs';
-import { createEndpoint, createDocsFor } from './utils/express-decorators/creation';
+import { createEndpoint, createDocsFor } from "../nexos-express/creation";
 import { BaseEndpoint } from './endpoints/base.endpoint';
 
 export interface IStaticPathDefinition {
@@ -145,7 +145,7 @@ export class GuideoServer {
             result.push(createDocsFor(endpoint));
         });
 
-        result.push('</main>', '</body>', '</html>');
+        result.push('</main>', '<script src="./script.js"></script>', '</body>', '</html>');
         return result.join('\n');
     }
 }

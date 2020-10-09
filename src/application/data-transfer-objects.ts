@@ -1,4 +1,4 @@
-import { IGuide, IUser } from '../core/models';
+import { IGuide } from "../core/models";
 
 export class GuideDto {
     private id: string;
@@ -16,6 +16,6 @@ export class GuideDto {
         this.tags = tags === undefined ? [] : tags;
         this.user = user;
         this.imageLink = imageLink === undefined ? '' : imageLink;
-        this.rating = rating;
+        this.rating = rating
     }
 }

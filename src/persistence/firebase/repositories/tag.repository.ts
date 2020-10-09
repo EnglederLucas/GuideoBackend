@@ -32,7 +32,7 @@ export class TagRepository implements ITagRepository {
         return tags;
     }
 
-    async getTagByName(name: string): Promise<ITag> {
+    async getTagByName(name: string): Promise<ITag | null> {
         const doc: firestore.DocumentSnapshot = await this.tagsRef.doc(name).get();
         const data: firestore.DocumentData | undefined = doc.data();
 

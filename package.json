@@ -21,6 +21,7 @@
     "express-validator": "^6.5.0",
     "firebase-admin": "^9.2.0",
     "firebase-functions": "^3.5.0",
+    "mongoose": "^5.10.6",
     "mp3-duration": "^1.1.0",
     "multer": "^1.4.2",
     "reflect-metadata": "^0.1.13",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.2",
+    "@types/mongoose": "^5.7.36",
     "@types/multer": "^1.4.3"
   }
 }
