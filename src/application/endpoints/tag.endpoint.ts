@@ -53,7 +53,7 @@ export class TagEndpoint {
 
     @Post('/')
     @Validate(checkSchema({
-        name: { isString: true }
+        tagName: { isString: true }
     }))
     async add(req: Request, res: Response) {
         const tagName = req.body.tagName;
