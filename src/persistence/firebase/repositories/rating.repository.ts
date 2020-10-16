@@ -1,7 +1,7 @@
 import { firestore } from "firebase-admin";
 import { IRating } from "../../../core/models";
 import { IRatingRepository } from "../../../core/contracts";
-import $Log from "../../../utils/logger";
+import { $Log } from "../../../utils/logger";
 
 export class RatingRepository implements IRatingRepository {
 

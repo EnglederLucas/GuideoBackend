@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import cors, { CorsOptions } from 'cors';
 import { Middleware } from "./middleware";
-import $Log from '../utils/logger';
+import { $Log } from '../utils/logger';
 import * as https from 'https';
 import * as fs from 'fs';
 import { createEndpoint, createDocsFor } from "../nexos-express/creation";

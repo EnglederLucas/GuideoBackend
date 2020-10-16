@@ -2,7 +2,7 @@ import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
 import { rename, exists, mkdir, unlink } from 'fs';
 import { promisify } from 'util';
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 import { $log } from '@tsed/logger';
 
 export class TrackEndpoint extends BaseEndpoint{

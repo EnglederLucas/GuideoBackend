@@ -1,7 +1,7 @@
 import { firestore } from "firebase-admin";
 import { IGuide } from '../../../core/models';
 import { IGuideRepository } from "../../../core/contracts";
-import $Log from '../../../utils/logger';
+import { $Log } from '../../../utils/logger';
 
 export class GuideRepository implements IGuideRepository {
 

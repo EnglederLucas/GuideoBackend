@@ -1,5 +1,5 @@
 import { IUserDto } from '../../core/data-transfer-objects';
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 

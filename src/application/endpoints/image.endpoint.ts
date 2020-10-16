@@ -1,6 +1,6 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 import { Files } from '../../utils/async-methods';
 
 export class ImageEndpoint extends BaseEndpoint {

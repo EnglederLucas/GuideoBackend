@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { query, checkSchema } from "express-validator";
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 
 import { Endpoint, Get, Validate, Post, RouteDescription, Query } from "../../nexos-express/decorators";
 import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";

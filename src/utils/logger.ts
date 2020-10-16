@@ -1,7 +1,7 @@
 import { RequestHandler, Response, NextFunction, Request } from 'express';
 import { Logger } from "@tsed/logger";
 
-export default class Log {
+export class $Log {
     private static readonly _logger: Logger = new Logger("App");
     private static inititalized = false;
 

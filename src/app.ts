@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { GuideoServer } from './application/GuideoServer';
 import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
-import $Log from "./utils/logger";
+import { $Log } from "./utils/logger";
 
 // import { UnitOfWork } from './persistence/firebase/unitofwork';
 import { UnitOfWork } from './persistence/mongo/unitofwork';
@@ -17,15 +17,17 @@ import { IDataInitializer, IUnitOfWork } from './core/contracts';
 import { InMemoryDataInitializer } from './persistence/initializers';
 import { DbDataInitializer } from './persistence/initializers/db';
 import { Files } from './utils/async-methods';
+import config from './config';
 
 async function main() {
     $Log.logTitle();
     $Log.logger.info("start initializing server ...");
 
-    const port: number = 3030;
+    const port: number = config.port;
     const enableCors: boolean = true;
 
-    const serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
+    // const serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
+    const serviceAccount = require(`${__dirname}${config.credPath}`);
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
@@ -33,7 +35,8 @@ async function main() {
     });
 
     // connect to mongo db
-    await connect('mongodb://192.168.99.100:27017/guideo', {useNewUrlParser: true, useUnifiedTopology: true});
+    // await connect(`mongodb://192.168.99.100:27017/guideo`, {useNewUrlParser: true, useUnifiedTopology: true});
+    await connect(`${config.dbUrl}/${config.dbName}`, {useNewUrlParser: true, useUnifiedTopology: true});
 
     // const db = admin.firestore();
     // const unitOfWork: UnitOfWork = new UnitOfWork(db);
@@ -79,15 +82,15 @@ async function main() {
             new UserEndpoint(unitOfWork),
             new TagEndpoint(unitOfWork),
             new RatingEndpoint(unitOfWork),
-            new ImageEndpoint(`${__dirname}\\..\\public\\img`),
-            new TrackEndpoint(`${__dirname}\\..\\public\\tracks`),
+            new ImageEndpoint(`${__dirname}${config.publicPath}\\img`),
+            new TrackEndpoint(`${__dirname}${config.publicPath}\\tracks`),
             new TrackDBEndpoint(unitOfWork)
         ],
         enableCors: enableCors,
         staticPaths:  [
-            { route: '/img', paths: [ `${__dirname}\\..\\public\\img` ] },
-            { route: '/docs', paths: [ `${__dirname}\\..\\public\\docs` ] },
-            { route: '/tracks', paths: [ `${__dirname}\\..\\public\\tracks` ] }
+            { route: '/img', paths: [ `${__dirname}${config.publicPath}\\img` ] },
+            { route: '/docs', paths: [ `${__dirname}${config.publicPath}\\docs` ] },
+            { route: '/tracks', paths: [ `${__dirname}${config.publicPath}\\tracks` ] }
         ],
         middlewares: [
             // { route: '/api', handler: verifyUserToken },
@@ -95,15 +98,15 @@ async function main() {
             { route: '/', handler: $Log.getRoutingLogger() },
             { route: '/', handler: express.json() }
         ],
-        keyPath: `${__dirname}\\..\\public\\security\\key.pem`,
-        certPath: `${__dirname}\\..\\public\\security\\cert.pem`
+        keyPath: `${__dirname}${config.publicPath}\\security\\key.pem`,
+        certPath: `${__dirname}${config.publicPath}\\security\\cert.pem`
     });
     
     if (enableCors) $Log.logger.info('cors enabled');
 
-    $Log.logger.info(`${__dirname}\\..\\public`);
+    $Log.logger.info(`${__dirname}${config.publicPath}`);
 
-    await Files.writeFileAsync(`${__dirname}\\..\\public\\docs\\v1.html`, server.createDocumentation(), 'utf-8');
+    await Files.writeFileAsync(`${__dirname}${config.publicPath}\\docs\\v1.html`, server.createDocumentation(), 'utf-8');
 
     server.start();
 }
