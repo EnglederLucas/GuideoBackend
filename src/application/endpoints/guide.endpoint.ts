@@ -151,7 +151,6 @@ export class GuideEndpoint {
                 // tag.numberOfUses++;
                 // await this.unitOfWork.tags.update(tag);
             });
-
             return new JsonResponse(202, null);
         } catch (err) {
             return BadRequest(err.toString());
