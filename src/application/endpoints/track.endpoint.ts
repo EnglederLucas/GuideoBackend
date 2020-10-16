@@ -1,15 +1,15 @@
-import { TrackController } from '../../logic/controllers/track.controller';
 import { Request, Response } from 'express';
 import { ITrack } from '../../core/models';
-import { Endpoint, Get, Validate, Post } from '../utils/express-decorators/decorators';
-import { JsonResponse, BadRequest, Ok, Created } from '../utils/express-decorators/models';
+import { Endpoint, Get, Validate, Post } from '../../nexos-express/decorators';
+import { JsonResponse, BadRequest, Ok, Created } from '../../nexos-express/models';
 
 import { query, checkSchema } from 'express-validator';
+import { IUnitOfWork } from '../../core/contracts';
 
 @Endpoint('tracks')
 export class TrackDBEndpoint {
 
-    constructor(private trackController: TrackController) {
+    constructor(private unitOfWork: IUnitOfWork) {
     }
 
     @Get('/byGuide')
@@ -20,21 +20,19 @@ export class TrackDBEndpoint {
         //$Log.logger.info(`byGuide call on TrackEndpoint`);
         console.log('byGuide-Call on TrackEndpoint');
         try{
-            return Ok(await this.trackController.getByGuide(guideId));
+            return Ok(await this.unitOfWork.tracks.getByGuide(guideId));
         } catch(err) {
             return BadRequest(err);
         }
     };
 
     @Get('/byId')
-    @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
     @Validate(query('trackId', 'the id of the track has to be defined with "trackId"').isString())
     async getById(req: Request, res: Response): Promise<JsonResponse<any>> {
-        const guideId = req.query.guideId;
         const trackId = req.query.trackId;
 
         try{
-            return Ok(await this.trackController.getById(guideId, trackId));
+            return Ok(await this.unitOfWork.tracks.getById(trackId));
         } catch(err) {
             return BadRequest(err);
         }
@@ -58,7 +56,7 @@ export class TrackDBEndpoint {
     async addTrack(req: Request, res: Response){
         try {
             const track: ITrack = this.mapToTrack(req.body);
-            await this.trackController.addTrack(track);
+            await this.unitOfWork.tracks.add(track);
             return Created('Track inserted');
         } catch (err) {
             return BadRequest(err);
