@@ -32,8 +32,8 @@ export class RatingRepository implements IRatingRepository {
         return ratings.pop();
     }
 
-    async add(item: IRating): Promise<void> {
-        await DbRating.ofRating(item).save();    
+    async add(item: IRating): Promise<string> {
+        return (await DbRating.ofRating(item).save())._id;    
     }
 
     async addRange(items: IRating[]): Promise<void> {

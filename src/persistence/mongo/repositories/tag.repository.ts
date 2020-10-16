@@ -32,8 +32,8 @@ export class TagRepository implements ITagRepository {
         throw new Error('Method not implemented.');
     }
 
-    async add(item: ITag): Promise<void> {
-        await DbTag.ofTag(item).save();
+    async add(item: ITag): Promise<string> {
+        return (await DbTag.ofTag(item).save())._id;
     }
 
     async addRange(items: ITag[]): Promise<void> {

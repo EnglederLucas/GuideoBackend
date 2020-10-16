@@ -5,8 +5,8 @@ import { verifyUserToken } from './application/middleware';
 import { GuideEndpoint, UserEndpoint, TagEndpoint, RatingEndpoint, TrackDBEndpoint, TrackEndpoint, ImageEndpoint } from './application/endpoints';
 import $Log from "./utils/logger";
 
-// import { UnitOfWork } from './persistence/firebase/unitofwork';
-import { UnitOfWork } from './persistence/mongo/unitofwork';
+ import { UnitOfWork } from './persistence/firebase/unitofwork';
+//import { UnitOfWork } from './persistence/mongo/unitofwork';
 
 import * as admin from 'firebase-admin';
 import express from 'express';
@@ -33,12 +33,12 @@ async function main() {
     });
 
     // connect to mongo db
-    await connect('mongodb://192.168.99.100:27017/guideo', {useNewUrlParser: true, useUnifiedTopology: true});
+    //await connect('mongodb://192.168.99.100:27017/guideo', {useNewUrlParser: true, useUnifiedTopology: true});
 
-    // const db = admin.firestore();
-    // const unitOfWork: UnitOfWork = new UnitOfWork(db);
-    const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
-    const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
+    const db = admin.firestore();
+    const unitOfWork: UnitOfWork = new UnitOfWork(db);
+    /*//const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
+    //const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
     $Log.logger.info('> clearing database ...');
     await unitOfWork.clearDatabase();
@@ -46,7 +46,7 @@ async function main() {
 
     $Log.logger.info('> initialize data ...');
     const result: number = await dataInitializer.initData();
-    $Log.logger.info(`> ${result} entries were initizialized`);
+    $Log.logger.info(`> ${result} entries were initizialized`);*/
 
     // unitOfWork.users.addRange(dataInitializer.getUsers());
     // unitOfWork.guides.addRange(dataInitializer.getGuides());
