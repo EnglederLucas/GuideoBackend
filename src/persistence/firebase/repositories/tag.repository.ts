@@ -63,13 +63,15 @@ export class TagRepository implements ITagRepository {
         return tags;
     }
 
-    async add(item: ITag): Promise<void> {
+    async add(item: ITag): Promise<string> {
         const id = item.name.toLowerCase();
 
-        await this.tagsRef.doc(id).set({
+        let setTag = await this.tagsRef.doc(id).set({
             name: id,   // is stille needed fo filter by beginning letters
             numberOfUses: item.numberOfUses
         });
+
+        return id;
     }
 
     async addRange(items: ITag[]): Promise<void> {

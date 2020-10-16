@@ -15,19 +15,21 @@ export class ImageEndpoint extends BaseEndpoint {
     protected initRoutes(): void {
         const upload = multer({ dest: this.tempPath })
 
-        this.router.post('/upload/:userName', upload.single('image'), async (req, res) => {
+        this.router.post('/upload/', upload.single('image'), async (req, res) => {
             try {
                 if (!req.file) {
                     res.status(400).send('no image sent!');
                     return;
                 }
                 
-                const userPath = `${this.imageMasterPath}\\${req.params['userName']}`;
+                const userPath = `${this.imageMasterPath}\\${req.query.username}`;
+                const guidePath = `${userPath}\\${req.query.guideId}`;
 
                 if (!await Files.existsAsync(userPath)) await Files.mkdirAsync(userPath);
+                if (!await Files.existsAsync(guidePath)) await Files.mkdirAsync(guidePath);
 
                 const tempPath = req.file.path;
-                const targetPath = `${userPath}\\${req.file.originalname}`;
+                const targetPath = `${guidePath}\\${req.file.originalname}`;
 
                 // rename/move the stored image to the users folder
                 await Files.renameAsync(tempPath, targetPath);

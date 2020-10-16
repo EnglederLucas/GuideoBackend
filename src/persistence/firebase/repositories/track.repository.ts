@@ -4,43 +4,55 @@ import { ITrackRepository } from "../../../core/contracts";
 
 export class TrackRepository implements ITrackRepository{
 
-    private readonly guidesRef: firestore.CollectionReference;
+    private readonly tracksRef: firestore.CollectionReference;
 
     constructor(private db: firestore.Firestore){
-        this.guidesRef = db.collection('guides');
+        this.tracksRef = db.collection('tracks');
     }
 
-    async add(guideId: string, item: ITrack): Promise<void> {
-        let setTrack = await this.guidesRef.doc(guideId).collection('tracks').add({
+    async add(item: ITrack): Promise<string> {
+        let setTrack = await this.tracksRef.add({
             item
         });
+        return setTrack.id;
     }
 
-    async addRange(guideId: string, items: ITrack[]): Promise<void> {
+    async addRange(items: ITrack[]): Promise<void> {
         items.forEach(item => {
-            this.add(guideId, item);
+            this.add(item);
         });
     }
 
-    async getByGuide(guideId: string): Promise<ITrack[]> {
+    async getAll(): Promise<ITrack[]> {
         let tracks: ITrack[] = [];
-        let snapshot = await this.guidesRef.doc(guideId).collection('tracks').get();
+        let snapshot = await this.tracksRef.get();
 
         snapshot.forEach(doc => {
-            tracks.push({id: doc.data().id, trackLink: doc.data().trackLink, description: doc.data().description});
+            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, description: doc.data().description});
         });
 
         return tracks;
     }
 
-    async getById(guideId: string, trackId: string): Promise<ITrack> {
-        const doc = await this.guidesRef.doc(guideId).collection('tracks').doc(trackId).get();
+    async getByGuide(guideId: string): Promise<ITrack[]> {
+        let tracks: ITrack[] = [];
+        let snapshot = await this.tracksRef.where('guideId', '==', guideId).get();
+
+        snapshot.forEach(doc => {
+            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, description: doc.data().description});
+        });
+
+        return tracks;
+    }
+
+    async getById(trackId: string): Promise<ITrack> {
+        const doc = await this.tracksRef.doc(trackId).get();
         const data: firestore.DocumentData | undefined = doc.data();
 
         if(!doc.exists || data == undefined)
-            throw new Error(`Can not find track with id ${trackId} in guide with id ${guideId}`);
+            throw new Error(`Can not find track with id ${trackId}`);
 
-        let track: ITrack = {id: data.id, trackLink: data.trackLink, description: data.description};
+        let track: ITrack = {id: doc.id, guideId: data.guideId, trackName: data.trackName, trackLink: data.trackLink, description: data.description};
 
         return track;
     }
