@@ -48,8 +48,8 @@ export class GuideRepository implements IGuideRepository {
         await DbGuide.updateOne({ _id: guide.id }, guide).exec();
     }
 
-    async add(item: IGuide): Promise<void> {
-        await DbGuide.ofGuide(item).save();
+    async add(item: IGuide): Promise<string> {
+        return (await DbGuide.ofGuide(item).save())._id;
     }
 
     async addRange(items: IGuide[]): Promise<void> {

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { query, checkSchema } from "express-validator";
 import { $Log } from '../../utils/logger';
 
-import { Endpoint, Get, Validate, Post, RouteDescription, Query } from "../../nexos-express/decorators";
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query } from "../../nexos-express/decorators";
 import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";
 
 import { IUnitOfWork } from '../../core/contracts';
@@ -104,6 +104,34 @@ export class GuideEndpoint {
         },
         user: {
             isString: true
+        }
+    }))
+    async addGuide(req: Request, res: Response) {
+        try {
+            const guide: PostGuideDto = this.mapToPostGuide(req.body);
+            const guideId = await this.unitOfWork.guides.add(guide.asGuide());
+            return Created(guideId);
+        } catch (err) {
+            return BadRequest(err.toString());
+        }
+    }
+
+    @Put('/')
+    @Validate(checkSchema({
+        id: {
+            isString: true
+        },
+        name: {
+            isString: true
+        },
+        description: {
+            isString: true
+        },
+        tags: {
+            isArray: true
+        },
+        user: {
+            isString: true
         },
         imageLink: {
             isString: true
@@ -112,10 +140,10 @@ export class GuideEndpoint {
             isBoolean: true
         }
     }))
-    async addGuide(req: Request, res: Response) {
+    async addGuideData(req: Request, res: Response) {
         try {
-            const guideDto: PostGuideDto = this.mapToGuide(req.body);
-            const guide = guideDto.asGuide();
+            const guide = this.mapToGuide(req.body);
+            await this.unitOfWork.guides.update(guide);
 
             guide.tags?.forEach(async tagName => {
                 const tag = await this.unitOfWork.tags.getTagByName(tagName);
@@ -123,52 +151,27 @@ export class GuideEndpoint {
                 // tag.numberOfUses++;
                 // await this.unitOfWork.tags.update(tag);
             });
-
-            await this.unitOfWork.guides.add(guide);
-            return Created({ text: 'nice one' });
+            return new JsonResponse(202, null);
         } catch (err) {
             return BadRequest(err.toString());
         }
     }
 
-    /*async update(guide: IGuide): Promise<void> {
-        const dbGuide = await this.unitOfWork.guides.getById(guide.id);
+    private mapToGuide(obj: any): IGuide {
+        let { id, name, description, tags, user, imageLink, chronological } = obj;
 
-        if (!guide.name) dbGuide.name = guide.name;
-        if (!guide.description) dbGuide.description = guide.description;
-        if (!guide.chronological) dbGuide.chronological = guide.chronological;
-        if (!guide.imageLink) dbGuide.imageLink = guide.imageLink;
-        if (guide.tags) {
-            const oldTags = dbGuide.tags!!;
-            const newTags = guide.tags!!;
-            const finalTags: string[] = [];
-            
-            oldTags.forEach(async tagName => {
-                if (newTags.includes(tagName)) {
-                    // this tag is also contained in the newer version of the guide
-                    // therefore nothing should happen with this tag
-                    finalTags.push(tagName);
-                    newTags.splice(newTags.indexOf(tagName), 1);
-                } else {
-                    // reduce number of uses
-                    const tag = await this.unitOfWork.tags.getTagByName(tagName);
-                    tag.numberOfUses--;
-                    await this.unitOfWork.tags.update(tag);
-                }
-            });
+        if (id === undefined) throw new Error("no id defined");
+        if (name === undefined) throw new Error("no name defined");
+        if (description === undefined) description = '';
+        if (tags === undefined || !(tags instanceof Array)) tags = [];
+        if (user === undefined) throw new Error("User id is undefined");
+        if (imageLink === undefined) imageLink = '/deer.png';
+        if (chronological === undefined) chronological = false;
+        
+        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0};
+    }
 
-            // Nun sind alle gleich gebliebenen tags in newTags weg.
-            // jetzt sind nur noch die zu aktualisierenden da
-            newTags.forEach(async tagName => {
-                // increase number of uses
-                const tag = await this.unitOfWork.tags.getTagByName(tagName);
-                tag.numberOfUses++;
-                await this.unitOfWork.tags.update(tag);
-            });
-        }
-    }*/
-
-    private mapToGuide(obj: any): PostGuideDto {
+    private mapToPostGuide(obj: any): PostGuideDto {
         let { name, description, tags, user, imageLink, chronological } = obj;
 
         if (name === undefined) throw new Error("no name defined");

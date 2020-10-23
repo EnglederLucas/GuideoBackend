@@ -3,7 +3,7 @@ import { IUserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
-    add(item: TEntity): Promise<void>;
+    add(item: TEntity): Promise<string>;
     addRange(items: TEntity[]): Promise<void>;
     getById(id: TId): Promise<TEntity | null>;
 }
@@ -39,11 +39,8 @@ export interface IUserRepository {
     addRange(items: IUserDto[]): Promise<void>;
 }
 
-export interface ITrackRepository {
-    add(guideId: string, item: ITrack): Promise<void>;
-    addRange(guideId: string, items: ITrack[]): Promise<void>;
+export interface ITrackRepository extends IGenericRepository<ITrack, string> {
     getByGuide(guideId: string): Promise<ITrack[]>;
-    getById(guideId: string, trackId: string): Promise<ITrack>;
 }
 
 export interface IUnitOfWork {

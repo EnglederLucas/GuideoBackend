@@ -83,12 +83,14 @@ export class RatingRepository implements IRatingRepository {
         return ratings.pop();
     }
 
-    async add(item: IRating): Promise<void> {
+    async add(item: IRating): Promise<string> {
         let setRating = await this.ratingsRef.add({
             guideId: item.guideId,
             userId: item.userId,
             rating: item.rating
         });
+
+        return setRating.id;
 
         // this.guidesRef.doc(item.guideId).collection('ratings').add({
         //     userId: item.userId,

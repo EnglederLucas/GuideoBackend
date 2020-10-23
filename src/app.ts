@@ -50,8 +50,8 @@ async function main() {
   });
 
   // const db = admin.firestore();
-  // const unitOfWork: UnitOfWork = new UnitOfWork(db);
-  const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
+  const unitOfWork: UnitOfWork = new UnitOfWork(db);
+  // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
   const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
   $Log.logger.info('> clearing database ...');
