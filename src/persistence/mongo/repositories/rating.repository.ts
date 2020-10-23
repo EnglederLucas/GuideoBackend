@@ -1,7 +1,7 @@
 import { IRatingRepository } from '../../../core/contracts';
 import { IRating } from '../../../core/models';
 import { DbRating } from '../models/rating.model';
-import $Log from "../../../utils/logger";
+import { $Log } from "../../../utils/logger";
 
 export class RatingRepository implements IRatingRepository {
 

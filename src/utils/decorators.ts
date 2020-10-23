@@ -1,4 +1,4 @@
-import $Log from './logger';
+import { $Log } from './logger';
 
 export function Deprecated(alternate: string = ''): ClassDecorator {
     return target => {

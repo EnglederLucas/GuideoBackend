@@ -6,7 +6,7 @@ import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decora
 import { Ok, BadRequest, Created, NotFound } from '../../nexos-express/models';
 import { IUnitOfWork } from "../../core/contracts";
 
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 
 @Endpoint('ratings')
 export class RatingEndpoint {

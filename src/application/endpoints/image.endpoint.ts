@@ -1,50 +1,61 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
-import $Log from '../../utils/logger';
+import { $Log } from '../../utils/logger';
 import { Files } from '../../utils/async-methods';
 
 export class ImageEndpoint extends BaseEndpoint {
-    private tempPath: string; 
+  private tempPath: string;
 
-    constructor(private imageMasterPath: string, tempPath: string | undefined = undefined) {
-        super('images');
+  constructor(
+    private imageMasterPath: string,
+    tempPath: string | undefined = undefined
+  ) {
+    super('images');
 
-        this.tempPath = tempPath === undefined ? imageMasterPath : tempPath;
-    }
+    this.tempPath = tempPath === undefined ? imageMasterPath : tempPath;
+  }
 
-    protected initRoutes(): void {
-        const upload = multer({ dest: this.tempPath })
+  protected initRoutes(): void {
+    const upload = multer({ dest: this.tempPath });
 
-        this.router.post('/upload/', upload.single('image'), async (req, res) => {
-            try {
-                if (!req.file) {
-                    res.status(400).send('no image sent!');
-                    return;
-                }
-                
-                const userPath = `${this.imageMasterPath}\\${req.query.username}`;
-                const guidePath = `${userPath}\\${req.query.guideId}`;
+    this.router.post(
+      '/upload/:userName',
+      upload.single('image'),
+      async (req, res) => {
+        try {
+          if (!req.file) {
+            res.status(400).send('no image sent!');
+            return;
+          }
 
-                if (!await Files.existsAsync(userPath)) await Files.mkdirAsync(userPath);
-                if (!await Files.existsAsync(guidePath)) await Files.mkdirAsync(guidePath);
+          const userPath = `${this.imageMasterPath}/${req.params['userName']}`;
 
-                const tempPath = req.file.path;
-                const targetPath = `${guidePath}\\${req.file.originalname}`;
+          if (!(await Files.existsAsync(userPath)))
+            await Files.mkdirAsync(userPath);
 
-                // rename/move the stored image to the users folder
-                await Files.renameAsync(tempPath, targetPath);
-                // await this.unlinkAsync(tempPath);
+          const tempPath = req.file.path;
+          const targetPath = `${userPath}/${req.file.originalname}`;
 
-                console.log(targetPath);
-                // generate the link for the guide object
-                const imageRoute = '/' + targetPath
-                    .substring(targetPath.indexOf('img'))
-                    .replace('\\', '/');
+          // rename/move the stored image to the users folder
+          await Files.renameAsync(tempPath, targetPath);
+          // await this.unlinkAsync(tempPath);
 
-                res.status(200).send(imageRoute);
-            } catch(err) {
-                res.status(500).contentType('text/plain').send('Oops! An error occured, while storing the image\n error:' + err);
-            }
-        });
-    }
+          $Log.logger.info(targetPath);
+          // generate the link for the guide object
+          const imageRoute =
+            '/' +
+            targetPath.substring(targetPath.indexOf('img')).replace('\\', '/');
+
+          res.status(200).send(imageRoute);
+        } catch (err) {
+          res
+            .status(500)
+            .contentType('text/plain')
+            .send(
+              'Oops! An error occured, while storing the image\n error:' + err
+            );
+        }
+      }
+    );
+  }
 }
