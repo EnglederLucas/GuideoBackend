@@ -5,12 +5,16 @@ RUN npm install
 RUN npm install -g typescript
 RUN tsc
 
-FROM node:alpine
+FROM node
 WORKDIR /app
 COPY --from=builder ./build .
 COPY --from=builder ./public ./public
 COPY --from=builder ./package.json .
 COPY --from=builder ./vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json .
+
+# FROM node
+# %WORKDIR /app
+# %COPY --from=orderer ./app .
 ENV CRED_PATH /vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json
 ENV PUBLIC_PATH /public
 RUN npm install
