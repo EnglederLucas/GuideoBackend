@@ -17,5 +17,6 @@ COPY --from=orderer ./app .
 ENV CRED_PATH=/vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json PUBLIC_PATH=/public
 RUN npm install --production
 # RUN ls -la
+# TODO make this to an Argument :D
 EXPOSE 3030
 CMD ["node", "app.js"]
