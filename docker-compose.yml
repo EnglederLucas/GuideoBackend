@@ -2,7 +2,21 @@ version: '3.6'
 
 services: 
     guideo:
+        build: 
+            context: .
+            dockerfile: server.Dockerfile
+            args: 
+                - PORT=3040
+        image: guideo
+#        container_name: guideo
+        environment: 
+            DB_URL: mongodb://192.168.99.100:27017
+            DB_NAME: guideo
         ports: 
-            - 3030:3030
+            - 3030:3040
+        depends_on: 
+            - mongo
     mongo:
         image: mongo
+        ports: 
+            - "27017:27017"
