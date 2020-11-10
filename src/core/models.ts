@@ -37,4 +37,16 @@ export interface ITrack {
     trackName: string;
     description: string;
     trackLink: string;
+    trackLength: number;
+    mapping: IMapping;
+}
+
+export interface IMapping {
+    
+}
+
+export interface IGeoLocation extends IMapping {
+    radius: number;
+    latitude: number;
+    longitude: number;
 }
