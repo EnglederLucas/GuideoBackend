@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ITrack } from '../../core/models';
+import { IGeoLocation, IMapping, ITrack } from '../../core/models';
 import { Endpoint, Get, Validate, Post } from '../../nexos-express/decorators';
 import { JsonResponse, BadRequest, Ok, Created } from '../../nexos-express/models';
 
@@ -69,8 +69,15 @@ export class TrackDBEndpoint {
         if (guideId === undefined) throw new Error('No guideid defined');
         if (trackName === undefined) throw new Error('No trackName defined');
         if (trackLink === undefined) throw new Error('No trackLink defined');
-        if (description === undefined) description = '';
+        //if (description === undefined) description = '';
 
-        return { guideId, trackName, description, trackLink } as ITrack;
+        var mapping: IMapping;
+        if (obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined) {
+            mapping = { latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius } as IGeoLocation;
+        } else {
+            throw new Error('No mapping defined');
+        }
+
+        return { guideId, trackName, description, trackLink, mapping } as ITrack;
     }
 }

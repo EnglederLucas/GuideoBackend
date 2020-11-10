@@ -28,7 +28,7 @@ export class TrackRepository implements ITrackRepository{
         let snapshot = await this.tracksRef.get();
 
         snapshot.forEach(doc => {
-            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, description: doc.data().description});
+            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, trackLength: doc.data().trackLenth, description: doc.data().description, mapping: doc.data().mapping});
         });
 
         return tracks;
@@ -39,7 +39,7 @@ export class TrackRepository implements ITrackRepository{
         let snapshot = await this.tracksRef.where('guideId', '==', guideId).get();
 
         snapshot.forEach(doc => {
-            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, description: doc.data().description});
+            tracks.push({id: doc.id, guideId: doc.data().guideId, trackName: doc.data().trackName, trackLink: doc.data().trackLink, trackLength: doc.data().trackLenth, description: doc.data().description, mapping: doc.data().mapping});
         });
 
         return tracks;
@@ -52,7 +52,7 @@ export class TrackRepository implements ITrackRepository{
         if(!doc.exists || data == undefined)
             throw new Error(`Can not find track with id ${trackId}`);
 
-        let track: ITrack = {id: doc.id, guideId: data.guideId, trackName: data.trackName, trackLink: data.trackLink, description: data.description};
+        let track: ITrack = {id: doc.id, guideId: data.guideId, trackName: data.trackName, trackLink: data.trackLink, trackLength: data.trackLenth, description: data.description, mapping: data.mapping};
 
         return track;
     }
