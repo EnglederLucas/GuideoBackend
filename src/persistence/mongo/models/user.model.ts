@@ -10,12 +10,11 @@ export interface IUserModel extends Model<IUserDocument> {
 }
 
 const UserSchema = new Schema({
-    userName: { type: String, required: true },
+    username: { type: String, required: true },
     name: { type: String },
     email: { type: String },
-    password: {type: String, required: true },
     description: { type: String },
-    imageLink: { type: String }
+    imageLink: { type: String },
 });
 
 UserSchema.statics.ofUser = (user: IUser) => new DbUser(user);

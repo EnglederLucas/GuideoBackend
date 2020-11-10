@@ -1,24 +1,22 @@
-import { IGuide, IRating } from "../../core/models";
+import { IGuide, IRating } from '../../core/models';
 import { Request, Response } from 'express';
 import { query, checkSchema } from 'express-validator';
 
-import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
+import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
 import { Ok, BadRequest, Created, NotFound } from '../../nexos-express/models';
-import { IUnitOfWork } from "../../core/contracts";
+import { IUnitOfWork } from '../../core/contracts';
 
 import { $Log } from '../../utils/logger';
 
 @Endpoint('ratings')
 export class RatingEndpoint {
-    
-    constructor(private readonly unitOfWork: IUnitOfWork) {
-    }
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
 
     @Get('/')
     async getAll(req: Request, res: Response) {
-        try{
+        try {
             return Ok(await this.unitOfWork.ratings.getAll());
-        } catch(ex){
+        } catch (ex) {
             return BadRequest(ex);
         }
     }
@@ -28,7 +26,7 @@ export class RatingEndpoint {
     // @Validate(query('guidename', 'a guidename has to be defined').isString())
     // async getAverageOfGuide(req: Request, res: Response) {
     //     const guideName = req.query.guidename;
-                
+
     //     try{
     //         res.status(200).send((await this.unitOfWork.ratings.getAverageRatingOfGuide(guideName)).toString());
     //     } catch(ex){
@@ -39,9 +37,9 @@ export class RatingEndpoint {
     @Get('/ofGuide')
     @Validate(query('guidename', 'a guidename has to be defined').isString())
     async getRatingsOfGuide(@Query('guidename') guideName: any, req: Request, res: Response) {
-        try{
+        try {
             return Ok(await this.unitOfWork.ratings.getRatingsOfGuide(guideName));
-        } catch(ex){
+        } catch (ex) {
             return BadRequest(ex);
         }
     }
@@ -49,9 +47,9 @@ export class RatingEndpoint {
     @Get('/ofUser')
     @Validate(query('username', 'a username has to be defined').isString())
     async getRatingsOfUser(@Query('username') userName: any, req: Request, res: Response) {
-        try{
+        try {
             return Ok(await this.unitOfWork.ratings.getRatingsOfUser(userName));
-        } catch(ex){
+        } catch (ex) {
             return BadRequest(ex);
         }
     }
@@ -70,17 +68,19 @@ export class RatingEndpoint {
     }
 
     @Post('/')
-    @Validate(checkSchema({
-        userId: {
-            isString: true
-        },
-        guideId: {
-            isString: true
-        },
-        rating: {
-            isNumeric: true
-        }
-    }))
+    @Validate(
+        checkSchema({
+            userId: {
+                isString: true,
+            },
+            guideId: {
+                isString: true,
+            },
+            rating: {
+                isNumeric: true,
+            },
+        }),
+    )
     async addRating(req: Request, res: Response) {
         try {
             const rating: IRating = this.mapToRating(req.body);
@@ -89,7 +89,7 @@ export class RatingEndpoint {
             // if guide not exists, this will raise an exception
             const guide: IGuide | null = await this.unitOfWork.guides.getById(rating.guideId);
 
-            if (guide === null || guide === undefined){
+            if (guide === null || guide === undefined) {
                 return NotFound({ msg: `No guide found with id ${rating.guideId}` });
             }
 
@@ -98,7 +98,7 @@ export class RatingEndpoint {
             // $Log.logger.info('rating repo: update values');
             const newNumOfRatings = guide.numOfRatings + 1;
             const oldRatingTotal = guide.rating * guide.numOfRatings;
-            const newAvgRating = Math.round((oldRatingTotal + rating.rating) / newNumOfRatings); 
+            const newAvgRating = Math.round((oldRatingTotal + rating.rating) / newNumOfRatings);
 
             guide.rating = newAvgRating;
             guide.numOfRatings = newNumOfRatings;
@@ -109,27 +109,27 @@ export class RatingEndpoint {
             await this.unitOfWork.guides.update(guide);
             $Log.logger.info('rating repo: add rating finished');
 
-            return Created({ msg: "nice one" });
+            return Created({ msg: 'nice one' });
         } catch (err) {
-            return BadRequest(err.toString());
+            return BadRequest({ msg: err.toString() });
         }
     }
 
     private mapToRating(obj: any): IRating {
         let { rating, guideId, userId } = obj;
 
-        if (rating === undefined) throw new Error("no rating defined");
-        if (guideId === undefined) throw new Error("no guide id defined");
-        if (userId === undefined) throw new Error("no user id defined");
+        if (rating === undefined) throw new Error('no rating defined');
+        if (guideId === undefined) throw new Error('no guide id defined');
+        if (userId === undefined) throw new Error('no user id defined');
 
-        if (typeof(rating) !== "number") throw new Error("rating has the wrong format")
-        if (typeof(guideId) !== "string") throw new Error("guideId has the wrong format")
-        if (typeof(userId) !== "string") throw new Error("userId has the wrong format")
+        if (typeof rating !== 'number') throw new Error('rating has the wrong format');
+        if (typeof guideId !== 'string') throw new Error('guideId has the wrong format');
+        if (typeof userId !== 'string') throw new Error('userId has the wrong format');
 
         return {
             rating: rating,
             guideId: guideId,
-            userId: userId
-        }
+            userId: userId,
+        };
     }
 }

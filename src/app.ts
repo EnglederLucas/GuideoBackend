@@ -19,12 +19,12 @@ import { UnitOfWork } from './persistence/mongo/unitofwork';
 import * as admin from 'firebase-admin';
 import express from 'express';
 
-import { connect, connection, connection as db } from 'mongoose';
+import { connect, connection as db } from 'mongoose';
 
-import { IDataInitializer, IUnitOfWork } from './core/contracts';
-import { InMemoryDataInitializer } from './persistence/initializers';
+import { IDataInitializer } from './core/contracts';
+// import { InMemoryDataInitializer } from './persistence/initializers';
 import { DbDataInitializer } from './persistence/initializers/db';
-import { Files } from './utils/async-methods';
+import { Files } from './utils';
 import config from './config';
 
 async function main() {
