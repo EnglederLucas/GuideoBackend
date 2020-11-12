@@ -44,8 +44,6 @@ export class TrackEndpoint extends BaseEndpoint {
           '/' +
           targetPath.substring(targetPath.indexOf('tracks')).replace('\\', '/');
 
-        console.log('Trackroute: ' + trackRoute);
-
         const fileName = req.file.filename;
         var mp3Duration = require('mp3-duration');
 

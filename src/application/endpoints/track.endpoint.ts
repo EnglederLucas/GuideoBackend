@@ -83,22 +83,23 @@ export class TrackDBEndpoint {
   }
 
   private mapToTrack(obj: any): ITrack {
-    let { guideId, trackName, description, trackLink } = obj;
+    let { guideId, trackName, description, trackLink, trackLength } = obj;
 
     if (guideId === undefined) throw new Error('No guideid defined');
     if (trackName === undefined) throw new Error('No trackName defined');
     if (trackLink === undefined) throw new Error('No trackLink defined');
+    if (trackLength === undefined) throw new Error('No trackLength defined.');
     //if (description === undefined) description = '';
 
-    var mapping: IMapping;
+    var mapping: IMapping[];
     if(obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined){
-      mapping = {latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius} as IGeoLocation;
+      mapping = [{latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius} as IGeoLocation];
     }
     else{
       throw new Error('No mapping defined');
     }
 
-    return { guideId, trackName, description, trackLink, mapping } as ITrack;
+    return { guideId, trackName, description, trackLink, trackLength, mapping } as ITrack;
   }
 
 

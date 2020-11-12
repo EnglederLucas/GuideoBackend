@@ -38,7 +38,7 @@ export interface ITrack {
     description: string;
     trackLink: string;
     trackLength: number;
-    mapping: IMapping;
+    mapping: IMapping[];
 }
 
 export interface IMapping {

@@ -1,23 +1,29 @@
 import { ITrackRepository } from '../../../core/contracts';
 import { ITrack } from '../../../core/models';
+import { DbTrack } from '../models/track.model';
 
 export class TrackRepository implements ITrackRepository {
     
-    getAll(): Promise<ITrack[]> {
-        throw new Error('Method not implemented.');
+    async getAll(): Promise<ITrack[]> {
+        const result = await DbTrack.find({}, { guideId: 1, trackName: 1, description: 1, trackLink: 1, trackLength: 1, mapping: 1 }).exec();
+        return result;
     }
 
-    add(item: ITrack): Promise<string> {
-        throw new Error('Method not implemented.');
+    async add(item: ITrack): Promise<string> {
+        console.log(item);
+        return await (await DbTrack.ofTrack(item as ITrack).save())._id;
     }
-    addRange(items: ITrack[]): Promise<void> {
-        throw new Error('Method not implemented.');
+
+    async addRange(items: ITrack[]): Promise<void> {
+        await DbTrack.insertMany(items);
     }
-    getByGuide(guideId: string): Promise<ITrack[]> {
-        throw new Error('Method not implemented.');
+
+    async getByGuide(guideId: string): Promise<ITrack[]> {
+        return await DbTrack.find({ guideId: guideId }).exec();
     }
-    getById(trackId: string): Promise<ITrack> {
-        throw new Error('Method not implemented.');
+
+    async getById(trackId: string): Promise<ITrack | null> {
+        return await DbTrack.findOne({ _id: trackId }).exec();
     }
 
 }
