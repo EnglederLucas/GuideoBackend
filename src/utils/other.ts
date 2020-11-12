@@ -1,5 +1,7 @@
 import { $Log } from './logger';
 
+export const nameof = <T>(name: keyof T) => name;
+
 export function Deprecated(alternate: string = ''): ClassDecorator {
     return target => {
         $Log.logger.warn(`${target.name} is deprecated and will be removed in future versions of the app.`);
