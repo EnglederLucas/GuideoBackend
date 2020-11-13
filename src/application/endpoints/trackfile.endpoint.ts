@@ -40,7 +40,7 @@ export class TrackEndpoint extends BaseEndpoint {
                 const fileName = req.file.filename;
                 var mp3Duration = require('mp3-duration');
 
-                const trackLength = await mp3Duration(`${config.publicPath}/${trackRoute}`);
+                const trackLength = await mp3Duration(`${config.publicPath}${trackRoute}`);
                 const resObject = { fileName, trackLength, trackRoute };
 
                 res.status(200).send(resObject);
