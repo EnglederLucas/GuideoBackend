@@ -20,14 +20,14 @@ export class TrackEndpoint extends BaseEndpoint {
                     res.status(400).send('no track sent!');
                     return;
                 }
-                const userPath = `${this.trackMasterPath}\\${req.query.username}`;
-                const guidePath = `${userPath}\\${req.query.guideId}`;
+                const userPath = `${this.trackMasterPath}/${req.query.username}`;
+                const guidePath = `${userPath}/${req.query.guideId}`;
 
                 if (!(await Files.existsAsync(userPath))) await Files.mkdirAsync(userPath);
                 if (!(await Files.existsAsync(guidePath))) await Files.mkdirAsync(guidePath);
 
                 const tempPath = req.file.path;
-                const targetPath = `${guidePath}\\${req.file.originalname}`;
+                const targetPath = `${guidePath}/${req.file.originalname}`;
 
                 // rename/move the stored track to the guides folder
                 await Files.renameAsync(tempPath, targetPath);
