@@ -26,21 +26,20 @@ export class TrackEndpoint extends BaseEndpoint {
 
                 if (!(await Files.existsAsync(userPath))) await Files.mkdirAsync(userPath);
                 if (!(await Files.existsAsync(guidePath))) await Files.mkdirAsync(guidePath);
-
+                
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}/${req.file.originalname}`;
 
                 // rename/move the stored track to the guides folder
                 await Files.renameAsync(tempPath, targetPath);
 
-                console.log('targetPath: ' + targetPath);
                 // generate the link for the guide object
                 const trackRoute = '/' + targetPath.substring(targetPath.indexOf('tracks')).replace('\\', '/');
 
                 const fileName = req.file.filename;
                 var mp3Duration = require('mp3-duration');
 
-                const trackLength = await mp3Duration(`${config.publicPath}${trackRoute}`);
+                const trackLength = await mp3Duration(targetPath);
                 const resObject = { fileName, trackLength, trackRoute };
 
                 res.status(200).send(resObject);
