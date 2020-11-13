@@ -1,6 +1,7 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
 import { Files, $Log } from '../../utils';
+import config from '../../config';
 
 export class TrackEndpoint extends BaseEndpoint {
     private tempPath: string;
@@ -39,7 +40,7 @@ export class TrackEndpoint extends BaseEndpoint {
                 const fileName = req.file.filename;
                 var mp3Duration = require('mp3-duration');
 
-                const trackLength = await mp3Duration(`public\\${trackRoute}`);
+                const trackLength = await mp3Duration(`${config.publicPath}/${trackRoute}`);
                 const resObject = { fileName, trackLength, trackRoute };
 
                 res.status(200).send(resObject);

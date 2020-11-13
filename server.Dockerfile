@@ -1,5 +1,4 @@
 FROM node AS builder
-
 COPY . .
 RUN npm install && npm install -g typescript
 RUN tsc
@@ -19,6 +18,5 @@ ENV CRED_PATH=/vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json PUBLIC_PATH
 ENV PORT=${PORT}
 RUN npm install --production
 # RUN ls -la
-# TODO: make this to an Argument :D
 EXPOSE ${PORT}
 CMD ["node", "app.js"]
