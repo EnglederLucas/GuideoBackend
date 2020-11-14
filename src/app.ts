@@ -54,9 +54,9 @@ async function main() {
     // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
     const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
-    $Log.logger.info('> clearing database ...');
-    await unitOfWork.clearDatabase();
-    $Log.logger.info('> database is empty');
+    // $Log.logger.info('> clearing database ...');
+    // await unitOfWork.clearDatabase();
+    // $Log.logger.info('> database is empty');
 
     $Log.logger.info('> initialize data ...');
     const result: number = await dataInitializer.initData();
@@ -104,8 +104,9 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            // { route: '/api', handler: verifyUserToken },
-            // { route: '/img', handler: verifyUserToken },
+            { route: '/api', handler: verifyUserToken },
+            { route: '/img', handler: verifyUserToken },
+            { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },
             { route: '/', handler: express.json() },
         ],
