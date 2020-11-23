@@ -24,7 +24,7 @@ export class UserEndpoint {
     @Validate(query('username', 'we need a username').isString())
     async getByName(@Query('username') userName: any, req: Request, res: Response) {
         try {
-            return Ok(await this.unitOfWork.users.getUserByName(name));
+            return Ok(await this.unitOfWork.users.getUserByName(userName));
         } catch (ex) {
             return BadRequest(ex);
         }
