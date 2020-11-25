@@ -11,6 +11,7 @@ export interface IUserModel extends Model<IUserDocument> {
 
 const UserSchema = new Schema({
     username: { type: String, required: true },
+    authid: { type: String, required: true },
     name: { type: String },
     email: { type: String },
     description: { type: String },
