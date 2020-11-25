@@ -41,7 +41,7 @@ export class UserEndpoint {
         }
     }
 
-    @Get('/:authid')
+    @Get('byauthid/:authid')
     async getByAuthId(@Params('authid') authid: any, req: Request, res: Response) {
         try {
             return Ok(await this.unitOfWork.users.getByAuthId(authid));
