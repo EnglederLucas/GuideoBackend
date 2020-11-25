@@ -12,17 +12,12 @@ import {
     ImageEndpoint,
 } from './application/endpoints';
 
-// import { UnitOfWork } from './persistence/firebase/unitofwork';
 import { UnitOfWork } from './persistence/mongo/unitofwork';
 
 import * as admin from 'firebase-admin';
 import express from 'express';
 
 import { connect, connection as db } from 'mongoose';
-
-// import { IDataInitializer } from './core/contracts';
-// import { InMemoryDataInitializer } from './persistence/initializers';
-// import { DbDataInitializer } from './persistence/initializers/db';
 import { Files, $Log } from './utils';
 import config from './config';
 
@@ -59,7 +54,7 @@ async function main() {
     // const result: number = await dataInitializer.initData();
     // $Log.logger.info(`> ${result} entries were initizialized`);
 
-    $Log.logger.info('> added data to database');
+    // $Log.logger.info('> added data to database');
 
     const server: GuideoServer = new GuideoServer({
         port: port,
@@ -79,7 +74,7 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            { route: '/api', handler: verifyUserToken },
+            // { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },
@@ -97,8 +92,6 @@ async function main() {
 
     server.start();
 }
-
-// main().catch((err) => $Log.logger.error('something happened!\n' + err));
 
 (async () => {
     try {

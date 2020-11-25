@@ -1,4 +1,3 @@
-import { IUserDto } from '../../core/data-transfer-objects';
 import { $Log } from '../../utils/logger';
 import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
@@ -6,6 +5,7 @@ import { Request, Response } from 'express';
 import { Endpoint, Get, Validate, Post, Query, Params } from '../../nexos-express/decorators';
 import { Ok, BadRequest, Created } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
+import { IUser } from '../../core/models';
 
 @Endpoint('users')
 export class UserEndpoint {
@@ -41,11 +41,20 @@ export class UserEndpoint {
         }
     }
 
+    @Get('/:authid')
+    async getByAuthId(@Params('authid') authid: any, req: Request, res: Response) {
+        try {
+            return Ok(await this.unitOfWork.users.getByAuthId(authid));
+        } catch (ex) {
+            return BadRequest(ex);
+        }
+    }
+
     @Post('/')
     @Validate(
         checkSchema({
-            id: { isString: true },
             username: { isString: true },
+            authid: { isString: true },
             name: { isString: true, optional: true },
             email: { isString: true, optional: true },
             description: { isString: true, optional: true },
@@ -53,23 +62,24 @@ export class UserEndpoint {
     )
     async addUser(req: Request, res: Response) {
         try {
-            const user: IUserDto = this.mapToUser(req.body);
-            await this.unitOfWork.users.add(user);
-            return Created({ msg: 'user inserted' });
+            const user: IUser = this.mapToUser(req.body);
+            const id = await this.unitOfWork.users.add(user);
+            return Created({ id: id });
         } catch (err) {
             return BadRequest({ msg: err.toString() });
         }
     }
 
-    private mapToUser(obj: any): IUserDto {
-        let { id, username, name, email, description } = obj;
+    private mapToUser(obj: any): IUser {
+        let { username, authid, name, email, description } = obj;
 
-        if (id === undefined) throw new Error('no id defined');
+        // if (id === undefined) throw new Error('no id defined');
         if (username === undefined) throw new Error('no username defined');
+        if (authid === undefined) throw new Error('no username defined');
         // if (name === undefined) name = '';
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
 
-        return { id, username, name, email, description } as IUserDto;
+        return { username, authid, name, email, description } as IUser;
     }
 }
