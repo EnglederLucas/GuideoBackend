@@ -9,6 +9,10 @@ export class TrackRepository implements ITrackRepository{
     constructor(private db: firestore.Firestore){
         this.tracksRef = db.collection('tracks');
     }
+    
+    getTracksByLocation(latitude: number, longitude: number): Promise<ITrack[]> {
+        throw new Error("Method not implemented.");
+    }
 
     async add(item: ITrack): Promise<string> {
         let setTrack = await this.tracksRef.add({

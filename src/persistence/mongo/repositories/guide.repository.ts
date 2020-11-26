@@ -3,7 +3,7 @@ import { IGuide } from '../../../core/models';
 import { DbGuide } from '../models';
 
 export class GuideRepository implements IGuideRepository {
-    
+
     getAll(): Promise<IGuide[]> {
         return DbGuide.find({}).exec();
     }

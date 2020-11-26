@@ -6,7 +6,7 @@ export class TagRepository implements ITagRepository {
 
     getById(id: string): Promise<ITag | null> {
         // return DbTag.findById(id).exec();
-        return this,this.getTagByName(id);
+        return this.getTagByName(id);
     }
 
     getAll(): Promise<ITag[]> {

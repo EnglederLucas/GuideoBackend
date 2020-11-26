@@ -79,7 +79,7 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            { route: '/api', handler: verifyUserToken },
+            // { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },

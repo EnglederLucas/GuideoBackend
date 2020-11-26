@@ -41,6 +41,7 @@ export interface IUserRepository {
 
 export interface ITrackRepository extends IGenericRepository<ITrack, string> {
     getByGuide(guideId: string): Promise<ITrack[]>;
+    getTracksByLocation(latitude: number, longitude: number): Promise<ITrack[]>
 }
 
 export interface IUnitOfWork {

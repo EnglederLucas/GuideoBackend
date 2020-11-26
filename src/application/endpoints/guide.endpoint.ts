@@ -91,6 +91,18 @@ export class GuideEndpoint {
         }
     }
 
+    /*@Get('/byLocation')
+    @Validate(query('latitude', 'a latitude has to be defined').isFloat())
+    @Validate(query('longitude', 'a longitude has to be defined').isFloat())
+    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response){
+        try{
+            const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude);
+            res.send(this.convertToDto(guides));
+        } catch(ex){
+            res.send(ex);
+        }
+    }*/
+
     @Post('/')
     @Validate(checkSchema({
         name: {
