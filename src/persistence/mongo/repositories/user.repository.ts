@@ -16,7 +16,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async getByAuthId(id: string): Promise<IUser | null> {
-        const user = await DbUser.findOne({ userid: id }).exec();
+        const user = await DbUser.findOne({ authid: id }).exec();
         return user;
     }
 
