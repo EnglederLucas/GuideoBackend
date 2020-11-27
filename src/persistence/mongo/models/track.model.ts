@@ -19,7 +19,7 @@ interface IGeoLocationModel extends Model<IGeoLocationDocument> { }
 export const DbGeoLocation = model<IGeoLocationDocument, IGeoLocationModel>('Geolocation', GeoLocationSchema);*/
 
 const TrackSchema = new Schema({
-    guideId: { type: String, required: true },
+    guideId: { type: Schema.Types.ObjectId, required: true },
     trackName: { type: String, required: true },
     description: { type: String, required: false },
     trackLink: {type: String, required: true },

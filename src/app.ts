@@ -20,6 +20,8 @@ import express from 'express';
 import { connect, connection as db } from 'mongoose';
 import { Files, $Log } from './utils';
 import config from './config';
+import { IDataInitializer } from './core/contracts';
+import { DbDataInitializer } from './persistence/initializers';
 
 async function main() {
     $Log.logTitle();
@@ -44,17 +46,17 @@ async function main() {
 
     const unitOfWork: UnitOfWork = new UnitOfWork(db);
     // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
-    // const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
+    /*const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
-    // $Log.logger.info('> clearing database ...');
-    // await unitOfWork.clearDatabase();
-    // $Log.logger.info('> database is empty');
+    $Log.logger.info('> clearing database ...');
+    await unitOfWork.clearDatabase();
+    $Log.logger.info('> database is empty');
 
-    // $Log.logger.info('> initialize data ...');
-    // const result: number = await dataInitializer.initData();
-    // $Log.logger.info(`> ${result} entries were initizialized`);
+    $Log.logger.info('> initialize data ...');
+    const result: number = await dataInitializer.initData();
+    $Log.logger.info(`> ${result} entries were initizialized`);
 
-    // $Log.logger.info('> added data to database');
+    $Log.logger.info('> added data to database');*/
 
     const server: GuideoServer = new GuideoServer({
         port: port,

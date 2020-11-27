@@ -27,6 +27,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
         });
 
         await this.unitOfWork.guides.add({
@@ -39,6 +40,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: true
         });
 
         await this.unitOfWork.guides.add({
@@ -51,6 +53,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
         });
 
         await this.unitOfWork.guides.add({
@@ -63,6 +66,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
         });
 
         const ratings: IRating[] = [
@@ -76,11 +80,11 @@ export class DbDataInitializer implements IDataInitializer {
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
                 rating: 1,
             },
-            {
-                userId: '3',
-                guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
-                rating: 5,
-            },
+            // {
+            //     userId: '3',
+            //     guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
+            //     rating: 5,
+            // },
             {
                 userId: '1',
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
