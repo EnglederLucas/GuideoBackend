@@ -49,37 +49,46 @@ export class GuideRepository implements IGuideRepository {
     async getGuidesByLocation(latitude: number, longitude: number): Promise<GuideLocationDto[]> {
         const userLocation = {latitude: latitude, longitude: longitude};
         
-        const tracks: ITrack[] = await DbGuide.aggregate([
+        const dbResult = await DbGuide.aggregate([
             {
-              '$match': {
+                '$match': {
                 'privateFlag': false
-              }
+                }
+            },{
+                '$lookup': {
+                    'from': 'tracks', 
+                    'localField': '_id', 
+                    'foreignField': 'guideId', 
+                    'as': 'tracks'
+                }
             }, {
-              '$lookup': {
-                'from': 'tracks', 
-                'localField': '_id', 
-                'foreignField': 'guideId', 
-                'as': 'tracks'
-              }
+                '$project': {
+                    'tracks': 1, 
+                    '_id': 0
+                }
             }, {
-              '$project': {
-                'tracks': 1, 
-                '_id': 0
-              }
+                '$unwind': {
+                    'path': '$tracks'
+                }
             }, {
-              '$unwind': {
-                'path': '$tracks'
-              }
+                '$group': {
+                    '_id': null, 
+                    'tracks': {
+                    '$push': '$tracks'
+                    }
+                }
+            }, {
+                '$project': {
+                    '_id': 0
+                }
             }
         ]).exec();
 
-        //console.log("tracks: ",tracks);
-
+        let tracks: ITrack[] = dbResult[0].tracks;
         let guideTrackMap = new Map<string, {location: IGeoLocation, distance: number}>();
 
         const maxDistance = 5000;
         tracks.forEach(track => {
-            console.log(track);
             //Get Guides within 5km of the given latitude and longitude with geolib
             const trackLocation = {latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude};
             const trackDistance = getDistance(userLocation, trackLocation);
@@ -89,17 +98,22 @@ export class GuideRepository implements IGuideRepository {
             }
         });
 
-        console.log("guidetrackmap: ", guideTrackMap);
+        //console.log("guidetrackmap: ", guideTrackMap);
 
         let guides: GuideLocationDto[] = [];
 
-        guideTrackMap.forEach((value, key) => {
-            DbGuide.findOne({_id: key}).exec()
-                .then(guideDocument => guideDocument as IGuide)
-                .then(guide => {
-                    guides.push({location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
-                });
-        });
+        //Doesn't wait for this
+        const getGuideLocationDtos = async () => {
+            guideTrackMap.forEach((value, key) => {
+                DbGuide.findOne({_id: key}).exec()
+                    .then(guideDocument => guideDocument as IGuide)
+                    .then(guide => {
+                        console.log(guide);
+                        guides.push({location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
+                    });
+            });
+        }
+        await getGuideLocationDtos();
 
         console.log("guides: ", guides);
 

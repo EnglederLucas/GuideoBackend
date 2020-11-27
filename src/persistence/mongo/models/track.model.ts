@@ -24,7 +24,7 @@ const TrackSchema = new Schema({
     description: { type: String, required: false },
     trackLink: {type: String, required: true },
     trackLength: { type: Number, required: true },
-    mapping: { type: [Schema.Types.Mixed], required:true}
+    mapping: { type: Schema.Types.Mixed, required:true}
 });
 
 TrackSchema.statics.ofTrack = (track: ITrack) => new DbTrack(track);
