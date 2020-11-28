@@ -85,23 +85,23 @@ export class GuideEndpoint {
 
         try{
             const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
-            res.send(this.convertToDto(guides));
+            return Ok(this.convertToDto(guides));
         } catch(ex){
-            res.send(ex);
+            return BadRequest(ex);
         }
     }
 
-    /*@Get('/byLocation')
+    @Get('/byLocation')
     @Validate(query('latitude', 'a latitude has to be defined').isFloat())
     @Validate(query('longitude', 'a longitude has to be defined').isFloat())
     async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response){
         try{
             const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude);
-            res.send(this.convertToDto(guides));
+            return Ok(guides);
         } catch(ex){
-            res.send(ex);
+            return BadRequest(ex);
         }
-    }*/
+    }
 
     @Post('/')
     @Validate(checkSchema({
@@ -150,9 +150,12 @@ export class GuideEndpoint {
         },
         chronological: {
             isBoolean: true
+        },
+        private: {
+            isBoolean: true
         }
     }))
-    async addGuideData(req: Request, res: Response) {
+    async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
             await this.unitOfWork.guides.update(guide);
@@ -170,7 +173,7 @@ export class GuideEndpoint {
     }
 
     private mapToGuide(obj: any): IGuide {
-        let { id, name, description, tags, user, imageLink, chronological } = obj;
+        let { id, name, description, tags, user, imageLink, chronological, privateFlag } = obj;
 
         if (id === undefined) throw new Error("no id defined");
         if (name === undefined) throw new Error("no name defined");
@@ -179,8 +182,9 @@ export class GuideEndpoint {
         if (user === undefined) throw new Error("User id is undefined");
         if (imageLink === undefined) imageLink = '/deer.png';
         if (chronological === undefined) chronological = false;
-        
-        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0};
+        if (privateFlag === undefined) privateFlag = false;
+
+        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0, privateFlag: privateFlag};
     }
 
     private mapToPostGuide(obj: any): PostGuideDto {

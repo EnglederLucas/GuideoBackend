@@ -5,7 +5,7 @@ export interface IGuideDocument extends Document, IGuide {
     id: string
 }
 
-export interface IGuideModel extends Model<IGuideDocument> {
+export interface IGuideModel extends IGuide, Model<IGuideDocument> {
     ofGuide(data: IGuide): IGuideDocument;
 }
 
@@ -30,6 +30,10 @@ const GuideSchema = new Schema({
         required: true
     },
     chronological: {
+        type: Boolean,
+        required: true
+    },
+    privateFlag : {
         type: Boolean,
         required: true
     }

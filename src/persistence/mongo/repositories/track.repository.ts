@@ -1,4 +1,5 @@
 import { isPointWithinRadius } from 'geolib';
+import { GuideLocationDto } from '../../../application/data-transfer-objects';
 import { ITrackRepository } from '../../../core/contracts';
 import { IGeoLocation, IGuide, ITrack } from '../../../core/models';
 import { DbGuide } from '../models';
@@ -34,6 +35,7 @@ export class TrackRepository implements ITrackRepository {
 
         var tracks: ITrack[] = [];
         var tracksInRadius: ITrack[] = [];
+        var locationGuides: GuideLocationDto[] = [];
 
         for(var i=0; i < dbGuides.length; i++){
             (await DbTrack.find({ guideId: dbGuides[i].id }).exec()).forEach(track => {
@@ -41,14 +43,14 @@ export class TrackRepository implements ITrackRepository {
             }); 
         }
         
-        //For GeoLocation-Mapping only
         tracks.forEach(track => {
             //Get Guides within 5km of the given latitude and longitude with geolib
+            
             if(isPointWithinRadius(
                 userLocation,
-                {latitude: (track.mapping[0] as IGeoLocation).latitude, longitude: (track.mapping[0] as IGeoLocation).longitude},
-                5000
-            )) { tracksInRadius.push(track); }
+                {latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude},
+                5000)) { 
+            }
         });
 
         return tracksInRadius;
