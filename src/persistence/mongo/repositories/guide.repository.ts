@@ -88,34 +88,23 @@ export class GuideRepository implements IGuideRepository {
         let guideTrackMap = new Map<string, {location: IGeoLocation, distance: number}>();
 
         const maxDistance = 5000;
+        let mapResult;
         tracks.forEach(track => {
-            //Get Guides within 5km of the given latitude and longitude with geolib
+            //Get Guides within maxDistance of the given latitude and longitude with geolib
             const trackLocation = {latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude};
             const trackDistance = getDistance(userLocation, trackLocation);
-            let mapResult = guideTrackMap.get(track.guideId);
-            if(trackDistance < maxDistance && ((mapResult && getDistance(userLocation, trackLocation) < mapResult.distance) || !mapResult)){
-                guideTrackMap.set(track.guideId, {location: track.mapping.geoLocation, distance: getDistance(userLocation, trackLocation)});
+            mapResult = guideTrackMap.get(track.guideId.toString());
+            if(trackDistance < maxDistance && (mapResult === undefined || (getDistance(userLocation, trackLocation) < mapResult.distance)) ){
+                guideTrackMap.set(track.guideId.toString(), {location: track.mapping.geoLocation, distance: getDistance(userLocation, trackLocation)});
             }
         });
 
-        //console.log("guidetrackmap: ", guideTrackMap);
-
         let guides: GuideLocationDto[] = [];
 
-        //Doesn't wait for this
-        const getGuideLocationDtos = async () => {
-            guideTrackMap.forEach((value, key) => {
-                DbGuide.findOne({_id: key}).exec()
-                    .then(guideDocument => guideDocument as IGuide)
-                    .then(guide => {
-                        console.log(guide);
-                        guides.push({location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
-                    });
-            });
+        for(let [key, value] of guideTrackMap){
+            const guide = await DbGuide.findOne({_id: key}).exec() as IGuide;
+            guides.push({location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
         }
-        await getGuideLocationDtos();
-
-        console.log("guides: ", guides);
 
         return guides;
     }
