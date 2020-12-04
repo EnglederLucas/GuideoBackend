@@ -46,6 +46,7 @@ async function main() {
 
     const unitOfWork: UnitOfWork = new UnitOfWork(db);
     // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
+    //Init local Db
     /*const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
     $Log.logger.info('> clearing database ...');
@@ -76,7 +77,7 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            // { route: '/api', handler: verifyUserToken },
+            { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },

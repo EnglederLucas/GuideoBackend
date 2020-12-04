@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IGeoLocation, IMapping, ITrack } from '../../core/models';
+import { IGeoLocation, ITrack } from '../../core/models';
 import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
 import { JsonResponse, BadRequest, Ok, Created } from '../../nexos-express/models';
 

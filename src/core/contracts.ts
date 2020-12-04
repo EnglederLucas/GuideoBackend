@@ -16,6 +16,7 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
+    delete(guideId: string, username: string): Promise<void>;
     getGuidesByName(name: string): Promise<IGuide[]>;
     getGuidesOfUser(userName: string): Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>; // ITag['name'][] wird zu dem Typ string[] zur compilezeit

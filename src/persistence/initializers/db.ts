@@ -69,6 +69,13 @@ export class DbDataInitializer implements IDataInitializer {
             privateFlag: false
         });
 
+        await this.unitOfWork.users.add({
+            id: '',
+            authid: 'rOogJsfoD1eHbIZXbYHWf5DGr983',
+            email: 'thelegend27@x.at',
+            username: 'thelegend27'
+        });
+
         const ratings: IRating[] = [
             {
                 userId: '1',
@@ -176,6 +183,7 @@ export class DbDataInitializer implements IDataInitializer {
 
         return 10;
     }
+
 
     getGuides(): IGuide[] {
         throw new Error('Method not implemented.');

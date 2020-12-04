@@ -1,7 +1,9 @@
 import { getDistance, isPointWithinRadius } from 'geolib';
 import { GuideLocationDto } from '../../../application/data-transfer-objects';
+import config from '../../../config';
 import { IGuideRepository } from '../../../core/contracts';
 import { IGeoLocation, IGuide, ITrack } from '../../../core/models';
+import { Files } from '../../../utils';
 import { DbGuide } from '../models';
 import { DbTrack } from '../models/track.model';
 
@@ -12,7 +14,7 @@ export class GuideRepository implements IGuideRepository {
     }
 
     getById(id: string): Promise<IGuide | null> {
-        return DbGuide.findOne({ _id: id, privateFlag: false }).exec();
+        return DbGuide.findOne({ _id: id }).exec();
     }
 
     getTopGuides(limit: number): Promise<IGuide[]> {
@@ -103,7 +105,7 @@ export class GuideRepository implements IGuideRepository {
 
         for(let [key, value] of guideTrackMap){
             const guide = await DbGuide.findOne({_id: key}).exec() as IGuide;
-            guides.push({location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
+            guides.push({id: guide.id, location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
         }
 
         return guides;
@@ -122,10 +124,9 @@ export class GuideRepository implements IGuideRepository {
         await DbGuide.insertMany(items);
     }
 
-    async delete(item: IGuide){
-        //TODO: Delete tracks and guide folder in file system -> afterwards from db
-        await DbTrack.deleteMany({guideId: item.id}).exec();
-        await DbGuide.deleteOne({_id: item.id}).exec();
+    async delete(guideId: string): Promise<void>{
+        await DbTrack.deleteMany({guideId: guideId}).exec();
+        await DbGuide.deleteOne({_id: guideId}).exec();
     }
 
 }

@@ -14,7 +14,7 @@ export async function verifyUserToken(req: Request, res: Response, next: NextFun
     try {
         // $Log.logger.info(`Authenticate ${token}`);
         const decodedIdToken: auth.DecodedIdToken = await auth().verifyIdToken(token);
-        req.params['uid'] = decodedIdToken.uid;
+        req.headers['uid'] = decodedIdToken.uid;
         next();
     } catch (err) {
         $Log.logger.error(err);
