@@ -1,3 +1,4 @@
+import { GuideLocationDto } from '../application/data-transfer-objects';
 import { IGuide, IRating, ITag, IUser, ITrack } from './models';
 
 export interface IGenericRepository<TEntity, TId> {
@@ -15,11 +16,13 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
+    delete(guideId: string, username: string): Promise<void>;
     getGuidesByName(name: string): Promise<IGuide[]>;
     getGuidesOfUser(userName: string): Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>; // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
     getTopGuides(limit: number): Promise<IGuide[]>;
+    getGuidesByLocation(latitude: number, longitude: number): Promise<GuideLocationDto[]>;
     update(guide: IGuide): Promise<void>;
 }
 

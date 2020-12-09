@@ -14,7 +14,7 @@ const RatingSchema = new Schema({
         required: true
     },
     guideId: {
-        type: String,
+        type: Schema.Types.ObjectId,
         required: true
     },
     rating: {

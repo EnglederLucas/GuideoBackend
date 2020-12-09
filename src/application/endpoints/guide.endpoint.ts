@@ -2,14 +2,16 @@ import { Request, Response } from 'express';
 import { query, checkSchema } from "express-validator";
 import { $Log } from '../../utils/logger';
 
-import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query } from "../../nexos-express/decorators";
-import { Ok, JsonResponse, BadRequest, Created, InternalServerError  } from "../../nexos-express/models";
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query, Delete } from "../../nexos-express/decorators";
+import { Ok, JsonResponse, BadRequest, Created, InternalServerError, NotFound  } from "../../nexos-express/models";
 
 import { IUnitOfWork } from '../../core/contracts';
 import { IGuide } from '../../core/models';
 import { PostGuideDto } from "../../core/data-transfer-objects";
 
 import { GuideDto } from "../data-transfer-objects";
+import config from '../../config';
+import { Files } from '../../utils';
 
 @Endpoint('guides')
 export class GuideEndpoint {
@@ -85,23 +87,23 @@ export class GuideEndpoint {
 
         try{
             const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
-            res.send(this.convertToDto(guides));
+            return Ok(this.convertToDto(guides));
         } catch(ex){
-            res.send(ex);
+            return BadRequest(ex);
         }
     }
 
-    /*@Get('/byLocation')
+    @Get('/byLocation')
     @Validate(query('latitude', 'a latitude has to be defined').isFloat())
     @Validate(query('longitude', 'a longitude has to be defined').isFloat())
     async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response){
         try{
             const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude);
-            res.send(this.convertToDto(guides));
+            return Ok(guides);
         } catch(ex){
-            res.send(ex);
+            return BadRequest(ex);
         }
-    }*/
+    }
 
     @Post('/')
     @Validate(checkSchema({
@@ -150,9 +152,12 @@ export class GuideEndpoint {
         },
         chronological: {
             isBoolean: true
+        },
+        private: {
+            isBoolean: true
         }
     }))
-    async addGuideData(req: Request, res: Response) {
+    async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
             await this.unitOfWork.guides.update(guide);
@@ -169,8 +174,55 @@ export class GuideEndpoint {
         }
     }
 
+    @Delete('/:guideId')
+    async deleteGuide(req: Request, res: Response){
+        try{
+            const uid = req.headers['uid'] as string;
+            const guideId = req.params['guideId'];
+
+            const user = await this.unitOfWork.users.getByAuthId(uid);
+            if(user == null){
+                return NotFound("User does not exist.");
+            }
+            const guide = await this.unitOfWork.guides.getById(guideId);
+            if(guide == null){
+                return NotFound("Guide does not exist.");
+            }
+            if(guide.user != uid){
+                return new JsonResponse(403, "Not allowed to delete other's guides.")
+            }
+
+            //Delete guide + tracks from filesystem
+            const username = user.username;
+            const guidePath = `${__dirname}/../../${config.publicPath}/tracks/${username}/${guideId}`;
+
+            //Check if dir exists
+            let folderExists: boolean;
+            try{
+                await Files.accessAsync(guidePath);
+                folderExists = true;
+            } catch(err){
+                folderExists = false;
+            }
+            
+            if(folderExists){
+                (await Files.readdirAsync(guidePath)).forEach(trackFile => {
+                    Files.unlinkAsync(`${guidePath}/${trackFile}`);
+                });
+                await Files.rmdirAsync(guidePath);
+            }
+            
+            //Delete guide + tracks from db
+            await this.unitOfWork.guides.delete(guideId, username);
+
+            return new JsonResponse(204, null);
+        } catch(err){
+            return BadRequest(err.toString());
+        }
+    }
+
     private mapToGuide(obj: any): IGuide {
-        let { id, name, description, tags, user, imageLink, chronological } = obj;
+        let { id, name, description, tags, user, imageLink, chronological, privateFlag } = obj;
 
         if (id === undefined) throw new Error("no id defined");
         if (name === undefined) throw new Error("no name defined");
@@ -179,8 +231,9 @@ export class GuideEndpoint {
         if (user === undefined) throw new Error("User id is undefined");
         if (imageLink === undefined) imageLink = '/deer.png';
         if (chronological === undefined) chronological = false;
-        
-        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0};
+        if (privateFlag === undefined) privateFlag = false;
+
+        return {id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0, privateFlag: privateFlag};
     }
 
     private mapToPostGuide(obj: any): PostGuideDto {

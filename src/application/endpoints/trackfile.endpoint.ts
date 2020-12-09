@@ -27,6 +27,7 @@ export class TrackEndpoint extends BaseEndpoint {
                 if (!(await Files.existsAsync(userPath))) await Files.mkdirAsync(userPath);
                 if (!(await Files.existsAsync(guidePath))) await Files.mkdirAsync(guidePath);
                 
+                
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}/${req.file.originalname}`;
 
