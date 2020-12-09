@@ -1,22 +1,19 @@
 FROM node AS builder
-COPY . .
-RUN npm install && npm install -g typescript
+RUN npm install -g typescript
+COPY ./package*.json ./
+RUN npm install
+COPY ./tsconfig.json .
+COPY ./src ./
 RUN tsc
-
-FROM node AS orderer
-WORKDIR /app
-COPY --from=builder ./build .
-COPY --from=builder ./public ./public
-COPY --from=builder ./package.json .
-COPY --from=builder ./vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json .
 
 FROM node
 ARG PORT=3030
 WORKDIR /app
-COPY --from=orderer ./app .
 ENV CRED_PATH=/vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json PUBLIC_PATH=/public
 ENV PORT=${PORT}
+COPY ./vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json .
+COPY ./package*.json ./
 RUN npm install --production
-# RUN ls -la
+COPY --from=builder ./build .
 EXPOSE ${PORT}
 CMD ["node", "app.js"]

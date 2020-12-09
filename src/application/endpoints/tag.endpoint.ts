@@ -1,30 +1,28 @@
 import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
-import { Endpoint, Get, Validate, Post, Query } from "../../nexos-express/decorators";
-import { Ok, BadRequest  } from "../../nexos-express/models";
-import { IUnitOfWork } from "../../core/contracts";
+import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
+import { Ok, BadRequest } from '../../nexos-express/models';
+import { IUnitOfWork } from '../../core/contracts';
 
 @Endpoint('tags')
 export class TagEndpoint {
-    
-    constructor(private readonly unitOfWork: IUnitOfWork) {
-    }
+    constructor(private readonly unitOfWork: IUnitOfWork) {}
 
     @Get('/')
     async getAll(req: Request, res: Response) {
-        try{
+        try {
             return Ok(await this.unitOfWork.tags.getAll());
-        } catch(ex){
+        } catch (ex) {
             return BadRequest(ex);
         }
     }
 
     @Get('/byname')
     async getByName(@Query('tagname') tagName: any, req: Request, res: Response) {
-        try{
-            return Ok(await this.unitOfWork.tags.getTagByName(name));
-        } catch(ex){
+        try {
+            return Ok(await this.unitOfWork.tags.getTagByName(tagName));
+        } catch (ex) {
             return BadRequest(ex);
         }
     }
@@ -34,7 +32,7 @@ export class TagEndpoint {
     async getWhichStartsWith(@Query('letters') letters: any, req: Request, res: Response) {
         try {
             return Ok(await this.unitOfWork.tags.getTagsBeginningWith(letters));
-        } catch(err) {
+        } catch (err) {
             return BadRequest(err);
         }
     }
@@ -46,21 +44,25 @@ export class TagEndpoint {
 
         try {
             return Ok(await this.unitOfWork.tags.getTopUsedTags(limit));
-        } catch(err) {
+        } catch (err) {
             return BadRequest(err);
         }
     }
 
     @Post('/')
-    @Validate(checkSchema({
-        tagName: { isString: true }
-    }))
+    @Validate(
+        checkSchema({
+            tagName: { isString: true },
+        }),
+    )
     async add(req: Request, res: Response) {
         const tagName = req.body.tagName;
 
-        return Ok(await this.unitOfWork.tags.add({
-            name: tagName,
-            numberOfUses: 0
-        }));
+        return Ok(
+            await this.unitOfWork.tags.add({
+                name: tagName,
+                numberOfUses: 0,
+            }),
+        );
     }
 }

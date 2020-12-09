@@ -1,7 +1,6 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
-import { $Log } from '../../utils/logger';
-import { Files } from '../../utils';
+import { Files, $Log } from '../../utils';
 
 export class ImageEndpoint extends BaseEndpoint {
     private tempPath: string;

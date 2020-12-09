@@ -1,0 +1,16 @@
+node_modules
+npm-debug.log
+*Dockerfile*
+docker-compose*
+.dockerignore
+.git
+.gitignore
+Readme.md
+LICENSE
+.vscode
+.idea
+build
+.env*
+nodemon.json
+.eslintrc.js
+.prettierrc.js

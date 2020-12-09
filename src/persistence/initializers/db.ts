@@ -20,13 +20,14 @@ export class DbDataInitializer implements IDataInitializer {
         await this.unitOfWork.guides.add({
             id: '',
             name: 'History of Linz',
-            user: 'thelegend27',
+            user: 'rOogJsfoD1eHbIZXbYHWf5DGr983', //thelegend27
             imageLink: '/img/skyline.jpg',
             tags: ['history', 'irrelevant'],
             description: 'The guide of guides will guide you through the history of Linz and its beautifullness',
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
         });
 
         await this.unitOfWork.guides.add({
@@ -39,6 +40,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: true
         });
 
         await this.unitOfWork.guides.add({
@@ -51,6 +53,7 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
         });
 
         await this.unitOfWork.guides.add({
@@ -63,6 +66,14 @@ export class DbDataInitializer implements IDataInitializer {
             chronological: false,
             rating: 0,
             numOfRatings: 0,
+            privateFlag: false
+        });
+
+        await this.unitOfWork.users.add({
+            id: '',
+            authid: 'rOogJsfoD1eHbIZXbYHWf5DGr983',
+            email: 'thelegend27@x.at',
+            username: 'thelegend27'
         });
 
         const ratings: IRating[] = [
@@ -76,11 +87,11 @@ export class DbDataInitializer implements IDataInitializer {
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
                 rating: 1,
             },
-            {
-                userId: '3',
-                guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
-                rating: 5,
-            },
+            // {
+            //     userId: '3',
+            //     guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
+            //     rating: 5,
+            // },
             {
                 userId: '1',
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
@@ -172,6 +183,7 @@ export class DbDataInitializer implements IDataInitializer {
 
         return 10;
     }
+
 
     getGuides(): IGuide[] {
         throw new Error('Method not implemented.');

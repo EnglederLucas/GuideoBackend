@@ -1,5 +1,5 @@
+import { GuideLocationDto } from '../application/data-transfer-objects';
 import { IGuide, IRating, ITag, IUser, ITrack } from './models';
-import { IUserDto } from './data-transfer-objects';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
@@ -9,18 +9,20 @@ export interface IGenericRepository<TEntity, TId> {
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
-    getRatingsOfGuide(guideId: string) : Promise<IRating[]>;
+    getRatingsOfGuide(guideId: string): Promise<IRating[]>;
     getAverageRatingOfGuide(guideId: string): Promise<number>;
-    getRatingsOfUser(userId: string) : Promise<IRating[]>;
+    getRatingsOfUser(userId: string): Promise<IRating[]>;
     getSpecificOf(guideId: string, userId: string): Promise<IRating | undefined>;
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
-    getGuidesByName(name: string) : Promise<IGuide[]>;
-    getGuidesOfUser(userName: string) : Promise<IGuide[]>;
-    getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>;     // ITag['name'][] wird zu dem Typ string[] zur compilezeit
+    delete(guideId: string, username: string): Promise<void>;
+    getGuidesByName(name: string): Promise<IGuide[]>;
+    getGuidesOfUser(userName: string): Promise<IGuide[]>;
+    getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>; // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
-    getTopGuides(limit: number): Promise<IGuide[]>
+    getTopGuides(limit: number): Promise<IGuide[]>;
+    getGuidesByLocation(latitude: number, longitude: number): Promise<GuideLocationDto[]>;
     update(guide: IGuide): Promise<void>;
 }
 
@@ -32,15 +34,17 @@ export interface ITagRepository extends IGenericRepository<ITag, string> {
 }
 
 export interface IUserRepository {
-    getById(id: string): Promise<IUserDto | null>;
-    getUserByName(name: string): Promise<IUserDto>;
-    getAll(): Promise<IUserDto[]>;
-    add(item: IUserDto): Promise<void>;
-    addRange(items: IUserDto[]): Promise<void>;
+    getById(id: string): Promise<IUser | null>;
+    getByAuthId(id: string): Promise<IUser | null>;
+    getUserByName(name: string): Promise<IUser>;
+    getAll(): Promise<IUser[]>;
+    add(item: IUser): Promise<string>;
+    addRange(items: IUser[]): Promise<void>;
 }
 
 export interface ITrackRepository extends IGenericRepository<ITrack, string> {
     getByGuide(guideId: string): Promise<ITrack[]>;
+    getTracksByLocation(latitude: number, longitude: number): Promise<ITrack[]>
 }
 
 export interface IUnitOfWork {

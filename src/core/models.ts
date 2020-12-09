@@ -1,5 +1,6 @@
 export interface IUser {
     id: string;
+    authid: string; // firebase user id
     username: string;
     name?: string;
     email?: string;
@@ -17,6 +18,7 @@ export interface IGuide {
     rating: number;
     numOfRatings: number;
     chronological: boolean;
+    privateFlag: boolean;
 }
 
 export interface IRating {
@@ -37,13 +39,18 @@ export interface ITrack {
     description: string;
     trackLink: string;
     trackLength: number;
-    mapping: IMapping[];
+    mapping: IMapping;
 }
 
-export interface IMapping {}
+export interface IMapping {
+    geoLocation: IGeoLocation
+    //TODO: implement other mapping methods
+}
 
-export interface IGeoLocation extends IMapping {
+export interface IGeoLocation{
     radius: number;
     latitude: number;
     longitude: number;
 }
+
+

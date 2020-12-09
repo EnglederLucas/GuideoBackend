@@ -11,21 +11,17 @@ import {
     TrackEndpoint,
     ImageEndpoint,
 } from './application/endpoints';
-import { $Log } from './utils/logger';
 
-// import { UnitOfWork } from './persistence/firebase/unitofwork';
 import { UnitOfWork } from './persistence/mongo/unitofwork';
 
 import * as admin from 'firebase-admin';
 import express from 'express';
 
 import { connect, connection as db } from 'mongoose';
-
-import { IDataInitializer } from './core/contracts';
-// import { InMemoryDataInitializer } from './persistence/initializers';
-import { DbDataInitializer } from './persistence/initializers/db';
-import { Files } from './utils';
+import { Files, $Log } from './utils';
 import config from './config';
+import { IDataInitializer } from './core/contracts';
+import { DbDataInitializer } from './persistence/initializers';
 
 async function main() {
     $Log.logTitle();
@@ -34,7 +30,6 @@ async function main() {
     const port: number = config.port;
     const enableCors: boolean = true;
 
-    // const serviceAccount = require(__dirname + '/../vyzerdb-736d7-firebase-adminsdk-vqpte-d08dfa582b.json');
     const serviceAccount = require(`${__dirname}${config.credPath}`);
 
     admin.initializeApp({
@@ -49,10 +44,10 @@ async function main() {
         useUnifiedTopology: true,
     });
 
-    // const db = admin.firestore();
     const unitOfWork: UnitOfWork = new UnitOfWork(db);
     // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
-    const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
+    //Init local Db
+    /*const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
     $Log.logger.info('> clearing database ...');
     await unitOfWork.clearDatabase();
@@ -62,29 +57,7 @@ async function main() {
     const result: number = await dataInitializer.initData();
     $Log.logger.info(`> ${result} entries were initizialized`);
 
-    // unitOfWork.users.addRange(dataInitializer.getUsers());
-    // unitOfWork.guides.addRange(dataInitializer.getGuides());
-    // unitOfWork.tags.addRange(dataInitializer.getTags());
-    // unitOfWork.ratings.addRange(dataInitializer.getRatings());
-
-    // dataInitializer.getRatings().forEach(async r => {
-    //     const guide = await unitOfWork.guides.getById(r.guideId);
-
-    //     if (guide === null || guide === undefined){
-    //         throw new Error(`No guide found with id ${r.guideId}`);
-    //     }
-
-    //     unitOfWork.ratings.add(r);
-    //     const newNumOfRatings = guide.numOfRatings + 1;
-    //     const oldRatingTotal = guide.rating * guide.numOfRatings;
-    //     const newAvgRating = Math.round((oldRatingTotal + r.rating) / newNumOfRatings);
-
-    //     guide.rating = newAvgRating;
-    //     guide.numOfRatings = newNumOfRatings;
-    //     await unitOfWork.guides.update(guide);
-    // });
-
-    $Log.logger.info('> added data to database');
+    $Log.logger.info('> added data to database');*/
 
     const server: GuideoServer = new GuideoServer({
         port: port,
@@ -104,13 +77,14 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            // { route: '/api', handler: verifyUserToken },
+            { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
+            // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },
             { route: '/', handler: express.json() },
         ],
-        keyPath: `${__dirname}${config.publicPath}/security/key.pem`,
-        certPath: `${__dirname}${config.publicPath}/security/cert.pem`,
+        // keyPath: `${__dirname}${config.publicPath}/security/key.pem`,
+        // certPath: `${__dirname}${config.publicPath}/security/cert.pem`,
     });
 
     if (enableCors) $Log.logger.info('cors enabled');
@@ -121,8 +95,6 @@ async function main() {
 
     server.start();
 }
-
-// main().catch((err) => $Log.logger.error('something happened!\n' + err));
 
 (async () => {
     try {

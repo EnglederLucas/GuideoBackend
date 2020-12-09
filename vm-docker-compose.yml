@@ -1,27 +1,40 @@
-version: '3.6'
+version: "3.6"
 
-services: 
-    guideo:
-        # build: 
-        #     context: .
-        #     dockerfile: server.Dockerfile
-        #     args: 
-        #         - PORT=3030
-        #image: guideo
-        image: guideo/guideo:0.2.0
-#       container_name: guideo
-        environment: 
-            DB_URL: mongodb://172.17.0.1:27017
-            DB_NAME: guideo
-        ports: 
-            - 8443:3030
-        volumes:
-            - server-data:/app/public
-        depends_on: 
-            - mongo
-    mongo:
-        image: mongo
-        ports: 
-            - "27017:27017"
+services:
+  guideo:
+    # build:
+    #     context: .
+    #     dockerfile: server.Dockerfile
+    #     args:
+    #         - PORT=3030
+    #image: guideo
+    image: guideo/guideo:0.6.0
+    #       container_name: guideo
+    environment:
+      DB_URL: mongodb://172.17.0.1:27017
+      DB_NAME: guideo
+    ports:
+      - 8443:3030
+    volumes:
+      - "./public:/app/public"
+#      - server-data:/app/public
+    depends_on:
+      - mongo
+
+  ionic-frontend:
+    image: guideo/ionic-frontend:v1.01
+    ports:
+      - 80:80
+    depends_on:
+      - guideo
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - db-data:/data/db
+
 volumes:
-    server_data:
+  # server-data:
+  db-data:

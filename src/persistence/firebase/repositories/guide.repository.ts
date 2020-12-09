@@ -1,147 +1,147 @@
-import { firestore } from "firebase-admin";
-import { IGuide } from '../../../core/models';
-import { IGuideRepository } from "../../../core/contracts";
-import { $Log } from '../../../utils/logger';
+// import { firestore } from "firebase-admin";
+// import { IGuide } from '../../../core/models';
+// import { IGuideRepository } from "../../../core/contracts";
+// import { $Log } from '../../../utils/logger';
 
-export class GuideRepository implements IGuideRepository {
+// export class GuideRepository implements IGuideRepository {
 
-    private readonly guidesRef: firestore.CollectionReference;
+//     private readonly guidesRef: firestore.CollectionReference;
 
-    constructor(private db: firestore.Firestore){
-        this.guidesRef = db.collection('guides');
-    }
+//     constructor(private db: firestore.Firestore){
+//         this.guidesRef = db.collection('guides');
+//     }
 
-    async getAll(): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
+//     async getAll(): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
 
-        let snapshot = await this.guidesRef.get();
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//         let snapshot = await this.guidesRef.get();
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-        return guides;
-    }
+//         return guides;
+//     }
 
-    async getById(id: string): Promise<IGuide> {
-        const doc: firestore.DocumentSnapshot = await this.guidesRef.doc(id).get();
-        const data: firestore.DocumentData | undefined = doc.data();
+//     async getById(id: string): Promise<IGuide> {
+//         const doc: firestore.DocumentSnapshot = await this.guidesRef.doc(id).get();
+//         const data: firestore.DocumentData | undefined = doc.data();
 
-        if(!doc.exists || data == undefined)
-            throw new Error(`Can not find guide with id ${id}`);
+//         if(!doc.exists || data == undefined)
+//             throw new Error(`Can not find guide with id ${id}`);
 
-        return this.convertDataToGuide(data, id);
-    }
+//         return this.convertDataToGuide(data, id);
+//     }
 
-    async getTopGuides(limit: number): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
-        
-        let snapshot = await this.guidesRef
-            .orderBy('rating', "desc")
-            .limit(limit)
-            .get();
-        
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//     async getTopGuides(limit: number): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
 
-        return guides;
-    }
+//         let snapshot = await this.guidesRef
+//             .orderBy('rating', "desc")
+//             .limit(limit)
+//             .get();
 
-    async getGuidesByName(name: string): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('name','==',name).get();
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//         return guides;
+//     }
 
-        return guides;
-    }
+//     async getGuidesByName(name: string): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
+//         let snapshot = await this.guidesRef.where('name','==',name).get();
 
-    async getGuidesWithTags(tags: string[]): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//         return guides;
+//     }
 
-        return guides;
-    }
+//     async getGuidesWithTags(tags: string[]): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
+//         let snapshot = await this.guidesRef.where('tags','array-contains-any',tags).get();
 
-    async getGuidesOfUser(userName: string): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.where('userName','==',userName).get();
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//         return guides;
+//     }
 
-        return guides;
-    }
+//     async getGuidesOfUser(userName: string): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
+//         let snapshot = await this.guidesRef.where('userName','==',userName).get();
 
-    async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
-        let guides: IGuide[] = [];
-        let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-        snapshot.forEach(doc => {
-            guides.push(this.convertDataToGuide(doc.data(), doc.id));
-        });
+//         return guides;
+//     }
 
-        return guides;
-    }
+//     async getGuidesPaged(index: number, size: number): Promise<IGuide[]> {
+//         let guides: IGuide[] = [];
+//         let snapshot = await this.guidesRef.orderBy('name').startAt(index).limit(size).get();
 
-    async add(item: IGuide): Promise<string> {
-        let setGuide = await this.guidesRef.add({
-            name: item.name,
-            description: item.description,
-            tags: item.tags,
-            user: item.user,
-            imageLink: item.imageLink,
-            chronological: item.chronological,
-            rating: 0,
-            numOfRatings: 0
-        });
-        return setGuide.id;
-    }
+//         snapshot.forEach(doc => {
+//             guides.push(this.convertDataToGuide(doc.data(), doc.id));
+//         });
 
-    async addRange(items: IGuide[]): Promise<void> {
-        items.forEach(item => {
-            this.add(item);
-        });
-    }
+//         return guides;
+//     }
 
-    async update(guide: IGuide): Promise<void> {
-        const batch: firestore.WriteBatch = this.db.batch();
-        const guideRef = this.guidesRef.doc(guide.id);
+//     async add(item: IGuide): Promise<string> {
+//         let setGuide = await this.guidesRef.add({
+//             name: item.name,
+//             description: item.description,
+//             tags: item.tags,
+//             user: item.user,
+//             imageLink: item.imageLink,
+//             chronological: item.chronological,
+//             rating: 0,
+//             numOfRatings: 0
+//         });
+//         return setGuide.id;
+//     }
 
-        batch.update(guideRef, {
-            name: guide.name,
-            description: guide.description,
-            tags: guide.tags,
-            user: guide.user,
-            imageLink: guide.imageLink,
-            chronological: guide.chronological,
-            rating: guide.rating,
-            numOfRatings: guide.numOfRatings
-        });
+//     async addRange(items: IGuide[]): Promise<void> {
+//         items.forEach(item => {
+//             this.add(item);
+//         });
+//     }
 
-        const results: firestore.WriteResult[] = await batch.commit();
-    }
+//     async update(guide: IGuide): Promise<void> {
+//         const batch: firestore.WriteBatch = this.db.batch();
+//         const guideRef = this.guidesRef.doc(guide.id);
 
-    private convertDataToGuide(data: firestore.DocumentData, id: string): IGuide {
-        const guide: IGuide = {
-            id: id,
-            name: data.name as string,
-            description: data.description as string | undefined,
-            tags: data.tags as string[],
-            user: data.user as string,
-            imageLink: data.imageLink as string | undefined,
-            chronological: data.chronological as boolean,
-            rating: data.rating as number,
-            numOfRatings: data.numOfRatings as number
-        };
+//         batch.update(guideRef, {
+//             name: guide.name,
+//             description: guide.description,
+//             tags: guide.tags,
+//             user: guide.user,
+//             imageLink: guide.imageLink,
+//             chronological: guide.chronological,
+//             rating: guide.rating,
+//             numOfRatings: guide.numOfRatings
+//         });
 
-        return guide;
-    }
-}
+//         const results: firestore.WriteResult[] = await batch.commit();
+//     }
+
+//     private convertDataToGuide(data: firestore.DocumentData, id: string): IGuide {
+//         const guide: IGuide = {
+//             id: id,
+//             name: data.name as string,
+//             description: data.description as string | undefined,
+//             tags: data.tags as string[],
+//             user: data.user as string,
+//             imageLink: data.imageLink as string | undefined,
+//             chronological: data.chronological as boolean,
+//             rating: data.rating as number,
+//             numOfRatings: data.numOfRatings as number
+//         };
+
+//         return guide;
+//     }
+// }

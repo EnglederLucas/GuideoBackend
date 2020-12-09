@@ -1,0 +1,44 @@
+## static configuration
+
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+  backend:
+    address: ":8443"
+
+certificatesResolvers:
+  guideoresolver:
+    acme:
+     email: luke.wirth31@gmail.com
+     storage: /letsencrypt/acme.json
+     ## Production
+     caServer: https://acme-v02.api.letsencrypt.org/directory
+     ## Development
+     # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+     tlsChallenge: {}
+
+## enabling the docker provider
+providers:
+  docker:
+    ## needed for docker APi access.  "unix:///var/run/docker.sock" is the default value
+    # endpoint: "unix:///var/run/docker.sock"
+    ## excludes containers that have not "treafik.enable = true" label
+    exposedByDefault: false   
+    ## defines default docker network. can be configured on container basis with traefik.docker.network label
+    # network: guideo-network
+
+## enables the traefik api
+api:
+  ## that the API will be available directly on the entryPoint named traefik. (if traefik not configured it will be automatically port 8080)
+  insecure: true
+  ## enables the traefik dashboard
+  dashboard: true
+  ## Enable additional endpoints for debugging and profiling, served under /debug/
+  debug: true
+
+## logs configuration
+log:
+  ## logging levels are DEBUG, PANIC, FATAL, ERROR, WARN, and INFO 
+  level: "INFO"
