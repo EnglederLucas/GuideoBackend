@@ -18,7 +18,7 @@ export class TrackDBEndpoint {
         try {
             return Ok(await this.unitOfWork.tracks.getByGuide(guideId));
         } catch (err) {
-            return BadRequest(err);
+            return BadRequest({ msg: err.message });
         }
     }
 
@@ -30,7 +30,7 @@ export class TrackDBEndpoint {
         try {
             return Ok(await this.unitOfWork.tracks.getById(trackId));
         } catch (err) {
-            return BadRequest(err);
+            return BadRequest({ msg: err.message });
         }
     }
 
@@ -57,7 +57,7 @@ export class TrackDBEndpoint {
             await this.unitOfWork.tracks.add(track);
             return Created({ msg: 'Track inserted' });
         } catch (err) {
-            return BadRequest(err);
+            return BadRequest({ msg: err.message });
         }
     }
 
@@ -69,7 +69,7 @@ export class TrackDBEndpoint {
             const tracks = await this.unitOfWork.tracks.getTracksByLocation(latitude, longitude);
             return Ok(tracks);
         } catch(err){
-            return BadRequest(err);
+            return BadRequest({ msg: err.message });
         }
     }
 
