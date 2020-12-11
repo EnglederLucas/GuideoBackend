@@ -80,11 +80,20 @@ export class GuideEndpoint {
         }
     }
 
+    @Get('/byRating')
+    @Validate(query('rating','a rating has to be defined').isNumeric())
+    async getByRating(@Query('rating') rating: number, req: Request, res: Response){
+        try{
+            const guides: IGuide[] = await this.unitOfWork.guides.getByRating(rating);
+            return Ok(this.convertToDto(guides));
+        } catch(err){
+            return BadRequest({msg: err.message});
+        }
+    }
+
     @Get('/withTags')
     @Validate(query('tags', 'tags has to be defined as an array').isArray())
     async getWithTags(@Query('tags') tags: any, req: Request, res: Response) {
-        // TODO: in a query? Really?
-
         try{
             const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
             return Ok(this.convertToDto(guides));
@@ -94,9 +103,9 @@ export class GuideEndpoint {
     }
 
     @Get('/byLocation')
-    @Validate(query('latitude', 'a latitude has to be defined').isFloat())
-    @Validate(query('longitude', 'a longitude has to be defined').isFloat())
-    @Validate(query('radius', 'a radius has to be defined').isFloat())
+    @Validate(query('latitude', 'a latitude has to be defined').isNumeric())
+    @Validate(query('longitude', 'a longitude has to be defined').isNumeric())
+    @Validate(query('radius', 'a radius has to be defined').isNumeric())
     async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, @Query('radius') radius: number, req: Request, res: Response){
         try{
             const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
