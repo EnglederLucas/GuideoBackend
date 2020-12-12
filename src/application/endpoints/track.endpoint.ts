@@ -5,6 +5,7 @@ import { JsonResponse, BadRequest, Ok, Created } from '../../nexos-express/model
 
 import { query, checkSchema } from 'express-validator';
 import { IUnitOfWork } from '../../core/contracts';
+import { $Log } from '../../utils';
 
 @Endpoint('tracks')
 export class TrackDBEndpoint {
@@ -14,9 +15,12 @@ export class TrackDBEndpoint {
     @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
     async getByGuide(req: Request, res: Response): Promise<JsonResponse<any>> {
         const guideId = req.query.guideId;
-        
+        // $Log.logger.info(`guideId: ${guideId}`);
+
         try {
-            return Ok(await this.unitOfWork.tracks.getByGuide(guideId));
+            const data = await this.unitOfWork.tracks.getByGuide(guideId);
+            // console.log(data);
+            return Ok(data);
         } catch (err) {
             return BadRequest(err);
         }
@@ -47,8 +51,8 @@ export class TrackDBEndpoint {
                 isString: true,
             },
             trackLength: {
-                isNumeric: true
-            }
+                isNumeric: true,
+            },
         }),
     )
     async addTrack(req: Request, res: Response) {
@@ -64,11 +68,11 @@ export class TrackDBEndpoint {
     @Get('/byLocation')
     @Validate(query('latitude', 'a latitude has to be defined').isFloat())
     @Validate(query('longitude', 'a longitude has to be defined').isFloat())
-    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response){
-        try{
+    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response) {
+        try {
             const tracks = await this.unitOfWork.tracks.getTracksByLocation(latitude, longitude);
             return Ok(tracks);
-        } catch(err){
+        } catch (err) {
             return BadRequest(err);
         }
     }
@@ -81,16 +85,14 @@ export class TrackDBEndpoint {
         if (trackLink === undefined) throw new Error('No trackLink defined');
         if (trackLength === undefined) throw new Error('No trackLength defined.');
         if (description === undefined) description = '';
-        
+
         let geoLocation: IGeoLocation;
-        if(obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined){
-            geoLocation = {latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius};
-        }
-        else{
-        throw new Error('No mapping defined');
+        if (obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined) {
+            geoLocation = { latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius };
+        } else {
+            throw new Error('No mapping defined');
         }
 
-        return { guideId, trackName, description, trackLink, trackLength, mapping: {geoLocation: geoLocation} } as ITrack;
+        return { guideId, trackName, description, trackLink, trackLength, mapping: { geoLocation: geoLocation } } as ITrack;
     }
-
 }

@@ -47,17 +47,17 @@ async function main() {
     const unitOfWork: UnitOfWork = new UnitOfWork(db);
     // const unitOfWork: IUnitOfWork = new UnitOfWork(connection);
     //Init local Db
-    /*const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
+    // const dataInitializer: IDataInitializer = new DbDataInitializer(unitOfWork);
 
-    $Log.logger.info('> clearing database ...');
-    await unitOfWork.clearDatabase();
-    $Log.logger.info('> database is empty');
+    // $Log.logger.info('> clearing database ...');
+    // await unitOfWork.clearDatabase();
+    // $Log.logger.info('> database is empty');
 
-    $Log.logger.info('> initialize data ...');
-    const result: number = await dataInitializer.initData();
-    $Log.logger.info(`> ${result} entries were initizialized`);
+    // $Log.logger.info('> initialize data ...');
+    // const result: number = await dataInitializer.initData();
+    // $Log.logger.info(`> ${result} entries were initizialized`);
 
-    $Log.logger.info('> added data to database');*/
+    // $Log.logger.info('> added data to database');
 
     const server: GuideoServer = new GuideoServer({
         port: port,
@@ -77,7 +77,7 @@ async function main() {
             { route: '/tracks', paths: [`${__dirname}${config.publicPath}/tracks`] },
         ],
         middlewares: [
-            { route: '/api', handler: verifyUserToken },
+            // { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },
