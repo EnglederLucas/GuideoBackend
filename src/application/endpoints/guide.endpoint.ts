@@ -26,7 +26,7 @@ export class GuideEndpoint {
             const guides: IGuide[] = await this.unitOfWork.guides.getAll();
             return Ok(this.convertToDto(guides));
         } catch(err){
-            return InternalServerError(err.toString());
+            return BadRequest({msg: err.message});
         }
     }
 
@@ -40,8 +40,8 @@ export class GuideEndpoint {
         try {
             const guides = await this.unitOfWork.guides.getGuidesPaged(pos, size);
             return Ok(this.convertToDto(guides));
-        } catch(ex){
-            return InternalServerError(ex);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 
@@ -53,8 +53,8 @@ export class GuideEndpoint {
         try {
             const guides = await this.unitOfWork.guides.getTopGuides(limit);
             return Ok(this.convertToDto(guides));
-        } catch(err) {
-            return BadRequest(err);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 
@@ -64,8 +64,8 @@ export class GuideEndpoint {
         try {
             const guides = await this.unitOfWork.guides.getGuidesByName(guideName);
             return Ok(this.convertToDto(guides));
-        } catch(ex){
-            return BadRequest(ex);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 
@@ -75,8 +75,8 @@ export class GuideEndpoint {
         try{
             const guides = await this.unitOfWork.guides.getGuidesOfUser(userName);
             return Ok(this.convertToDto(guides));
-        } catch(ex){
-            return BadRequest(ex);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 
@@ -88,20 +88,21 @@ export class GuideEndpoint {
         try{
             const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
             return Ok(this.convertToDto(guides));
-        } catch(ex){
-            return BadRequest(ex);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 
     @Get('/byLocation')
     @Validate(query('latitude', 'a latitude has to be defined').isFloat())
     @Validate(query('longitude', 'a longitude has to be defined').isFloat())
-    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response){
+    @Validate(query('radius', 'a radius has to be defined').isFloat())
+    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, @Query('radius') radius: number, req: Request, res: Response){
         try{
-            const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude);
+            const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
             return Ok(guides);
-        } catch(ex){
-            return BadRequest(ex);
+        } catch(err){
+            return BadRequest({msg: err.message});
         }
     }
 

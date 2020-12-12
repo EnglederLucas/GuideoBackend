@@ -48,7 +48,7 @@ export class GuideRepository implements IGuideRepository {
             .exec();
     }
 
-    async getGuidesByLocation(latitude: number, longitude: number): Promise<GuideLocationDto[]> {
+    async getGuidesByLocation(latitude: number, longitude: number, radius: number): Promise<GuideLocationDto[]> {
         const userLocation = {latitude: latitude, longitude: longitude};
         
         const dbResult = await DbGuide.aggregate([
@@ -86,17 +86,20 @@ export class GuideRepository implements IGuideRepository {
             }
         ]).exec();
 
+        if(dbResult[0] === undefined){
+            throw new Error('No tracks with matching guideId in DB');
+        }
+
         let tracks: ITrack[] = dbResult[0].tracks;
         let guideTrackMap = new Map<string, {location: IGeoLocation, distance: number}>();
 
-        const maxDistance = 5000;
         let mapResult;
         tracks.forEach(track => {
-            //Get Guides within maxDistance of the given latitude and longitude with geolib
+            //Get Guides within radius of the given latitude and longitude with geolib
             const trackLocation = {latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude};
             const trackDistance = getDistance(userLocation, trackLocation);
             mapResult = guideTrackMap.get(track.guideId.toString());
-            if(trackDistance < maxDistance && (mapResult === undefined || (getDistance(userLocation, trackLocation) < mapResult.distance)) ){
+            if(trackDistance < radius && (mapResult === undefined || (getDistance(userLocation, trackLocation) < mapResult.distance)) ){
                 guideTrackMap.set(track.guideId.toString(), {location: track.mapping.geoLocation, distance: getDistance(userLocation, trackLocation)});
             }
         });

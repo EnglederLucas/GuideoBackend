@@ -22,7 +22,7 @@ export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>; // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
     getTopGuides(limit: number): Promise<IGuide[]>;
-    getGuidesByLocation(latitude: number, longitude: number): Promise<GuideLocationDto[]>;
+    getGuidesByLocation(latitude: number, longitude: number, radius: number): Promise<GuideLocationDto[]>;
     update(guide: IGuide): Promise<void>;
 }
 
