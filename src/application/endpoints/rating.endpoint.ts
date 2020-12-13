@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { query, checkSchema } from 'express-validator';
 
 import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
-import { Ok, BadRequest, Created, NotFound } from '../../nexos-express/models';
+import { Ok, BadRequest, Created, NotFound, NoContent } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
 
 import { $Log } from '../../utils/logger';
@@ -61,7 +61,7 @@ export class RatingEndpoint {
         const result: IRating | undefined = await this.unitOfWork.ratings.getSpecificOf(guideId, userId);
 
         if (result === undefined) {
-            return BadRequest(`no rating found for guide ${guideId} and user ${userId}`);
+            return NoContent(`no rating found for guide ${guideId} and user ${userId}`);
         }
 
         return Ok(result);
