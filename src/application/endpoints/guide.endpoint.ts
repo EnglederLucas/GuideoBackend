@@ -204,7 +204,7 @@ export class GuideEndpoint {
 
             //Delete guide + tracks from filesystem
             const username = user.username;
-            const guidePath = `${__dirname}/../../${config.publicPath}/tracks/${username}/${guideId}`;
+            const guidePath = `${config.publicPath}/tracks/${username}/${guideId}`;
 
             //Check if dir exists
             let folderExists: boolean;
