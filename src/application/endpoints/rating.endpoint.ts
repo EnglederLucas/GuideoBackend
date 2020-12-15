@@ -93,15 +93,24 @@ export class RatingEndpoint {
                 return NotFound({ msg: `No guide found with id ${rating.guideId}` });
             }
 
-            await this.unitOfWork.ratings.add(rating);
-            // $Log.logger.info('rating repo: inserting rating');
-            // $Log.logger.info('rating repo: update values');
-            const newNumOfRatings = guide.numOfRatings + 1;
-            const oldRatingTotal = guide.rating * guide.numOfRatings;
-            const newAvgRating = Math.round((oldRatingTotal + rating.rating) / newNumOfRatings);
-
-            guide.rating = newAvgRating;
-            guide.numOfRatings = newNumOfRatings;
+            //TODO: Check if user rated already || adjust rating accordingly
+            const uid = req.headers['uid'] as string;
+            //Update Rating
+            if(await this.unitOfWork.ratings.userHasRatedGuide(guide.id, uid)){
+                await this.unitOfWork.ratings.update({rating: rating.rating, guideId: rating.guideId, userId: rating.userId});
+            }
+            //New Rating
+            else{
+                await this.unitOfWork.ratings.add(rating);
+                // $Log.logger.info('rating repo: inserting rating');
+                // $Log.logger.info('rating repo: update values');
+                const newNumOfRatings = guide.numOfRatings + 1;
+                const oldRatingTotal = guide.rating * guide.numOfRatings;
+                const newAvgRating = Math.round((oldRatingTotal + rating.rating) / newNumOfRatings);
+    
+                guide.rating = newAvgRating;
+                guide.numOfRatings = newNumOfRatings;
+            }
 
             // $Log.logger.info('rating repo: update in database');
             // update guide
@@ -122,12 +131,8 @@ export class RatingEndpoint {
         if (guideId === undefined) throw new Error('no guide id defined');
         if (userId === undefined) throw new Error('no user id defined');
 
-        if (typeof rating !== 'number') throw new Error('rating has the wrong format');
-        if (typeof guideId !== 'string') throw new Error('guideId has the wrong format');
-        if (typeof userId !== 'string') throw new Error('userId has the wrong format');
-
         return {
-            rating: rating,
+            rating: Number.parseInt(rating),
             guideId: guideId,
             userId: userId,
         };
