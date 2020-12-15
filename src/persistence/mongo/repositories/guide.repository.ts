@@ -48,13 +48,28 @@ export class GuideRepository implements IGuideRepository {
             .exec();
     }
 
+    async getByRating(rating: number): Promise<IGuide[]> {
+        const guides = await DbGuide.aggregate([
+            {
+              '$match': {
+                'privateFlag': false, 
+                'rating': {
+                  '$gte': rating
+                }
+              }
+            }
+        ]).exec();
+
+        return guides;
+    }
+
     async getGuidesByLocation(latitude: number, longitude: number, radius: number): Promise<GuideLocationDto[]> {
         const userLocation = {latitude: latitude, longitude: longitude};
         
         const dbResult = await DbGuide.aggregate([
             {
                 '$match': {
-                'privateFlag': false
+                    'privateFlag': false
                 }
             },{
                 '$lookup': {
@@ -76,7 +91,7 @@ export class GuideRepository implements IGuideRepository {
                 '$group': {
                     '_id': null, 
                     'tracks': {
-                    '$push': '$tracks'
+                        '$push': '$tracks'
                     }
                 }
             }, {

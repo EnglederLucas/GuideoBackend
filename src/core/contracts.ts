@@ -16,6 +16,7 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 }
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
+    getByRating(rating: number): IGuide[] | PromiseLike<IGuide[]>;
     delete(guideId: string, username: string): Promise<void>;
     getGuidesByName(name: string): Promise<IGuide[]>;
     getGuidesOfUser(userName: string): Promise<IGuide[]>;
