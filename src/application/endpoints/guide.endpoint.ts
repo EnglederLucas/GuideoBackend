@@ -82,9 +82,9 @@ export class GuideEndpoint {
 
     @Get('/byRating')
     @Validate(query('rating','a rating has to be defined').isNumeric())
-    async getByRating(@Query('rating') rating: number, req: Request, res: Response){
+    async getByRating(@Query('rating') rating: string, req: Request, res: Response){
         try{
-            const guides: IGuide[] = await this.unitOfWork.guides.getByRating(rating);
+            const guides: IGuide[] = await this.unitOfWork.guides.getByRating(Number.parseInt(rating));
             return Ok(this.convertToDto(guides));
         } catch(err){
             return BadRequest({msg: err.message});

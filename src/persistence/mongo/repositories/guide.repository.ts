@@ -49,7 +49,6 @@ export class GuideRepository implements IGuideRepository {
     }
 
     async getByRating(rating: number): Promise<IGuide[]> {
-        
         const guides = await DbGuide.aggregate([
             {
               '$match': {
@@ -60,8 +59,6 @@ export class GuideRepository implements IGuideRepository {
               }
             }
         ]).exec();
-
-        console.log(guides, '   ', rating);
 
         return guides;
     }
