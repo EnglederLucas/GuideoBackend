@@ -9,6 +9,8 @@ export interface IGenericRepository<TEntity, TId> {
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
+    getRatingOfGuideByUser(id: string, uid: string): Promise<IRating | null>;
+    update(rating: IRating): Promise<void>;
     getRatingsOfGuide(guideId: string): Promise<IRating[]>;
     getAverageRatingOfGuide(guideId: string): Promise<number>;
     getRatingsOfUser(userId: string): Promise<IRating[]>;
