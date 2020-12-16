@@ -40,8 +40,8 @@ export class RatingRepository implements IRatingRepository {
         await DbRating.insertMany(items);
     }
 
-    async userHasRatedGuide(guideId: string, userId: string): Promise<boolean> {
-        return await DbRating.find({guideId: guideId, userId: userId}) != null;
+    async getRatingOfGuideByUser(guideId: string, userId: string): Promise<IRating | null> {
+        return await DbRating.findOne({guideId: guideId, userId: userId});
     }
 
     async update(rating: IRating): Promise<void> {

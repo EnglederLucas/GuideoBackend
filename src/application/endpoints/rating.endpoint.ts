@@ -96,8 +96,11 @@ export class RatingEndpoint {
             //TODO: Check if user rated already || adjust rating accordingly
             const uid = req.headers['uid'] as string;
             //Update Rating
-            if(await this.unitOfWork.ratings.userHasRatedGuide(guide.id, uid)){
+            const userRating = await this.unitOfWork.ratings.getRatingOfGuideByUser(guide.id, uid);
+            if(userRating !== null){
                 await this.unitOfWork.ratings.update({rating: rating.rating, guideId: rating.guideId, userId: rating.userId});
+                
+                guide.rating = (guide.numOfRatings * guide.rating - userRating.rating + rating.rating) / guide.numOfRatings;
             }
             //New Rating
             else{
