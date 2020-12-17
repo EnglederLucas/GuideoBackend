@@ -30,6 +30,7 @@ export class GuideLocationDto {
         public tags: string[],
         public user: string,
         public imageLink: string,
-        public location: {latitude: number, longitude: number}
+        public location: {latitude: number, longitude: number},
+        public rating: number
     ) {}
 }

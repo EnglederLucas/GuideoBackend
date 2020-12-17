@@ -123,7 +123,7 @@ export class GuideRepository implements IGuideRepository {
 
         for(let [key, value] of guideTrackMap){
             const guide = await DbGuide.findOne({_id: key}).exec() as IGuide;
-            guides.push({id: guide.id, location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, imageLink: guide.imageLink ?? ''});
+            guides.push({id: guide.id, location: value.location, name: guide.name, description: guide.description ?? '', tags: guide.tags ?? [], user: guide.user, rating: guide.rating, imageLink: guide.imageLink ?? ''});
         }
 
         return guides;
