@@ -19,6 +19,7 @@ export class GuideEndpoint {
     constructor(private readonly unitOfWork: IUnitOfWork) {
     }
 
+
     @Get('/')
     @RouteDescription('Returns all available guides')
     async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
@@ -27,6 +28,22 @@ export class GuideEndpoint {
             return Ok(this.convertToDto(guides));
         } catch(err){
             return BadRequest({msg: err.message});
+        }
+    }
+
+    @Get('/byId/:guideId')
+    async getById(req: Request, res: Response){
+        const guideId = req.params['guideId'];
+
+        try{
+            const guide = await this.unitOfWork.guides.getById(guideId);
+            if(guide == null){
+                return NotFound("Guide does not exist.");
+            }
+
+            return Ok(guide);
+        } catch (err){
+            return BadRequest({msg: err.message})
         }
     }
 
@@ -108,7 +125,22 @@ export class GuideEndpoint {
     @Validate(query('radius', 'a radius has to be defined').isNumeric())
     async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, @Query('radius') radius: number, req: Request, res: Response){
         try{
-            const guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
+            let guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
+
+            //TODO: Check if filter criteria is added in query
+            /*const minRating = req.query['minRating'];
+            if(minRating !== undefined){
+                guides.forEach(guide => {
+                    if(guide.rating){
+
+                    }
+                })
+            }
+            const tags = req.query['tags'];
+            if(tags !== undefined){
+
+            }*/
+
             return Ok(guides);
         } catch(err){
             return BadRequest({msg: err.message});
@@ -190,40 +222,44 @@ export class GuideEndpoint {
             const uid = req.headers['uid'] as string;
             const guideId = req.params['guideId'];
 
-            const user = await this.unitOfWork.users.getByAuthId(uid);
-            if(user == null){
-                return NotFound("User does not exist.");
-            }
-            const guide = await this.unitOfWork.guides.getById(guideId);
-            if(guide == null){
-                return NotFound("Guide does not exist.");
-            }
-            if(guide.user != uid){
-                return new JsonResponse(403, "Not allowed to delete other's guides.")
-            }
-
-            //Delete guide + tracks from filesystem
-            const username = user.username;
-            const guidePath = `${config.publicPath}/tracks/${username}/${guideId}`;
-
-            //Check if dir exists
-            let folderExists: boolean;
             try{
-                await Files.accessAsync(guidePath);
-                folderExists = true;
-            } catch(err){
-                folderExists = false;
-            }
+                const user = await this.unitOfWork.users.getByAuthId(uid);
+                if(user == null){
+                    return NotFound("User does not exist.");
+                }
+                const guide = await this.unitOfWork.guides.getById(guideId);
+                if(guide == null){
+                    return NotFound("Guide does not exist.");
+                }
+                if(guide.user != uid){
+                    return new JsonResponse(403, "Not allowed to delete other's guides.")
+                }
+    
+                //Delete guide + tracks from filesystem
+                const username = user.username;
+                const guidePath = `${config.publicPath}/tracks/${username}/${guideId}`;
+    
+                //Check if dir exists
+                let folderExists: boolean;
+                try{
+                    await Files.accessAsync(guidePath);
+                    folderExists = true;
+                } catch(err){
+                    folderExists = false;
+                }
+                
+                if(folderExists){
+                    (await Files.readdirAsync(guidePath)).forEach(trackFile => {
+                        Files.unlinkAsync(`${guidePath}/${trackFile}`);
+                    });
+                    await Files.rmdirAsync(guidePath);
+                }
             
-            if(folderExists){
-                (await Files.readdirAsync(guidePath)).forEach(trackFile => {
-                    Files.unlinkAsync(`${guidePath}/${trackFile}`);
-                });
-                await Files.rmdirAsync(guidePath);
+                //Delete guide + tracks from db
+                await this.unitOfWork.guides.delete(guideId, username);
+            }catch(err){
+                BadRequest({msg: err.message})
             }
-            
-            //Delete guide + tracks from db
-            await this.unitOfWork.guides.delete(guideId, username);
 
             return new JsonResponse(204, null);
         } catch(err){
