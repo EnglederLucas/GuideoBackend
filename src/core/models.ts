@@ -40,6 +40,7 @@ export interface ITrack {
     trackLink: string;
     trackLength: number;
     mapping: IMapping;
+    hidden: boolean;
 }
 
 export interface IMapping {

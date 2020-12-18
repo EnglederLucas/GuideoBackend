@@ -31,34 +31,4 @@ export class TrackRepository implements ITrackRepository {
         return await DbTrack.findOne({ _id: trackId }).exec();
     }
 
-    //Provisional solution
-    async getTracksByLocation(latitude: number, longitude: number): Promise<ITrack[]> {
-        const userLocation = { latitude: latitude, longitude: longitude };
-        const dbGuides: IGuide[] = (await DbGuide.find({}).exec()) as IGuide[];
-
-        var tracks: ITrack[] = [];
-        var tracksInRadius: ITrack[] = [];
-        var locationGuides: GuideLocationDto[] = [];
-
-        for (var i = 0; i < dbGuides.length; i++) {
-            (await DbTrack.find({ guideId: dbGuides[i].id }).exec()).forEach(track => {
-                tracks.push(track);
-            });
-        }
-
-        tracks.forEach(track => {
-            //Get Guides within 5km of the given latitude and longitude with geolib
-
-            if (
-                isPointWithinRadius(
-                    userLocation,
-                    { latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude },
-                    5000,
-                )
-            ) {
-            }
-        });
-
-        return tracksInRadius;
-    }
 }

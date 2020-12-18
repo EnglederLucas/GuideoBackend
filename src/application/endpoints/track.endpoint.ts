@@ -42,17 +42,20 @@ export class TrackDBEndpoint {
     @Validate(
         checkSchema({
             guideId: {
-                isString: true,
+                isString: true
             },
             trackName: {
-                isString: true,
+                isString: true
             },
             trackLink: {
-                isString: true,
+                isString: true
             },
             trackLength: {
-                isNumeric: true,
+                isNumeric: true
             },
+            hidden: {
+                isBoolean: true
+            }
         }),
     )
     async addTrack(req: Request, res: Response) {
@@ -65,25 +68,14 @@ export class TrackDBEndpoint {
         }
     }
 
-    @Get('/byLocation')
-    @Validate(query('latitude', 'a latitude has to be defined').isFloat())
-    @Validate(query('longitude', 'a longitude has to be defined').isFloat())
-    async getByLocation(@Query('latitude') latitude: number, @Query('longitude') longitude: number, req: Request, res: Response) {
-        try {
-            const tracks = await this.unitOfWork.tracks.getTracksByLocation(latitude, longitude);
-            return Ok(tracks);
-        } catch (err) {
-            return BadRequest({ msg: err.message });
-        }
-    }
-
     private mapToTrack(obj: any): ITrack {
-        let { guideId, trackName, description, trackLink, trackLength } = obj;
+        let { guideId, trackName, description, trackLink, trackLength, hidden } = obj;
 
         if (guideId === undefined) throw new Error('No guideId defined');
         if (trackName === undefined) throw new Error('No trackName defined');
         if (trackLink === undefined) throw new Error('No trackLink defined');
         if (trackLength === undefined) throw new Error('No trackLength defined.');
+        if (hidden === undefined) throw new Error('No hidden defined.');
         if (description === undefined) description = '';
 
         let geoLocation: IGeoLocation;
