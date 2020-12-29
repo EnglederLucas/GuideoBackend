@@ -58,6 +58,7 @@ export class UserEndpoint {
             name: { isString: true, optional: true },
             email: { isString: true, optional: true },
             description: { isString: true, optional: true },
+            imageLink: { isString: true, optional: true },
         }),
     )
     async addUser(req: Request, res: Response) {
@@ -71,7 +72,7 @@ export class UserEndpoint {
     }
 
     private mapToUser(obj: any): IUser {
-        let { username, authid, name, email, description } = obj;
+        let { username, authid, name, email, description, imageLink } = obj;
 
         // if (id === undefined) throw new Error('no id defined');
         if (username === undefined) throw new Error('no username defined');
@@ -80,6 +81,6 @@ export class UserEndpoint {
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
 
-        return { username, authid, name, email, description } as IUser;
+        return { username, authid, name, email, description, imageLink } as IUser;
     }
 }
