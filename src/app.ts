@@ -83,8 +83,8 @@ async function main() {
             { route: '/', handler: $Log.getRoutingLogger() },
             { route: '/', handler: express.json() },
         ],
-        // keyPath: `${__dirname}${config.publicPath}/security/key.pem`,
-        // certPath: `${__dirname}${config.publicPath}/security/cert.pem`,
+        keyPath: `${__dirname}${config.publicPath}/security/key.pem`,
+        certPath: `${__dirname}${config.publicPath}/security/cert.pem`,
     });
 
     if (enableCors) $Log.logger.info('cors enabled');
