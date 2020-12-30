@@ -162,7 +162,11 @@ export class TrackDBEndpoint {
         if (hidden === undefined) throw new Error('No hidden defined.');
         if (description === undefined) description = '';
 
-        const { longitude, latitude, radius } = obj.mapping?.geoLocation;
+        const {
+            mapping: {
+                geoLocation: { longitude, latitude, radius },
+            },
+        } = obj;
 
         let mapping: IMapping | null = null;
         if (obj.mapping && obj.mapping?.geoLocation && longitude && latitude && radius) {
