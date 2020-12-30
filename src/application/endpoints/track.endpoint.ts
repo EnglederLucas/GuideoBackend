@@ -153,6 +153,8 @@ export class TrackDBEndpoint {
     private mapToTrack(obj: any): ITrack {
         let { id, guideId, trackName, description, trackLink, trackLength, hidden } = obj;
 
+        console.log(obj);
+
         if (guideId === undefined) throw new Error('No guideId defined');
         if (trackName === undefined) throw new Error('No trackName defined');
         if (trackLink === undefined) throw new Error('No trackLink defined');
@@ -160,10 +162,11 @@ export class TrackDBEndpoint {
         if (hidden === undefined) throw new Error('No hidden defined.');
         if (description === undefined) description = '';
 
+        const { longitude, latitude, radius } = obj.mapping?.geoLocation;
+
         let mapping: IMapping | null = null;
-        if (obj.mapping && obj.mapping?.geoLocation) {
-            const { longitude, latitude, radius } = obj.mapping?.geoLocation;
-            if (longitude && latitude && radius) mapping = obj.mapping;
+        if (obj.mapping && obj.mapping?.geoLocation && longitude && latitude && radius) {
+            mapping = obj.mapping;
         } else if (obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined) {
             mapping = { geoLocation: { latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius } };
         } else {
