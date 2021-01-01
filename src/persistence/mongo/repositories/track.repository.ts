@@ -8,15 +8,21 @@ import { DbTrack } from '../models/track.model';
 
 export class TrackRepository implements ITrackRepository {
     async getAll(): Promise<ITrack[]> {
-        const result = await DbTrack.find(
-            {},
-            { guideId: 1, trackName: 1, description: 1, trackLink: 1, trackLength: 1, mapping: 1 },
-        ).exec();
+        const result = await DbTrack.find({}).exec();
         return result;
     }
 
     async add(item: ITrack): Promise<string> {
         return (await DbTrack.ofTrack(item as ITrack).save())._id;
+    }
+
+    async update(track: ITrack): Promise<void> {
+        console.log(track);
+        await DbTrack.updateOne({ _id: track.id }, track).exec();
+    }
+
+    async delete(trackId: string): Promise<void> {
+        await DbTrack.deleteOne({ _id: trackId }).exec();
     }
 
     async addRange(items: ITrack[]): Promise<void> {
@@ -30,5 +36,4 @@ export class TrackRepository implements ITrackRepository {
     async getById(trackId: string): Promise<ITrack | null> {
         return await DbTrack.findOne({ _id: trackId }).exec();
     }
-
 }

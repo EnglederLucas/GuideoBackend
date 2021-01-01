@@ -6,11 +6,11 @@ export interface IGenericRepository<TEntity, TId> {
     add(item: TEntity): Promise<string>;
     addRange(items: TEntity[]): Promise<void>;
     getById(id: TId): Promise<TEntity | null>;
+    update(item: TEntity): Promise<void>;
 }
 
 export interface IRatingRepository extends IGenericRepository<IRating, any> {
     getRatingOfGuideByUser(id: string, uid: string): Promise<IRating | null>;
-    update(rating: IRating): Promise<void>;
     getRatingsOfGuide(guideId: string): Promise<IRating[]>;
     getAverageRatingOfGuide(guideId: string): Promise<number>;
     getRatingsOfUser(userId: string): Promise<IRating[]>;
@@ -19,21 +19,19 @@ export interface IRatingRepository extends IGenericRepository<IRating, any> {
 
 export interface IGuideRepository extends IGenericRepository<IGuide, string> {
     getByRating(rating: number): IGuide[] | PromiseLike<IGuide[]>;
-    delete(guideId: string, username: string): Promise<void>;
+    delete(guideId: string): Promise<void>; //username was unnecessary
     getGuidesByName(name: string): Promise<IGuide[]>;
-    getGuidesOfUser(userName: string): Promise<IGuide[]>;
+    getGuidesOfUser(userName: string, includePrivate?: boolean): Promise<IGuide[]>;
     getGuidesWithTags(tags: ITag['name'][]): Promise<IGuide[]>; // ITag['name'][] wird zu dem Typ string[] zur compilezeit
     getGuidesPaged(index: number, size: number): Promise<IGuide[]>;
     getTopGuides(limit: number): Promise<IGuide[]>;
     getGuidesByLocation(latitude: number, longitude: number, radius: number): Promise<GuideLocationDto[]>;
-    update(guide: IGuide): Promise<void>;
 }
 
 export interface ITagRepository extends IGenericRepository<ITag, string> {
     getTagByName(name: string): Promise<ITag | null>;
     getTagsBeginningWith(letters: string): Promise<ITag[]>;
     getTopUsedTags(limit: number): Promise<ITag[]>;
-    update(tag: ITag): Promise<void>;
 }
 
 export interface IUserRepository {
@@ -47,6 +45,7 @@ export interface IUserRepository {
 
 export interface ITrackRepository extends IGenericRepository<ITrack, string> {
     getByGuide(guideId: string): Promise<ITrack[]>;
+    delete(trackId: string): Promise<void>;
 }
 
 export interface IUnitOfWork {
