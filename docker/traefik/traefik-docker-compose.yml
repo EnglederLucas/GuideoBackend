@@ -19,21 +19,35 @@ services:
       - ./traefik.yml:/etc/traefik/traefik.yml
       - ./letsencrypt:/letsencrypt
   
-  ionic:
-    image: guideo/ionic-frontend:1.0.13
+  # ionic:
+  #   image: guideo/ionic-frontend:1.0.13
+  #   networks:
+  #     - frontend
+  #   depends_on:
+  #     - guideo
+  #   labels:
+  #     - traefik.enable=true
+  #     # Host and Port definition
+  #     - traefik.http.routers.frontend.entrypoints=web
+  #     - traefik.http.routers.frontend.rule=(Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`))
+  #     - traefik.http.services.ionic.loadbalancer.server.port=80
+  #     # TLS Certificate configuration
+  #     # - traefik.http.routers.frontend.tls=true
+  #     # - traefik.http.routers.frontend.tls.certresolver=guideoresolver
+
+  guideo-pwa:
+    image: guideo/ionic-frontend:pwa-0.1
     networks:
       - frontend
-    depends_on:
-      - guideo
     labels:
       - traefik.enable=true
       # Host and Port definition
-      - traefik.http.routers.frontend.entrypoints=web
-      - traefik.http.routers.frontend.rule=(Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`))
-      - traefik.http.services.ionic.loadbalancer.server.port=80
-      # TLS Certificate configuration
-      # - traefik.http.routers.frontend.tls=true
-      # - traefik.http.routers.frontend.tls.certresolver=guideoresolver
+      - traefik.http.routers.pwa.entrypoints=web
+      - traefik.http.routers.pwa.rule=((Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`)) && PathPrefix(`/pwa/`))
+      - traefik.http.services.guideo-pwa.loadbalancer.server.port=80
+      - traefik.http.middlewares.guideo-pwa-stripprefix.stripprefix.prefixes=/pwa
+      - traefik.http.routers.pwa.middlewares=guideo-pwa-stripprefix@docker
+      # - traefik.http.routers.test.priority=10
 
   mongo:
     image: mongo
