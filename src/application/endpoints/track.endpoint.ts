@@ -29,6 +29,28 @@ export class TrackDBEndpoint {
         }
     }
 
+    @Get('/byGuideAndLocation')
+    @Validate(query('latitude', 'a latitude has to be defined').isNumeric())
+    @Validate(query('longitude', 'a longitude has to be defined').isNumeric())
+    @Validate(query('radius', 'a radius has to be defined').isNumeric())
+    async getByLocation(
+        @Query('latitude') latitude: number,
+        @Query('longitude') longitude: number,
+        @Query('radius') radius: number,
+        req: Request,
+        res: Response,
+    ) : Promise<JsonResponse<any>>{
+        const guideId = req.query.guideId;
+
+        try {
+            const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, {latitude, longitude, radius});
+            // console.log(data);
+            return Ok(data.map(t => new TrackDto(t)));
+        } catch (err) {
+            return BadRequest({ msg: err.message });
+        }
+    }
+
     @Get('/:trackId')
     async getById(req: Request, res: Response): Promise<JsonResponse<any>> {
         const trackId = req.params['trackId'];
@@ -162,6 +184,23 @@ export class TrackDBEndpoint {
         if (hidden === undefined) throw new Error('No hidden defined.');
         if (description === undefined) description = '';
 
+        const mapping = this.getMapping(obj);
+
+        const newTrack: ITrack = {
+            id: id ?? '',
+            guideId,
+            trackName,
+            description,
+            trackLink,
+            trackLength,
+            mapping,
+            hidden,
+        };
+
+        return newTrack;
+    }
+
+    private getMapping(obj: any): IMapping{
         const {
             mapping: {
                 geoLocation: { longitude, latitude, radius },
@@ -176,17 +215,8 @@ export class TrackDBEndpoint {
         } else {
             throw new Error('No mapping defined');
         }
-        const newTrack: ITrack = {
-            id: id ?? '',
-            guideId,
-            trackName,
-            description,
-            trackLink,
-            trackLength,
-            mapping: mapping as IMapping,
-            hidden,
-        };
 
-        return newTrack;
+        return mapping!;
     }
+
 }

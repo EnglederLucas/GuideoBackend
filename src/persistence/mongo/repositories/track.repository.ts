@@ -2,11 +2,20 @@ import { isPointWithinRadius } from 'geolib';
 import { Schema } from 'mongoose';
 import { GuideLocationDto } from '../../../application/data-transfer-objects';
 import { ITrackRepository } from '../../../core/contracts';
-import { IGeoLocation, IGuide, ITrack } from '../../../core/models';
+import { IGeoLocation, IGuide, IMapping, ITrack } from '../../../core/models';
 import { DbGuide } from '../models';
 import { DbTrack } from '../models/track.model';
+import { getDistance} from 'geolib';
 
 export class TrackRepository implements ITrackRepository {
+
+    async getByGuideAndLocation(guideId: string, userLocation: {latitude: number, longitude: number, radius: number}): Promise<ITrack[]> {
+        const tracks = await DbTrack.find({ guideId: guideId }).exec() as ITrack[];
+
+        let sortedTracks: ITrack[] = tracks.sort((a,b) => getDistance(a.mapping.geoLocation, userLocation) - getDistance(b.mapping.geoLocation, userLocation));
+        return sortedTracks;
+    }
+
     async getAll(): Promise<ITrack[]> {
         const result = await DbTrack.find({}).exec();
         return result;

@@ -1,5 +1,5 @@
 import { GuideLocationDto } from '../application/data-transfer-objects';
-import { IGuide, IRating, ITag, IUser, ITrack } from './models';
+import { IGuide, IRating, ITag, IUser, ITrack, IMapping, IGeoLocation } from './models';
 
 export interface IGenericRepository<TEntity, TId> {
     getAll(): Promise<TEntity[]>;
@@ -44,6 +44,7 @@ export interface IUserRepository {
 }
 
 export interface ITrackRepository extends IGenericRepository<ITrack, string> {
+    getByGuideAndLocation(guideId: string, userLocation: {}): Promise<ITrack[]>;
     getByGuide(guideId: string): Promise<ITrack[]>;
     delete(trackId: string): Promise<void>;
 }

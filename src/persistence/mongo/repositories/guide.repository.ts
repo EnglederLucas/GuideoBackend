@@ -1,4 +1,4 @@
-import { getDistance, isPointWithinRadius } from 'geolib';
+import { getDistance} from 'geolib';
 import { GuideLocationDto } from '../../../application/data-transfer-objects';
 import config from '../../../config';
 import { IGuideRepository } from '../../../core/contracts';
@@ -124,8 +124,10 @@ export class GuideRepository implements IGuideRepository {
         });
 
         let guides: GuideLocationDto[] = [];
+        //sort by distance
+        const sortedGuideTrackMap = new Map([...guideTrackMap.entries()].sort((a,b) => a[1].distance - b[1].distance));
 
-        for (let [key, value] of guideTrackMap) {
+        for (let [key, value] of sortedGuideTrackMap) {
             const guide = (await DbGuide.findOne({ _id: key }).exec()) as IGuide;
             guides.push({
                 id: guide.id,
