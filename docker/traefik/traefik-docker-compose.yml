@@ -36,14 +36,14 @@ services:
   #     # - traefik.http.routers.frontend.tls.certresolver=guideoresolver
 
   guideo-pwa:
-    image: guideo/ionic-frontend:pwa-0.1
+    image: guideo/ionic-frontend:pwa-0.3
     networks:
       - frontend
     labels:
       - traefik.enable=true
       # Host and Port definition
       - traefik.http.routers.pwa.entrypoints=web
-      - traefik.http.routers.pwa.rule=((Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`)) && PathPrefix(`/pwa/`))
+      - traefik.http.routers.pwa.rule=((Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`)) && PathPrefix(`/pwa`))
       - traefik.http.services.guideo-pwa.loadbalancer.server.port=80
       - traefik.http.middlewares.guideo-pwa-stripprefix.stripprefix.prefixes=/pwa
       - traefik.http.routers.pwa.middlewares=guideo-pwa-stripprefix@docker

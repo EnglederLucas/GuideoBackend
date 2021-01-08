@@ -1,0 +1,105 @@
+version: "3.6"
+
+services:
+  reverse-proxy:
+    image: traefik:2.3.4    # official v2 traefik docker image
+    # Enables the web UI and tells Traefik to listen to docker
+    # command: --api.insecure=true --providers.docker
+    ports:
+      - 80:80   # The HTTP port
+      - 443:443   # HTTPS port, needed for tlsChallenge in certResolvers
+      - 8443:8443 # Backend Port
+      - 8080:8080   # The web ui (eneabled by --api.insecure=true)
+    networks:
+      - frontend
+      - backend
+    volumes:
+      # So thaht Traefik can listen to the docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./letsencrypt:/letsencrypt
+  
+  ionic:
+    image: guideo/ionic-frontend:1.0.20
+    networks:
+      - frontend
+    depends_on:
+      - guideo
+    labels:
+      - traefik.enable=true
+      # Host and Port definition
+      - traefik.http.routers.frontend.entrypoints=websecure
+      - traefik.http.routers.frontend.rule=(Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`))
+      - traefik.http.services.ionic.loadbalancer.server.port=80
+      # TLS Certificate configuration
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.routers.frontend.tls.certresolver=guideoresolver
+
+  download-server:
+    image: guideo/download-server:0.1.0
+    networks:
+      - frontend
+    volumes:
+      - "./download-server-public:/app/public"
+    labels:
+      - traefik.enable=true
+      # Host and Port definition
+      - traefik.http.routers.frontend.entrypoints=websecure
+      - traefik.http.routers.frontend.rule=((Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`)) && PathPrefix(`/download`))
+      - traefik.http.services.ionic.loadbalancer.server.port=3000
+
+  mongo:
+    image: mongo
+    networks:
+      backend:
+        ipv4_address: 10.2.0.2
+    volumes:
+      - db-data:/data/db
+    ports:
+      - 27017:27017
+    labels:
+      - traefik.enable=false
+
+  guideo:
+    image: guideo/guideo:1.0.2
+    environment: 
+      DB_URL: mongodb://10.2.0.2:27017
+      DB_NAME: guideo
+    networks:
+      - backend
+    volumes: 
+      - "./public:/app/public"
+    depends_on: 
+      - mongo
+    labels:
+      - traefik.enable=true
+      # Host and Port definition
+      - traefik.http.routers.guideo.entrypoints=backend
+      - traefik.http.routers.guideo.rule=(Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`))
+      # redirect to docker internal port (like port configuration in docker-compose: - port: xxxx:3030)
+      - traefik.http.services.guideo.loadbalancer.server.port=3030
+      # TLS Certificate configuration
+      - traefik.http.routers.guideo.tls=true
+      - traefik.http.routers.guideo.tls.certresolver=guideoresolver
+      # Redirect to https
+      # - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      # - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # - traefik.http.middlewares.https-redirect.redirectscheme.port=8443
+      # - traefik.http.routers.guideo.middlewares=https-redirect@docker
+
+volumes: 
+  db-data:
+
+networks:
+  backend:
+    name: backend
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.2.0.0/16
+  frontend:
+    name: frontend
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.3.0.0/16
