@@ -34,8 +34,9 @@ export class TrackDto {
     private trackLength: number;
     private mapping: IMapping;
     private hidden: boolean;
+    private position: number;
 
-    constructor({ id, guideId, description, hidden, mapping, trackLength, trackLink, trackName }: ITrack) {
+    constructor({ id, guideId, description, hidden, mapping, trackLength, trackLink, trackName, position }: ITrack) {
         this.id = id;
         this.guideId = guideId;
         this.description = description ?? '';
@@ -44,6 +45,7 @@ export class TrackDto {
         this.trackLength = trackLength ?? 0;
         this.trackLink = trackLink ?? '';
         this.trackName = trackName;
+        this.position = position;
     }
 }
 

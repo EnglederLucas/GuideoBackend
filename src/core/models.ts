@@ -41,6 +41,7 @@ export interface ITrack {
     trackLength: number;
     mapping: IMapping;
     hidden: boolean;
+    position: number;
 }
 
 export interface IMapping {

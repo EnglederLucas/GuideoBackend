@@ -80,10 +80,7 @@ export class TrackDBEndpoint {
             },
             trackLength: {
                 isNumeric: true,
-            },
-            hidden: {
-                isBoolean: true,
-            },
+            }
         }),
     )
     async addTrack(req: Request, res: Response) {
@@ -113,10 +110,7 @@ export class TrackDBEndpoint {
             },
             trackLength: {
                 isNumeric: true,
-            },
-            hidden: {
-                isBoolean: true,
-            },
+            }
         }),
     )
     async updateTrack(req: Request, res: Response) {
@@ -173,7 +167,7 @@ export class TrackDBEndpoint {
     }
 
     private mapToTrack(obj: any): ITrack {
-        let { id, guideId, trackName, description, trackLink, trackLength, hidden } = obj;
+        let { id, guideId, trackName, description, trackLink, trackLength, hidden, position } = obj;
 
         console.log(obj);
 
@@ -181,7 +175,7 @@ export class TrackDBEndpoint {
         if (trackName === undefined) throw new Error('No trackName defined');
         if (trackLink === undefined) throw new Error('No trackLink defined');
         if (trackLength === undefined) throw new Error('No trackLength defined.');
-        if (hidden === undefined) throw new Error('No hidden defined.');
+        if (hidden === undefined) hidden = false;
         if (description === undefined) description = '';
 
         const mapping = this.getMapping(obj);
@@ -195,6 +189,7 @@ export class TrackDBEndpoint {
             trackLength,
             mapping,
             hidden,
+            position
         };
 
         return newTrack;
