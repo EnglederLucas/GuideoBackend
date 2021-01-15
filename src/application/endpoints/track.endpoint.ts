@@ -167,7 +167,7 @@ export class TrackDBEndpoint {
     }
 
     private mapToTrack(obj: any): ITrack {
-        let { id, guideId, trackName, description, trackLink, trackLength, hidden, position } = obj;
+        let { id, guideId, trackName, description, trackLink, trackLength, hidden, order } = obj;
 
         console.log(obj);
 
@@ -189,7 +189,7 @@ export class TrackDBEndpoint {
             trackLength,
             mapping,
             hidden,
-            position
+            order
         };
 
         return newTrack;

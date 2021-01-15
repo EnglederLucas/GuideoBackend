@@ -12,7 +12,7 @@ export class TrackRepository implements ITrackRepository {
     async getByGuideAndLocation(guideId: string, userLocation: {latitude: number, longitude: number, radius: number}): Promise<ITrack[]> {
         const tracks = await DbTrack
             .find({ guideId: guideId })
-            .sort({ position: 1 })
+            .sort({ order: 1 })
             .exec() as ITrack[];
 
         let sortedTracks: ITrack[] = tracks.sort((a,b) => getDistance(a.mapping.geoLocation, userLocation) - getDistance(b.mapping.geoLocation, userLocation));

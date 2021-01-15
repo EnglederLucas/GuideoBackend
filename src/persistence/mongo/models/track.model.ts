@@ -26,7 +26,7 @@ const TrackSchema = new Schema({
     trackLength: { type: Number, required: true },
     mapping: { type: Schema.Types.Mixed, required: true },
     hidden: {type: Boolean, required: true},
-    position: {type: Number, required: false}
+    order: {type: Number, required: false}
 });
 
 TrackSchema.statics.ofTrack = (track: ITrack) => new DbTrack(track);
