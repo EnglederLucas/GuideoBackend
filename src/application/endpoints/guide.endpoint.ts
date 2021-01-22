@@ -223,6 +223,16 @@ export class GuideEndpoint {
             const guide = this.mapToGuide(req.body);
             await this.unitOfWork.guides.update(guide);
 
+            if (guide.username === null || guide.username === '') {
+                const user = await this.unitOfWork.users.getByAuthId(guide.user);
+
+                if (user === null) {
+                    throw new Error('No user found');
+                }
+
+                guide.username = user.username;
+            }
+
             guide.tags?.forEach(async tagName => {
                 const tag = await this.unitOfWork.tags.getTagByName(tagName);
                 // TODO: add Null Check

@@ -21,59 +21,63 @@ export class DbDataInitializer implements IDataInitializer {
             id: '',
             name: 'History of Linz',
             user: 'rOogJsfoD1eHbIZXbYHWf5DGr983', //thelegend27
+            username: 'thelegend27',
             imageLink: '/img/skyline.jpg',
             tags: ['history', 'irrelevant'],
             description: 'The guide of guides will guide you through the history of Linz and its beautifullness',
             chronological: false,
             rating: 0,
             numOfRatings: 0,
-            privateFlag: false
+            privateFlag: false,
         });
 
         await this.unitOfWork.guides.add({
             id: '',
             name: 'A Guide with name 2',
             user: 'maxmuster',
+            username: 'thelegend27',
             imageLink: '/img/Louvre_Museum.jpg',
             tags: ['culture'],
             description: 'A nonsense guide with nonsense content and nosense description',
             chronological: false,
             rating: 0,
             numOfRatings: 0,
-            privateFlag: true
+            privateFlag: true,
         });
 
         await this.unitOfWork.guides.add({
             id: '',
             name: 'Callcenter access 3000',
             user: 'luxdachef',
+            username: 'thelegend27',
             imageLink: '/img/AbbeyRoad.jpg',
             tags: ['technology'],
             description: 'A nonsense guide with nonsense content and nosense description',
             chronological: false,
             rating: 0,
             numOfRatings: 0,
-            privateFlag: false
+            privateFlag: false,
         });
 
         await this.unitOfWork.guides.add({
             id: '',
             name: 'A man must do, what a man has to do',
             user: 'thelegend27',
+            username: 'thelegend27',
             imageLink: '/img/deer.png',
             tags: ['culture', 'irrelevant'],
             description: 'Behind the secrets of duty.',
             chronological: false,
             rating: 0,
             numOfRatings: 0,
-            privateFlag: false
+            privateFlag: false,
         });
 
         await this.unitOfWork.users.add({
             id: '',
             authid: 'rOogJsfoD1eHbIZXbYHWf5DGr983',
             email: 'thelegend27@x.at',
-            username: 'thelegend27'
+            username: 'thelegend27',
         });
 
         const ratings: IRating[] = [
@@ -183,7 +187,6 @@ export class DbDataInitializer implements IDataInitializer {
 
         return 10;
     }
-
 
     getGuides(): IGuide[] {
         throw new Error('Method not implemented.');

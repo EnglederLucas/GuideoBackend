@@ -17,6 +17,7 @@ export class PostGuideDto {
             description: this.description,
             tags: this.tags,
             user: this.user,
+            username: '',
             imageLink: 'not defined',
             chronological: this.chronological,
             rating: 0,
