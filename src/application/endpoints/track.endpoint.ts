@@ -1,7 +1,7 @@
 import { IMapping } from './../../core/models';
 import { Request, Response } from 'express';
 import { IGeoLocation, ITrack } from '../../core/models';
-import { Endpoint, Get, Validate, Post, Query, Put, Delete } from '../../nexos-express/decorators';
+import { Endpoint, Get, Validate, Post, Query, Put, Delete, Middleware } from '../../nexos-express/decorators';
 import { JsonResponse, BadRequest, Ok, Created, NotFound } from '../../nexos-express/models';
 
 import { query, checkSchema } from 'express-validator';
@@ -9,6 +9,7 @@ import { IUnitOfWork } from '../../core/contracts';
 import { $Log, Files } from '../../utils';
 import config from '../../config';
 import { TrackDto } from '../data-transfer-objects';
+import { verifyUserToken } from '../middleware';
 
 @Endpoint('tracks')
 export class TrackDBEndpoint {
@@ -39,11 +40,11 @@ export class TrackDBEndpoint {
         @Query('radius') radius: number,
         req: Request,
         res: Response,
-    ) : Promise<JsonResponse<any>>{
+    ): Promise<JsonResponse<any>> {
         const guideId = req.query.guideId;
 
         try {
-            const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, {latitude, longitude, radius});
+            const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, { latitude, longitude, radius });
             // console.log(data);
             return Ok(data.map(t => new TrackDto(t)));
         } catch (err) {
@@ -80,9 +81,10 @@ export class TrackDBEndpoint {
             },
             trackLength: {
                 isNumeric: true,
-            }
+            },
         }),
     )
+    @Middleware(verifyUserToken)
     async addTrack(req: Request, res: Response) {
         try {
             const track: ITrack = this.mapToTrack(req.body);
@@ -110,9 +112,10 @@ export class TrackDBEndpoint {
             },
             trackLength: {
                 isNumeric: true,
-            }
+            },
         }),
     )
+    @Middleware(verifyUserToken)
     async updateTrack(req: Request, res: Response) {
         try {
             const track = this.mapToTrack(req.body);
@@ -124,6 +127,7 @@ export class TrackDBEndpoint {
     }
 
     @Delete('/:trackId')
+    @Middleware(verifyUserToken)
     async deleteTrack(req: Request, res: Response) {
         try {
             const uid = req.headers['uid'] as string;
@@ -189,13 +193,13 @@ export class TrackDBEndpoint {
             trackLength,
             mapping,
             hidden,
-            order
+            order,
         };
 
         return newTrack;
     }
 
-    private getMapping(obj: any): IMapping{
+    private getMapping(obj: any): IMapping {
         const {
             mapping: {
                 geoLocation: { longitude, latitude, radius },
@@ -213,5 +217,4 @@ export class TrackDBEndpoint {
 
         return mapping!;
     }
-
 }

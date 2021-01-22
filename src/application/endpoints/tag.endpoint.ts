@@ -1,9 +1,10 @@
 import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
-import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
+import { Endpoint, Get, Validate, Post, Query, Middleware } from '../../nexos-express/decorators';
 import { Ok, BadRequest } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
+import { verifyUserToken } from '../middleware';
 
 @Endpoint('tags')
 export class TagEndpoint {
@@ -55,6 +56,7 @@ export class TagEndpoint {
             tagName: { isString: true },
         }),
     )
+    @Middleware(verifyUserToken)
     async add(req: Request, res: Response) {
         const tagName = req.body.tagName;
 

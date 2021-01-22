@@ -2,7 +2,7 @@ import { IGuide } from '../../../core/models';
 import { Document, model, Schema, Model } from 'mongoose';
 
 export interface IGuideDocument extends Document, IGuide {
-    id: string
+    id: string;
 }
 
 export interface IGuideModel extends IGuide, Model<IGuideDocument> {
@@ -12,13 +12,17 @@ export interface IGuideModel extends IGuide, Model<IGuideDocument> {
 const GuideSchema = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
     },
     description: { type: String },
     tags: { type: [String] },
     user: {
         type: String,
-        required: true
+        required: true,
+    },
+    username: {
+        type: String,
+        required: true,
     },
     imageLink: { type: String },
     rating: {
@@ -27,16 +31,16 @@ const GuideSchema = new Schema({
     },
     numOfRatings: {
         type: Number,
-        required: true
+        required: true,
     },
     chronological: {
         type: Boolean,
-        required: true
+        required: true,
     },
-    privateFlag : {
+    privateFlag: {
         type: Boolean,
-        required: true
-    }
+        required: true,
+    },
 });
 
 GuideSchema.statics.ofGuide = (data: IGuide) => new DbGuide(data);

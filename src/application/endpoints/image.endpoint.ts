@@ -1,6 +1,7 @@
 import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
 import { Files, $Log } from '../../utils';
+import { verifyUserToken } from '../middleware';
 
 export class ImageEndpoint extends BaseEndpoint {
     private tempPath: string;
@@ -13,6 +14,8 @@ export class ImageEndpoint extends BaseEndpoint {
 
     protected initRoutes(): void {
         const upload = multer({ dest: this.tempPath });
+
+        this.router.use('/upload/:userName', verifyUserToken);
 
         this.router.post('/upload/:userName', upload.single('image'), async (req, res) => {
             try {

@@ -7,12 +7,13 @@ export class GuideDto {
     private description: string;
     private tags: string[];
     private user: string;
+    private username: string;
     private imageLink: string;
     private rating: number;
     private privateFlag: boolean;
     private chronological: boolean;
 
-    constructor({ id, name, description, tags, user, imageLink, rating, privateFlag, chronological }: IGuide) {
+    constructor({ id, name, description, tags, user, username, imageLink, rating, privateFlag, chronological }: IGuide) {
         this.id = id;
         this.name = name;
         this.description = description === undefined ? '' : description;
@@ -22,6 +23,7 @@ export class GuideDto {
         this.rating = rating;
         this.privateFlag = privateFlag;
         this.chronological = chronological;
+        this.username = username;
     }
 }
 

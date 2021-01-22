@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { query, checkSchema } from 'express-validator';
 import { $Log } from '../../utils/logger';
 
-import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query, Delete } from '../../nexos-express/decorators';
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query, Delete, Middleware } from '../../nexos-express/decorators';
 import { Ok, JsonResponse, BadRequest, Created, InternalServerError, NotFound } from '../../nexos-express/models';
 
 import { IUnitOfWork } from '../../core/contracts';
@@ -12,6 +12,7 @@ import { PostGuideDto } from '../../core/data-transfer-objects';
 import { GuideDto } from '../data-transfer-objects';
 import config from '../../config';
 import { Files } from '../../utils';
+import { verifyUserToken } from '../middleware';
 
 @Endpoint('guides')
 export class GuideEndpoint {
@@ -167,10 +168,19 @@ export class GuideEndpoint {
             },
         }),
     )
+    @Middleware(verifyUserToken)
     async addGuide(req: Request, res: Response) {
         try {
-            const guide: PostGuideDto = this.mapToPostGuide(req.body);
-            const guideId = await this.unitOfWork.guides.add(guide.asGuide());
+            const guide: IGuide = this.mapToPostGuide(req.body).asGuide();
+
+            const user = await this.unitOfWork.users.getByAuthId(guide.user);
+
+            if (user === null) {
+                throw new Error('No user found');
+            }
+
+            guide.username = user.username;
+            const guideId = await this.unitOfWork.guides.add(guide);
             return Created(guideId);
         } catch (err) {
             return BadRequest(err.toString());
@@ -207,6 +217,7 @@ export class GuideEndpoint {
             },
         }),
     )
+    @Middleware(verifyUserToken)
     async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
@@ -225,6 +236,7 @@ export class GuideEndpoint {
     }
 
     @Delete('/:guideId')
+    @Middleware(verifyUserToken)
     async deleteGuide(req: Request, res: Response) {
         try {
             const uid = req.headers['uid'] as string;
@@ -287,7 +299,19 @@ export class GuideEndpoint {
         if (chronological === undefined) chronological = false;
         if (privateFlag === undefined) privateFlag = false;
 
-        return { id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0, privateFlag: privateFlag };
+        return {
+            id,
+            name,
+            description,
+            tags,
+            user,
+            imageLink,
+            chronological,
+            rating: 0,
+            numOfRatings: 0,
+            privateFlag: privateFlag,
+            username: '',
+        };
     }
 
     private mapToPostGuide(obj: any): PostGuideDto {
