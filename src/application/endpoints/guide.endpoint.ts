@@ -171,8 +171,16 @@ export class GuideEndpoint {
     @Middleware(verifyUserToken)
     async addGuide(req: Request, res: Response) {
         try {
-            const guide: PostGuideDto = this.mapToPostGuide(req.body);
-            const guideId = await this.unitOfWork.guides.add(guide.asGuide());
+            const guide: IGuide = this.mapToPostGuide(req.body).asGuide();
+
+            const user = await this.unitOfWork.users.getByAuthId(guide.user);
+
+            if (user === null) {
+                throw new Error('No user found');
+            }
+
+            guide.username = user.username;
+            const guideId = await this.unitOfWork.guides.add(guide);
             return Created(guideId);
         } catch (err) {
             return BadRequest(err.toString());
@@ -291,7 +299,19 @@ export class GuideEndpoint {
         if (chronological === undefined) chronological = false;
         if (privateFlag === undefined) privateFlag = false;
 
-        return { id, name, description, tags, user, imageLink, chronological, rating: 0, numOfRatings: 0, privateFlag: privateFlag };
+        return {
+            id,
+            name,
+            description,
+            tags,
+            user,
+            imageLink,
+            chronological,
+            rating: 0,
+            numOfRatings: 0,
+            privateFlag: privateFlag,
+            username: '',
+        };
     }
 
     private mapToPostGuide(obj: any): PostGuideDto {

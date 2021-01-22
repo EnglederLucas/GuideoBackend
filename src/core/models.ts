@@ -14,6 +14,7 @@ export interface IGuide {
     description?: string;
     tags?: ITag['name'][]; // übernimmt den typ von ITag.name und macht ein Array daraus
     user: IUser['id']; // übernimmt den typ von IUser.name
+    username: string;
     imageLink?: string;
     rating: number;
     numOfRatings: number;
@@ -45,14 +46,12 @@ export interface ITrack {
 }
 
 export interface IMapping {
-    geoLocation: IGeoLocation
+    geoLocation: IGeoLocation;
     //TODO: implement other mapping methods
 }
 
-export interface IGeoLocation{
+export interface IGeoLocation {
     radius: number;
     latitude: number;
     longitude: number;
 }
-
-
