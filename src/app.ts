@@ -20,8 +20,8 @@ import express from 'express';
 import { connect, connection as db } from 'mongoose';
 import { Files, $Log } from './utils';
 import config from './config';
-import { IDataInitializer } from './core/contracts';
-import { DbDataInitializer } from './persistence/initializers';
+// import { IDataInitializer } from './core/contracts';
+// import { DbDataInitializer } from './persistence/initializers';
 
 async function main() {
     $Log.logTitle();
@@ -78,7 +78,7 @@ async function main() {
             { route: '/download', paths: [`${__dirname}${config.publicPath}/download`] },
         ],
         middlewares: [
-            //TODO:{ route: '/api', handler: verifyUserToken },
+            { route: '/api', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },

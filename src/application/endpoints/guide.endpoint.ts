@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { query, checkSchema } from 'express-validator';
 import { $Log } from '../../utils/logger';
 
-import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query, Delete } from '../../nexos-express/decorators';
+import { Endpoint, Get, Validate, Post, Put, RouteDescription, Query, Delete, Middleware } from '../../nexos-express/decorators';
 import { Ok, JsonResponse, BadRequest, Created, InternalServerError, NotFound } from '../../nexos-express/models';
 
 import { IUnitOfWork } from '../../core/contracts';
@@ -12,6 +12,7 @@ import { PostGuideDto } from '../../core/data-transfer-objects';
 import { GuideDto } from '../data-transfer-objects';
 import config from '../../config';
 import { Files } from '../../utils';
+import { verifyUserToken } from '../middleware';
 
 @Endpoint('guides')
 export class GuideEndpoint {
@@ -167,6 +168,7 @@ export class GuideEndpoint {
             },
         }),
     )
+    @Middleware(verifyUserToken)
     async addGuide(req: Request, res: Response) {
         try {
             const guide: PostGuideDto = this.mapToPostGuide(req.body);
@@ -207,6 +209,7 @@ export class GuideEndpoint {
             },
         }),
     )
+    @Middleware(verifyUserToken)
     async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
@@ -225,6 +228,7 @@ export class GuideEndpoint {
     }
 
     @Delete('/:guideId')
+    @Middleware(verifyUserToken)
     async deleteGuide(req: Request, res: Response) {
         try {
             const uid = req.headers['uid'] as string;
