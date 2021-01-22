@@ -179,7 +179,7 @@ export class GuideEndpoint {
                 throw new Error('No user found');
             }
 
-            guide.username = user.username;
+            guide.username = user.name ?? user.username;
             const guideId = await this.unitOfWork.guides.add(guide);
             return Created(guideId);
         } catch (err) {
@@ -221,7 +221,6 @@ export class GuideEndpoint {
     async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
-            await this.unitOfWork.guides.update(guide);
 
             if (guide.username === null || guide.username === '') {
                 const user = await this.unitOfWork.users.getByAuthId(guide.user);
@@ -230,8 +229,10 @@ export class GuideEndpoint {
                     throw new Error('No user found');
                 }
 
-                guide.username = user.username;
+                guide.username = user.name ?? user.username;
             }
+
+            await this.unitOfWork.guides.update(guide);
 
             guide.tags?.forEach(async tagName => {
                 const tag = await this.unitOfWork.tags.getTagByName(tagName);

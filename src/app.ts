@@ -78,7 +78,7 @@ async function main() {
             { route: '/download', paths: [`${__dirname}${config.publicPath}/download`] },
         ],
         middlewares: [
-            { route: '/api', handler: verifyUserToken },
+            { route: '/api/users', handler: verifyUserToken },
             // { route: '/img', handler: verifyUserToken },
             // { route: '/tracks', handler: verifyUserToken },
             { route: '/', handler: $Log.getRoutingLogger() },
