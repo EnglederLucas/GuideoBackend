@@ -23,7 +23,6 @@ export class TrackDBEndpoint {
 
         try {
             const data = await this.unitOfWork.tracks.getByGuide(guideId);
-            // console.log(data);
             return Ok(data.map(t => new TrackDto(t)));
         } catch (err) {
             return BadRequest({ msg: err.message });
@@ -45,7 +44,6 @@ export class TrackDBEndpoint {
 
         try {
             const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, { latitude, longitude, radius });
-            // console.log(data);
             return Ok(data.map(t => new TrackDto(t)));
         } catch (err) {
             return BadRequest({ msg: err.message });
@@ -118,8 +116,13 @@ export class TrackDBEndpoint {
     @Middleware(verifyUserToken)
     async updateTrack(req: Request, res: Response) {
         try {
-            const track = this.mapToTrack(req.body);
-            await this.unitOfWork.tracks.update(track);
+            var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, req.body['id']);
+            if(unauthorizedResponse != undefined){
+                return unauthorizedResponse;
+            }
+
+            const updatedTrack = this.mapToTrack(req.body);
+            await this.unitOfWork.tracks.update(updatedTrack);
             return new JsonResponse(202, null);
         } catch (err) {
             return BadRequest({ msg: err.message });
@@ -130,27 +133,15 @@ export class TrackDBEndpoint {
     @Middleware(verifyUserToken)
     async deleteTrack(req: Request, res: Response) {
         try {
-            const uid = req.headers['uid'] as string;
             const trackId = req.params['trackId'];
-
-            const user = await this.unitOfWork.users.getByAuthId(uid);
-            if (user === null) return NotFound('User does not exist.');
-
-            const track = await this.unitOfWork.tracks.getById(trackId);
-            if (track === null) return NotFound('Track does not exist.');
-
-            const guideId = track.guideId;
-
-            const guide = await this.unitOfWork.guides.getById(guideId);
-            if (guide === null) return NotFound('Guide does not exist.');
-
-            if (guide.user !== uid) {
-                return new JsonResponse(403, "Unauthorized to delete other's tracks.");
+            var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, trackId);
+            if(unauthorizedResponse != undefined){
+                return unauthorizedResponse;
             }
 
-            const username = user.username;
-            const trackPath = `${config.publicPath}/${track.trackLink}`;
-            console.log(trackPath);
+            const track = await this.unitOfWork.tracks.getById(trackId);
+
+            const trackPath = `${config.publicPath}/${track!.trackLink}`;
 
             //Check if file exists
             try {
@@ -161,7 +152,7 @@ export class TrackDBEndpoint {
                 //Delete track
                 await this.unitOfWork.tracks.delete(trackId);
             } catch (err) {
-                BadRequest({ msg: err.message });
+                return BadRequest({ msg: err.message });
             }
 
             return new JsonResponse(204, null);
@@ -216,5 +207,26 @@ export class TrackDBEndpoint {
         }
 
         return mapping!;
+    }
+
+    private async isUserAuthorized(uid: string, trackId: string): Promise<JsonResponse<any>|undefined>{
+        const user = await this.unitOfWork.users.getByAuthId(uid);
+        if (user === null) return NotFound({msg: 'User does not exist.'});
+
+        console.log(trackId);
+        const track = await this.unitOfWork.tracks.getById(trackId);
+        console.log(track);
+        if (track === null) return NotFound({ msg: 'Track does not exist.'});
+
+        const guideId = track.guideId;
+
+        const guide = await this.unitOfWork.guides.getById(guideId);
+        if (guide === null) return NotFound({ msg: 'Guide does not exist.'});
+
+        if (guide.user !== uid) {
+            return new JsonResponse(403, { msg: "Unauthorized to edit/delete other's tracks."});
+        }
+
+        return undefined;
     }
 }
