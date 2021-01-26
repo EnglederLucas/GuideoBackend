@@ -221,6 +221,11 @@ export class GuideEndpoint {
     async updateGuideData(req: Request, res: Response) {
         try {
             const guide = this.mapToGuide(req.body);
+            const uid = req.headers['uid'];
+
+            if (guide.user !== uid) {
+                return new JsonResponse(403, { msg: "Unauthorized to edit other's guides."});
+            }
 
             if (guide.username === null || guide.username === '') {
                 const user = await this.unitOfWork.users.getByAuthId(guide.user);
