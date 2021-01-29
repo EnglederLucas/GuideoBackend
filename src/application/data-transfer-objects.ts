@@ -58,6 +58,7 @@ export class GuideLocationDto {
         public description: string,
         public tags: string[],
         public user: string,
+        public username: string,
         public imageLink: string,
         public location: { latitude: number; longitude: number },
         public rating: number,

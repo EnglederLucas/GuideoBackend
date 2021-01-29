@@ -136,6 +136,7 @@ export class GuideRepository implements IGuideRepository {
                 description: guide.description ?? '',
                 tags: guide.tags ?? [],
                 user: guide.user,
+                username: guide.username,
                 rating: guide.rating,
                 imageLink: guide.imageLink ?? '',
             });

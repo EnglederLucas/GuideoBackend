@@ -47,11 +47,15 @@ export interface ITrack {
 
 export interface IMapping {
     geoLocation: IGeoLocation;
-    //TODO: implement other mapping methods
+    qrMapping?: IQR;
 }
 
 export interface IGeoLocation {
     radius: number;
     latitude: number;
     longitude: number;
+}
+
+export interface IQR {
+
 }
