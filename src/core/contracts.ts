@@ -41,6 +41,7 @@ export interface IUserRepository {
     getAll(): Promise<IUser[]>;
     add(item: IUser): Promise<string>;
     addRange(items: IUser[]): Promise<void>;
+    update(user: IUser): Promise<void>;
 }
 
 export interface ITrackRepository extends IGenericRepository<ITrack, string> {
