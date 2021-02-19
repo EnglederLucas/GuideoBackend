@@ -82,7 +82,7 @@ export class TrackDBEndpoint {
             },
         }),
     )
-    @Middleware(verifyUserToken)
+    //@Middleware(verifyUserToken)
     async addTrack(req: Request, res: Response) {
         try {
             const track: ITrack = this.mapToTrack(req.body);
@@ -191,31 +191,62 @@ export class TrackDBEndpoint {
     }
 
     private getMapping(obj: any): IMapping {
-        const {
+        /*const {
             mapping: {
                 geoLocation: { longitude, latitude, radius },
+                code: { accessCode },
+                qr: { active }
             },
-        } = obj;
+        } = obj;*/
 
-        let mapping: IMapping | null = null;
+        /*let mapping: IMapping | null = null;
         if (obj.mapping && obj.mapping?.geoLocation && longitude && latitude && radius) {
             mapping = obj.mapping;
         } else if (obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined) {
             mapping = { geoLocation: { latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius } };
         } else {
             throw new Error('No mapping defined');
+        }*/
+
+        let mapping: IMapping | null = null;
+        let objMapping: IMapping | undefined = obj.mapping;
+
+        if(objMapping === undefined){
+            throw new Error('No mapping defined');
         }
 
-        return mapping!;
+        if(objMapping.geoLocation !== undefined){
+            if(objMapping.geoLocation.latitude !== undefined && objMapping.geoLocation.longitude !== undefined && objMapping.geoLocation.radius !== undefined){
+                mapping = objMapping;
+            }
+        }
+        if(objMapping.code !== undefined){
+            if(objMapping.code.accessCode !== undefined){
+                if(mapping == null){
+                    mapping = objMapping;
+                } 
+            }
+        }
+        if(objMapping.qr !== undefined){
+            if(objMapping.qr.active !== undefined){
+                if(mapping == null){
+                    mapping = objMapping;
+                }
+            }
+        }
+
+        if(mapping == null){
+            throw new Error('Mapping incorrectly defined');
+        }
+
+        return mapping;
     }
 
     private async isUserAuthorized(uid: string, trackId: string): Promise<JsonResponse<any>|undefined>{
         const user = await this.unitOfWork.users.getByAuthId(uid);
         if (user === null) return NotFound({msg: 'User does not exist.'});
 
-        console.log(trackId);
         const track = await this.unitOfWork.tracks.getById(trackId);
-        console.log(track);
         if (track === null) return NotFound({ msg: 'Track does not exist.'});
 
         const guideId = track.guideId;

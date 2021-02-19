@@ -47,8 +47,11 @@ export interface ITrack {
 
 export interface IMapping {
     geoLocation: IGeoLocation;
-    qrMapping?: IQR;
+    qr?: IQR;
+    code?: ICode;
 }
+
+//type IMapping = {geoLocation: IGeoLocation} | {geoLocation: IGeoLocation} |{geoLocation: IGeoLocation}
 
 export interface IGeoLocation {
     radius: number;
@@ -57,5 +60,9 @@ export interface IGeoLocation {
 }
 
 export interface IQR {
+    active: boolean;
+}
 
+export interface ICode {
+    accessCode: string;
 }
