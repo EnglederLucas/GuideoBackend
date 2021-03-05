@@ -1,5 +1,6 @@
 import { RequestHandler, Response, NextFunction, Request } from 'express';
 import { Logger } from "@tsed/logger";
+import config from '../config';
 
 export class $Log {
     private static readonly _logger: Logger = new Logger("App");
@@ -37,6 +38,14 @@ export class $Log {
                 type: "stderr",
                 layout: { type: "colored" },
                 levels: ["fatal", "error", "warn"]
+            })
+            .set("everything", {
+                type: "file",
+                filename: `${process.cwd()}${config.loggingPath}/guideo_restcalls.log`,
+                layout:{
+                    type: "json",
+                    seperator: ","
+                }
             });
     }
 

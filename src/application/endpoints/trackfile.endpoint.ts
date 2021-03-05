@@ -2,6 +2,7 @@ import { BaseEndpoint } from './base.endpoint';
 import multer from 'multer';
 import { Files, $Log } from '../../utils';
 import config from '../../config';
+import { verifyUserToken } from '../middleware';
 
 export class TrackEndpoint extends BaseEndpoint {
     private tempPath: string;
@@ -15,6 +16,8 @@ export class TrackEndpoint extends BaseEndpoint {
     protected initRoutes(): void {
         const upload = multer({ dest: this.tempPath });
 
+        this.router.use('/upload/', verifyUserToken);
+
         this.router.post('/upload/', upload.single('track'), async (req, res) => {
             try {
                 if (!req.file) {
@@ -26,8 +29,7 @@ export class TrackEndpoint extends BaseEndpoint {
 
                 if (!(await Files.existsAsync(userPath))) await Files.mkdirAsync(userPath);
                 if (!(await Files.existsAsync(guidePath))) await Files.mkdirAsync(guidePath);
-                
-                
+
                 const tempPath = req.file.path;
                 const targetPath = `${guidePath}/${req.file.originalname}`;
 

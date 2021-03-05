@@ -7,7 +7,7 @@ export class PostGuideDto {
         public tags: string[],
         public user: string,
         public imageLink: string,
-        public chronological: boolean
+        public chronological: boolean,
     ) {}
 
     asGuide(): IGuide {
@@ -17,11 +17,12 @@ export class PostGuideDto {
             description: this.description,
             tags: this.tags,
             user: this.user,
+            username: '',
             imageLink: 'not defined',
             chronological: this.chronological,
             rating: 0,
             numOfRatings: 0,
-            privateFlag: true
+            privateFlag: true,
         };
     }
 }

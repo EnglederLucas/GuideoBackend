@@ -25,6 +25,10 @@ export class UserRepository implements IUserRepository {
         throw new Error('Has to be implemented');
     }
 
+    async update(user: IUser): Promise<void> {
+        DbUser.updateOne({ _id: user.id }, { $set: user }).exec();
+    }
+
     async add(item: IUser): Promise<string> {
         return (await DbUser.ofUser(item as IUser).save()).id;
     }

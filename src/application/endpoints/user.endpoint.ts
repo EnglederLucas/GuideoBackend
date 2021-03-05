@@ -2,8 +2,8 @@ import { $Log } from '../../utils/logger';
 import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
-import { Endpoint, Get, Validate, Post, Query, Params } from '../../nexos-express/decorators';
-import { Ok, BadRequest, Created } from '../../nexos-express/models';
+import { Endpoint, Get, Validate, Post, Query, Params, Body, Put } from '../../nexos-express/decorators';
+import { Ok, BadRequest, Created, JsonResponse, NoContent } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
 import { IUser } from '../../core/models';
 
@@ -58,6 +58,7 @@ export class UserEndpoint {
             name: { isString: true, optional: true },
             email: { isString: true, optional: true },
             description: { isString: true, optional: true },
+            imageLink: { isString: true, optional: true },
         }),
     )
     async addUser(req: Request, res: Response) {
@@ -70,8 +71,29 @@ export class UserEndpoint {
         }
     }
 
+    @Put('/')
+    @Validate(
+        checkSchema({
+            username: { isString: true },
+            authid: { isString: true },
+            name: { isString: true, optional: true },
+            email: { isString: true, optional: true },
+            description: { isString: true, optional: true },
+            imageLink: { isString: true, optional: true },
+        }),
+    )
+    async updateUser(@Body() userData: any, req: Request, res: Response) {
+        try {
+            const user: IUser = this.mapToUser(userData);
+            this.unitOfWork.users.update(user);
+            return Ok(`Updated user ${user.username}`);
+        } catch (err) {
+            return BadRequest({ msg: err.toString() });
+        }
+    }
+
     private mapToUser(obj: any): IUser {
-        let { username, authid, name, email, description } = obj;
+        let { username, authid, name, email, description, imageLink } = obj;
 
         // if (id === undefined) throw new Error('no id defined');
         if (username === undefined) throw new Error('no username defined');
@@ -80,6 +102,6 @@ export class UserEndpoint {
         // if (email === undefined) email = '';
         // if (description === undefined) description = '';
 
-        return { username, authid, name, email, description } as IUser;
+        return { username, authid, name, email, description, imageLink } as IUser;
     }
 }

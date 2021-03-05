@@ -2,11 +2,12 @@ import { IGuide, IRating } from '../../core/models';
 import { Request, Response } from 'express';
 import { query, checkSchema } from 'express-validator';
 
-import { Endpoint, Get, Validate, Post, Query } from '../../nexos-express/decorators';
+import { Endpoint, Get, Validate, Post, Query, Middleware } from '../../nexos-express/decorators';
 import { Ok, BadRequest, Created, NotFound, NoContent } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
 
 import { $Log } from '../../utils/logger';
+import { verifyUserToken } from '../middleware';
 
 @Endpoint('ratings')
 export class RatingEndpoint {
@@ -81,6 +82,7 @@ export class RatingEndpoint {
             },
         }),
     )
+    @Middleware(verifyUserToken)
     async addRating(req: Request, res: Response) {
         try {
             const rating: IRating = this.mapToRating(req.body);
@@ -97,20 +99,20 @@ export class RatingEndpoint {
             const uid = req.headers['uid'] as string;
             //Update Rating
             const userRating = await this.unitOfWork.ratings.getRatingOfGuideByUser(guide.id, uid);
-            if(userRating !== null){
-                await this.unitOfWork.ratings.update({rating: rating.rating, guideId: rating.guideId, userId: rating.userId});
-                
+            if (userRating !== null) {
+                await this.unitOfWork.ratings.update({ rating: rating.rating, guideId: rating.guideId, userId: rating.userId });
+
                 guide.rating = (guide.numOfRatings * guide.rating - userRating.rating + rating.rating) / guide.numOfRatings;
             }
             //New Rating
-            else{
+            else {
                 await this.unitOfWork.ratings.add(rating);
                 // $Log.logger.info('rating repo: inserting rating');
                 // $Log.logger.info('rating repo: update values');
                 const newNumOfRatings = guide.numOfRatings + 1;
                 const oldRatingTotal = guide.rating * guide.numOfRatings;
                 const newAvgRating = Math.round((oldRatingTotal + rating.rating) / newNumOfRatings);
-    
+
                 guide.rating = newAvgRating;
                 guide.numOfRatings = newNumOfRatings;
             }
