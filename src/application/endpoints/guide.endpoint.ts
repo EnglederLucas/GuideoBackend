@@ -9,7 +9,7 @@ import { IUnitOfWork } from '../../core/contracts';
 import { IGuide } from '../../core/models';
 import { PostGuideDto } from "../../core/data-transfer-objects";
 
-import { GuideDto } from "../data-transfer-objects";
+import { GuideDto, GuideLocationDto } from '../data-transfer-objects';
 import config from '../../config';
 import { Files } from '../../utils';
 
@@ -90,6 +90,9 @@ export class GuideEndpoint {
     @Validate(query('username', 'the username has to be defined with "username"').isString())
     async getOfUser(@Query('username') userName: any, req: Request, res: Response) {
         try{
+            //TODO: Check if username equals token username -> also send private guides
+
+            
             const guides = await this.unitOfWork.guides.getGuidesOfUser(userName);
             return Ok(this.convertToDto(guides));
         } catch(err){
@@ -128,20 +131,29 @@ export class GuideEndpoint {
             let guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
 
             //TODO: Check if filter criteria is added in query
-            /*const minRating = req.query['minRating'];
+            const minRating = req.query['minRating'];
+            const tags = req.query['tags'];
+            if(minRating === undefined && tags === undefined){
+                return Ok(guides);
+            }
+
+            let filteredGuides: GuideLocationDto[] = [];
             if(minRating !== undefined){
                 guides.forEach(guide => {
-                    if(guide.rating){
-
+                    if(guide.rating >= minRating){
+                        filteredGuides.push(guide);
                     }
                 })
             }
-            const tags = req.query['tags'];
             if(tags !== undefined){
+                guides.forEach(guide => {
+                    
+                    //TODO:
 
-            }*/
+                })
+            }
 
-            return Ok(guides);
+            return Ok(filteredGuides);
         } catch(err){
             return BadRequest({msg: err.message});
         }
