@@ -213,9 +213,7 @@ export class TrackDBEndpoint {
         const user = await this.unitOfWork.users.getByAuthId(uid);
         if (user === null) return NotFound({msg: 'User does not exist.'});
 
-        console.log(trackId);
         const track = await this.unitOfWork.tracks.getById(trackId);
-        console.log(track);
         if (track === null) return NotFound({ msg: 'Track does not exist.'});
 
         const guideId = track.guideId;

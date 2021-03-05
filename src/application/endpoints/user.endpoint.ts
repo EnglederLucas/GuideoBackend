@@ -3,7 +3,7 @@ import { query, checkSchema } from 'express-validator';
 import { Request, Response } from 'express';
 
 import { Endpoint, Get, Validate, Post, Query, Params, Body, Put } from '../../nexos-express/decorators';
-import { Ok, BadRequest, Created, JsonResponse, NoContent } from '../../nexos-express/models';
+import { Ok, BadRequest, Created, JsonResponse, NoContent, NotFound } from '../../nexos-express/models';
 import { IUnitOfWork } from '../../core/contracts';
 import { IUser } from '../../core/models';
 
@@ -84,6 +84,11 @@ export class UserEndpoint {
     )
     async updateUser(@Body() userData: any, req: Request, res: Response) {
         try {
+            var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, req.body['id']);
+            if(unauthorizedResponse != undefined){
+                return unauthorizedResponse;
+            }
+
             const user: IUser = this.mapToUser(userData);
             this.unitOfWork.users.update(user);
             return Ok(`Updated user ${user.username}`);
@@ -103,5 +108,19 @@ export class UserEndpoint {
         // if (description === undefined) description = '';
 
         return { username, authid, name, email, description, imageLink } as IUser;
+    }
+
+    private async isUserAuthorized(uid: string, updateUserUid: string): Promise<JsonResponse<any>|undefined>{
+        const user = await this.unitOfWork.users.getByAuthId(uid);
+        if (user === null) return NotFound({msg: 'User does not exist.'});
+
+        const updateUser = await this.unitOfWork.users.getById(updateUserUid);
+        if (updateUser === null) return NotFound({ msg: 'UpdateUser does not exist.'});
+
+        if (updateUser.authid !== uid) {
+            return new JsonResponse(403, { msg: "Unauthorized to edit another user."});
+        }
+
+        return undefined;
     }
 }
