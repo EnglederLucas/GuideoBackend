@@ -1,4 +1,4 @@
-import { getDistance} from 'geolib';
+import { getDistance } from 'geolib';
 import { GuideLocationDto } from '../../../application/data-transfer-objects';
 import config from '../../../config';
 import { IGuideRepository } from '../../../core/contracts';
@@ -125,7 +125,7 @@ export class GuideRepository implements IGuideRepository {
 
         let guides: GuideLocationDto[] = [];
         //sort by distance
-        const sortedGuideTrackMap = new Map([...guideTrackMap.entries()].sort((a,b) => a[1].distance - b[1].distance));
+        const sortedGuideTrackMap = new Map([...guideTrackMap.entries()].sort((a, b) => a[1].distance - b[1].distance));
 
         for (let [key, value] of sortedGuideTrackMap) {
             const guide = (await DbGuide.findOne({ _id: key }).exec()) as IGuide;
@@ -148,7 +148,7 @@ export class GuideRepository implements IGuideRepository {
     async update(guide: IGuide): Promise<void> {
         // /*const x = */await DbGuide.replaceOne({ _id: guide.id }, guide).exec()
         console.log('New Guide', guide);
-        await DbGuide.updateOne({ _id: guide.id }, guide).exec();
+        await DbGuide.updateOne({ _id: guide.id }, { $set: guide }).exec();
     }
 
     async add(item: IGuide): Promise<string> {

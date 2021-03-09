@@ -5,17 +5,15 @@ import { ITrackRepository } from '../../../core/contracts';
 import { IGeoLocation, IGuide, IMapping, ITrack } from '../../../core/models';
 import { DbGuide } from '../models';
 import { DbTrack } from '../models/track.model';
-import { getDistance} from 'geolib';
+import { getDistance } from 'geolib';
 
 export class TrackRepository implements ITrackRepository {
+    async getByGuideAndLocation(guideId: string, userLocation: { latitude: number; longitude: number; radius: number }): Promise<ITrack[]> {
+        const tracks = (await DbTrack.find({ guideId: guideId }).sort({ order: 1 }).exec()) as ITrack[];
 
-    async getByGuideAndLocation(guideId: string, userLocation: {latitude: number, longitude: number, radius: number}): Promise<ITrack[]> {
-        const tracks = await DbTrack
-            .find({ guideId: guideId })
-            .sort({ order: 1 })
-            .exec() as ITrack[];
-
-        let sortedTracks: ITrack[] = tracks.sort((a,b) => getDistance(a.mapping.geoLocation, userLocation) - getDistance(b.mapping.geoLocation, userLocation));
+        let sortedTracks: ITrack[] = tracks.sort(
+            (a, b) => getDistance(a.mapping.geoLocation, userLocation) - getDistance(b.mapping.geoLocation, userLocation),
+        );
         return sortedTracks;
     }
 
@@ -30,7 +28,7 @@ export class TrackRepository implements ITrackRepository {
 
     async update(track: ITrack): Promise<void> {
         console.log(track);
-        await DbTrack.updateOne({ _id: track.id }, track).exec();
+        await DbTrack.updateOne({ _id: track.id }, { $set: track }).exec();
     }
 
     async delete(trackId: string): Promise<void> {
@@ -42,10 +40,7 @@ export class TrackRepository implements ITrackRepository {
     }
 
     async getByGuide(guideId: string): Promise<ITrack[]> {
-        return await DbTrack
-            .find({ guideId: guideId })
-            .sort({ position: 1 })
-            .exec();
+        return await DbTrack.find({ guideId: guideId }).sort({ position: 1 }).exec();
     }
 
     async getById(trackId: string): Promise<ITrack | null> {

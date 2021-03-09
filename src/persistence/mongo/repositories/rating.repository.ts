@@ -1,10 +1,9 @@
 import { IRatingRepository } from '../../../core/contracts';
 import { IRating } from '../../../core/models';
 import { DbRating } from '../models/rating.model';
-import { $Log } from "../../../utils/logger";
+import { $Log } from '../../../utils/logger';
 
 export class RatingRepository implements IRatingRepository {
-
     getAll(): Promise<IRating[]> {
         return DbRating.find({}).exec();
     }
@@ -15,7 +14,7 @@ export class RatingRepository implements IRatingRepository {
     }
 
     getRatingsOfGuide(guideId: string): Promise<IRating[]> {
-        return DbRating.find({ guideId }).exec()
+        return DbRating.find({ guideId }).exec();
     }
 
     getRatingsOfUser(userId: string): Promise<IRating[]> {
@@ -33,7 +32,7 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async add(item: IRating): Promise<string> {
-        return (await DbRating.ofRating(item).save())._id;    
+        return (await DbRating.ofRating(item).save())._id;
     }
 
     async addRange(items: IRating[]): Promise<void> {
@@ -41,11 +40,11 @@ export class RatingRepository implements IRatingRepository {
     }
 
     async getRatingOfGuideByUser(guideId: string, userId: string): Promise<IRating | null> {
-        return await DbRating.findOne({guideId: guideId, userId: userId});
+        return await DbRating.findOne({ guideId: guideId, userId: userId });
     }
 
     async update(rating: IRating): Promise<void> {
-        await DbRating.findOneAndUpdate({guideId: rating.guideId, userId: rating.userId}, rating);
+        await DbRating.findOneAndUpdate({ guideId: rating.guideId, userId: rating.userId }, { $set: rating });
     }
 
     getById(id: any): Promise<IRating | null> {
