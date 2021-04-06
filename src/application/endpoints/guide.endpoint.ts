@@ -9,11 +9,7 @@ import { IUnitOfWork } from '../../core/contracts';
 import { IGuide } from '../../core/models';
 import { PostGuideDto } from '../../core/data-transfer-objects';
 
-<<<<<<< HEAD
 import { GuideDto, GuideLocationDto } from '../data-transfer-objects';
-=======
-import { GuideDto } from '../data-transfer-objects';
->>>>>>> 3af0f07df349fa20860608766ff5f7af7d778d90
 import config from '../../config';
 import { Files } from '../../utils';
 import { verifyUserToken } from '../middleware';
@@ -91,16 +87,8 @@ export class GuideEndpoint {
     @Get('/ofUser')
     @Validate(query('username', 'the username has to be defined with "username"').isString())
     async getOfUser(@Query('username') userName: any, req: Request, res: Response) {
-<<<<<<< HEAD
-        try{
-            //TODO: Check if username equals token username -> also send private guides
-
-            
-            const guides = await this.unitOfWork.guides.getGuidesOfUser(userName);
-=======
         try {
             const guides = await this.unitOfWork.guides.getGuidesOfUser(userName, true);
->>>>>>> 3af0f07df349fa20860608766ff5f7af7d778d90
             return Ok(this.convertToDto(guides));
         } catch (err) {
             return BadRequest({ msg: err.message });

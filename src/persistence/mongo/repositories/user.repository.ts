@@ -26,7 +26,7 @@ export class UserRepository implements IUserRepository {
     }
 
     async update(user: IUser): Promise<void> {
-        DbUser.updateOne({ _id: user.id }, { $set: user }).exec();
+        DbUser.updateOne({ authid: user.authid }, { $set: user }).exec();
     }
 
     async add(item: IUser): Promise<string> {
