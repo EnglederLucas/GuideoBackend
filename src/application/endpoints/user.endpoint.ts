@@ -84,8 +84,9 @@ export class UserEndpoint {
     )
     async updateUser(@Body() userData: any, req: Request, res: Response) {
         try {
-            var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, req.body['id']);
-            if(unauthorizedResponse != undefined){
+            var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, userData.authid);
+            
+            if(unauthorizedResponse !== undefined){
                 return unauthorizedResponse;
             }
 
@@ -110,14 +111,14 @@ export class UserEndpoint {
         return { username, authid, name, email, description, imageLink } as IUser;
     }
 
-    private async isUserAuthorized(uid: string, updateUserUid: string): Promise<JsonResponse<any>|undefined>{
-        const user = await this.unitOfWork.users.getByAuthId(uid);
-        if (user === null) return NotFound({msg: 'User does not exist.'});
+    private async isUserAuthorized(tokenAuthId: string, updateAuthId: string): Promise<JsonResponse<any>|undefined>{
+        const tokenUser = await this.unitOfWork.users.getByAuthId(tokenAuthId);
+        if (tokenUser === null) return NotFound({msg: 'Currently logged in user does not exist.'});
 
-        const updateUser = await this.unitOfWork.users.getById(updateUserUid);
-        if (updateUser === null) return NotFound({ msg: 'UpdateUser does not exist.'});
+        const updateUser = await this.unitOfWork.users.getByAuthId(updateAuthId);
+        if (updateUser === null) return NotFound({ msg: `User, with authid ${updateAuthId} does not exist.`});
 
-        if (updateUser.authid !== uid) {
+        if (updateUser.authid !== tokenAuthId) {
             return new JsonResponse(403, { msg: "Unauthorized to edit another user."});
         }
 
