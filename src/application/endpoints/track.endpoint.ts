@@ -117,9 +117,9 @@ export class TrackDBEndpoint {
     async updateTrack(req: Request, res: Response) {
         try {
             var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, req.body['id']);
-            if(unauthorizedResponse != undefined){
-                return unauthorizedResponse;
-            }
+            // if(unauthorizedResponse != undefined){
+            //     return unauthorizedResponse;
+            // }
 
             const updatedTrack = this.mapToTrack(req.body);
             await this.unitOfWork.tracks.update(updatedTrack);
@@ -135,7 +135,7 @@ export class TrackDBEndpoint {
         try {
             const trackId = req.params['trackId'];
             var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, trackId);
-            if(unauthorizedResponse != undefined){
+            if (unauthorizedResponse != undefined) {
                 return unauthorizedResponse;
             }
 
@@ -211,51 +211,55 @@ export class TrackDBEndpoint {
         let mapping: IMapping | null = null;
         let objMapping: IMapping | undefined = obj.mapping;
 
-        if(objMapping === undefined){
+        if (objMapping === undefined) {
             throw new Error('No mapping defined');
         }
 
-        if(objMapping.geoLocation !== undefined){
-            if(objMapping.geoLocation.latitude !== undefined && objMapping.geoLocation.longitude !== undefined && objMapping.geoLocation.radius !== undefined){
+        if (objMapping.geoLocation !== undefined) {
+            if (
+                objMapping.geoLocation.latitude !== undefined &&
+                objMapping.geoLocation.longitude !== undefined &&
+                objMapping.geoLocation.radius !== undefined
+            ) {
                 mapping = objMapping;
             }
         }
-        if(objMapping.code !== undefined){
-            if(objMapping.code.accessCode !== undefined){
-                if(mapping == null){
+        if (objMapping.code !== undefined) {
+            if (objMapping.code.accessCode !== undefined) {
+                if (mapping == null) {
                     mapping = objMapping;
-                } 
+                }
             }
         }
-        if(objMapping.qr !== undefined){
-            if(objMapping.qr.active !== undefined){
-                if(mapping == null){
+        if (objMapping.qr !== undefined) {
+            if (objMapping.qr.active !== undefined) {
+                if (mapping == null) {
                     mapping = objMapping;
                 }
             }
         }
 
-        if(mapping == null){
+        if (mapping == null) {
             throw new Error('Mapping incorrectly defined');
         }
 
         return mapping;
     }
 
-    private async isUserAuthorized(uid: string, trackId: string): Promise<JsonResponse<any>|undefined>{
+    private async isUserAuthorized(uid: string, trackId: string): Promise<JsonResponse<any> | undefined> {
         const user = await this.unitOfWork.users.getByAuthId(uid);
-        if (user === null) return NotFound({msg: 'User does not exist.'});
+        if (user === null) return NotFound({ msg: 'User does not exist.' });
 
         const track = await this.unitOfWork.tracks.getById(trackId);
-        if (track === null) return NotFound({ msg: 'Track does not exist.'});
+        if (track === null) return NotFound({ msg: 'Track does not exist.' });
 
         const guideId = track.guideId;
 
         const guide = await this.unitOfWork.guides.getById(guideId);
-        if (guide === null) return NotFound({ msg: 'Guide does not exist.'});
+        if (guide === null) return NotFound({ msg: 'Guide does not exist.' });
 
         if (guide.user !== uid) {
-            return new JsonResponse(403, { msg: "Unauthorized to edit/delete other's tracks."});
+            return new JsonResponse(403, { msg: "Unauthorized to edit/delete other's tracks." });
         }
 
         return undefined;

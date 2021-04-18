@@ -79,16 +79,16 @@ export class UserEndpoint {
             name: { isString: true, optional: true },
             email: { isString: true, optional: true },
             description: { isString: true, optional: true },
-            imageLink: { isString: true, optional: true },
+            // imageLink: { isString: true, optional: true },
         }),
     )
     async updateUser(@Body() userData: any, req: Request, res: Response) {
         try {
             var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, userData.authid);
-            
-            if(unauthorizedResponse !== undefined){
-                return unauthorizedResponse;
-            }
+
+            // if(unauthorizedResponse !== undefined){
+            //     return unauthorizedResponse;
+            // }
 
             const user: IUser = this.mapToUser(userData);
             this.unitOfWork.users.update(user);
@@ -111,15 +111,15 @@ export class UserEndpoint {
         return { username, authid, name, email, description, imageLink } as IUser;
     }
 
-    private async isUserAuthorized(tokenAuthId: string, updateAuthId: string): Promise<JsonResponse<any>|undefined>{
+    private async isUserAuthorized(tokenAuthId: string, updateAuthId: string): Promise<JsonResponse<any> | undefined> {
         const tokenUser = await this.unitOfWork.users.getByAuthId(tokenAuthId);
-        if (tokenUser === null) return NotFound({msg: 'Currently logged in user does not exist.'});
+        if (tokenUser === null) return NotFound({ msg: 'Currently logged in user does not exist.' });
 
         const updateUser = await this.unitOfWork.users.getByAuthId(updateAuthId);
-        if (updateUser === null) return NotFound({ msg: `User, with authid ${updateAuthId} does not exist.`});
+        if (updateUser === null) return NotFound({ msg: `User, with authid ${updateAuthId} does not exist.` });
 
         if (updateUser.authid !== tokenAuthId) {
-            return new JsonResponse(403, { msg: "Unauthorized to edit another user."});
+            return new JsonResponse(403, { msg: 'Unauthorized to edit another user.' });
         }
 
         return undefined;

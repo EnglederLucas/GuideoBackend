@@ -20,7 +20,7 @@ services:
       - ./letsencrypt:/letsencrypt
   
   ionic:
-    image: guideo/ionic-frontend:1.0.13
+    image: guideo/ionic-frontend:1.0.39
     networks:
       - frontend
     depends_on:
@@ -28,12 +28,12 @@ services:
     labels:
       - traefik.enable=true
       # Host and Port definition
-      - traefik.http.routers.frontend.entrypoints=web
+      - traefik.http.routers.frontend.entrypoints=websecure
       - traefik.http.routers.frontend.rule=(Host(`guideo.htl-leonding.ac.at`) || Host(`vm62.htl-leonding.ac.at`))
       - traefik.http.services.ionic.loadbalancer.server.port=80
       # TLS Certificate configuration
-      # - traefik.http.routers.frontend.tls=true
-      # - traefik.http.routers.frontend.tls.certresolver=guideoresolver
+      - traefik.http.routers.frontend.tls=true
+      - traefik.http.routers.frontend.tls.certresolver=guideoresolver
 
   mongo:
     image: mongo
@@ -48,7 +48,7 @@ services:
       - traefik.enable=false
 
   guideo:
-    image: guideo/guideo:0.8.5
+    image: guideo/guideo:1.3.0
     environment: 
       DB_URL: mongodb://10.2.0.2:27017
       DB_NAME: guideo
@@ -69,10 +69,10 @@ services:
       - traefik.http.routers.guideo.tls=true
       - traefik.http.routers.guideo.tls.certresolver=guideoresolver
       # Redirect to https
-      - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
-      - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
-      - traefik.http.middlewares.https-redirect.redirectscheme.port=8443
-      - traefik.http.routers.guideo.middlewares=https-redirect@docker
+      # - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+      # - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+      # - traefik.http.middlewares.https-redirect.redirectscheme.port=8443
+      # - traefik.http.routers.guideo.middlewares=https-redirect@docker
 
 volumes: 
   db-data:
