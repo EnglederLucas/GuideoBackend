@@ -132,7 +132,7 @@ export class GuideEndpoint {
             let guides = await this.unitOfWork.guides.getGuidesByLocation(latitude, longitude, radius);
 
             //TODO: Check if filter criteria is added in query
-            const minRating = req.query['minRating'];
+            const minRating = parseFloat(req.query['minRating'] as string);
             const tags = req.query['tags'];
             if(minRating === undefined && tags === undefined){
                 return Ok(guides);

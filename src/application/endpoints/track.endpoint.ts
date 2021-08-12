@@ -18,7 +18,7 @@ export class TrackDBEndpoint {
     @Get('/byGuide')
     @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
     async getByGuide(req: Request, res: Response): Promise<JsonResponse<any>> {
-        const guideId = req.query.guideId;
+        const guideId = req.query.guideId as string;
         // $Log.logger.info(`guideId: ${guideId}`);
 
         try {
@@ -40,7 +40,7 @@ export class TrackDBEndpoint {
         req: Request,
         res: Response,
     ): Promise<JsonResponse<any>> {
-        const guideId = req.query.guideId;
+        const guideId = req.query.guideId as string;
 
         try {
             const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, { latitude, longitude, radius });

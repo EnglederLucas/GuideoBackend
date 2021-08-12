@@ -21,23 +21,23 @@
     "express-validator": "^6.5.0",
     "firebase-admin": "^9.11.0",
     "geolib": "^3.3.1",
-    "mongoose": "^5.13.7",
+    "mongoose": "^5.13.5",
     "mp3-duration": "^1.1.0",
     "multer": "^1.4.2",
     "reflect-metadata": "^0.1.13",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.6",
-    "@types/express": "^4.17.2",
-    "@types/mongoose": "^5.7.36",
-    "@types/multer": "^1.4.3",
-    "@typescript-eslint/eslint-plugin": "^4.6.0",
-    "@typescript-eslint/parser": "^4.6.0",
-    "dotenv": "^8.2.0",
-    "eslint": "^7.12.1",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/mongoose": "^5.11.97",
+    "@types/multer": "^1.4.7",
+    "@typescript-eslint/eslint-plugin": "^4.29.0",
+    "@typescript-eslint/parser": "^4.29.0",
+    "dotenv": "^8.6.0",
+    "eslint": "^7.32.0",
     "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "prettier": "^2.1.2"
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2"
   }
 }
