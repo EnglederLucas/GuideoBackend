@@ -10,6 +10,7 @@ import { $Log, Files } from '../../utils';
 import config from '../../config';
 import { TrackDto } from '../data-transfer-objects';
 import { verifyUserToken } from '../middleware';
+import QRCode from 'qrcode';
 
 @Endpoint('tracks')
 export class TrackDBEndpoint {
@@ -87,6 +88,16 @@ export class TrackDBEndpoint {
         try {
             const track: ITrack = this.mapToTrack(req.body);
             const trackId = await this.unitOfWork.tracks.add(track);
+
+            //Generate QRCode with TrackId - if QRCode mapping is active
+            if(track.mapping.qr?.active){
+                track.id = trackId;
+                //let qrCodeSegments = [{data: trackId, mode: "alphanumeric"}];
+                //track.mapping.qr.qrCode = QRCode.create(qrCodeSegments, {errorCorrectionLevel: 'H'} );
+                track.mapping.qr.qrCode = QRCode.create(trackId, {errorCorrectionLevel: 'H'} );
+                await this.unitOfWork.tracks.update(track);
+            }
+
             return Created(trackId);
         } catch (err) {
             return BadRequest({ msg: err.message });
@@ -164,8 +175,6 @@ export class TrackDBEndpoint {
     private mapToTrack(obj: any): ITrack {
         let { id, guideId, trackName, description, trackLink, trackLength, hidden, order } = obj;
 
-        console.log(obj);
-
         if (guideId === undefined) throw new Error('No guideId defined');
         if (trackName === undefined) throw new Error('No trackName defined');
         if (trackLink === undefined) throw new Error('No trackLink defined');
@@ -191,23 +200,6 @@ export class TrackDBEndpoint {
     }
 
     private getMapping(obj: any): IMapping {
-        /*const {
-            mapping: {
-                geoLocation: { longitude, latitude, radius },
-                code: { accessCode },
-                qr: { active }
-            },
-        } = obj;*/
-
-        /*let mapping: IMapping | null = null;
-        if (obj.mapping && obj.mapping?.geoLocation && longitude && latitude && radius) {
-            mapping = obj.mapping;
-        } else if (obj.latitude !== undefined && obj.longitude !== undefined && obj.radius !== undefined) {
-            mapping = { geoLocation: { latitude: obj.latitude, longitude: obj.longitude, radius: obj.radius } };
-        } else {
-            throw new Error('No mapping defined');
-        }*/
-
         let mapping: IMapping | null = null;
         let objMapping: IMapping | undefined = obj.mapping;
 

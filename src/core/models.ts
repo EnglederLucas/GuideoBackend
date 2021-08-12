@@ -1,3 +1,5 @@
+import { QRCode } from "qrcode";
+
 export interface IUser {
     id: string;
     authid: string; // firebase user id
@@ -61,6 +63,7 @@ export interface IGeoLocation {
 
 export interface IQR {
     active: boolean;
+    qrCode: QRCode;
 }
 
 export interface ICode {
