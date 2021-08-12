@@ -182,7 +182,7 @@ export class GuideEndpoint {
         try {
             const guide: IGuide = this.mapToPostGuide(req.body).asGuide();
 
-            const user = await this.unitOfWork.users.getByAuthId(guide.user);
+            const user = await this.unitOfWork.users.getByAuthId(guide.user); 
 
             if (user === null) {
                 throw new Error('No user found');

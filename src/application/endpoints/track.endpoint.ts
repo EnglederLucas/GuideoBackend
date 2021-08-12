@@ -82,7 +82,7 @@ export class TrackDBEndpoint {
             },
         }),
     )
-    //@Middleware(verifyUserToken)
+    @Middleware(verifyUserToken)
     async addTrack(req: Request, res: Response) {
         try {
             const track: ITrack = this.mapToTrack(req.body);
@@ -117,9 +117,9 @@ export class TrackDBEndpoint {
     async updateTrack(req: Request, res: Response) {
         try {
             var unauthorizedResponse = this.isUserAuthorized(req.headers['uid'] as string, req.body['id']);
-            // if(unauthorizedResponse != undefined){
-            //     return unauthorizedResponse;
-            // }
+            if(unauthorizedResponse != undefined){
+                 return unauthorizedResponse;
+            }
 
             const updatedTrack = this.mapToTrack(req.body);
             await this.unitOfWork.tracks.update(updatedTrack);
