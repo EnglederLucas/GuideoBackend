@@ -2,17 +2,19 @@ import { isPointWithinRadius } from 'geolib';
 import { Schema } from 'mongoose';
 import { GuideLocationDto } from '../../../application/data-transfer-objects';
 import { ITrackRepository } from '../../../core/contracts';
-import { IGeoLocation, IGuide, IMapping, ITrack } from '../../../core/models';
+import { IGeoLocation, IGuide, Mapping, ITrack } from '../../../core/models';
 import { DbGuide } from '../models';
 import { DbTrack } from '../models/track.model';
 import { getDistance } from 'geolib';
 
 export class TrackRepository implements ITrackRepository {
     async getByGuideAndLocation(guideId: string, userLocation: { latitude: number; longitude: number; radius: number }): Promise<ITrack[]> {
-        const tracks = (await DbTrack.find({ guideId: guideId }).sort({ order: 1 }).exec()) as ITrack[];
+        // Querying all Tracks of the corresponding guideo that have a geoLocation
+        const tracks = (await DbTrack.find({ guideId: guideId, 'mapping.geoLocation': { $exists: true } }).sort({ order: 1 }).exec()) as ITrack[];
 
         let sortedTracks: ITrack[] = tracks.sort(
-            (a, b) => getDistance(a.mapping.geoLocation, userLocation) - getDistance(b.mapping.geoLocation, userLocation),
+            // Non-null assertion, because the MongoDB query above only delivers Tracks which have a geoLocation
+            (a, b) => getDistance(a.mapping.geoLocation!, userLocation) - getDistance(b.mapping.geoLocation!, userLocation),
         );
         return sortedTracks;
     }

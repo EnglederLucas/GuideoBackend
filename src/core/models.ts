@@ -1,4 +1,4 @@
-import { QRCode } from "qrcode";
+import { RequireAtLeastOne } from "../utils/mapping.utility"
 
 export interface IUser {
     id: string;
@@ -42,18 +42,26 @@ export interface ITrack {
     description: string;
     trackLink: string;
     trackLength: number;
-    mapping: IMapping;
+    mapping: Mapping;
     hidden: boolean;
     order: number;
 }
 
-export interface IMapping {
-    geoLocation: IGeoLocation;
+//TODO: Only one property is required
+
+interface IBaseMapping{
+    geoLocation?: IGeoLocation;
     qr?: IQR;
     code?: ICode;
 }
 
-//type IMapping = {geoLocation: IGeoLocation} | {geoLocation: IGeoLocation} |{geoLocation: IGeoLocation}
+/*export interface Mapping {
+    geoLocation: IGeoLocation;
+    qr?: IQR;
+    code?: ICode;
+}*/
+
+export type Mapping = RequireAtLeastOne<IBaseMapping, 'geoLocation' | 'qr' | 'code'>
 
 export interface IGeoLocation {
     radius: number;

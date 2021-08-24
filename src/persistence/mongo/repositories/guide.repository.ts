@@ -88,6 +88,11 @@ export class GuideRepository implements IGuideRepository {
                 },
             },
             {
+                $match: {
+                    'mapping.geoLocation': { $exists: true }
+                }
+            },
+            {
                 $group: {
                     _id: null,
                     tracks: {
@@ -112,12 +117,13 @@ export class GuideRepository implements IGuideRepository {
         let mapResult;
         tracks.forEach(track => {
             //Get Guides within radius of the given latitude and longitude with geolib
-            const trackLocation = { latitude: track.mapping.geoLocation.latitude, longitude: track.mapping.geoLocation.longitude };
+            //Non-null assertion, because the query only returns tracks containing a geoLocation
+            const trackLocation = { latitude: track.mapping.geoLocation!.latitude, longitude: track.mapping.geoLocation!.longitude };
             const trackDistance = getDistance(userLocation, trackLocation);
             mapResult = guideTrackMap.get(track.guideId.toString());
             if (trackDistance < radius && (mapResult === undefined || getDistance(userLocation, trackLocation) < mapResult.distance)) {
                 guideTrackMap.set(track.guideId.toString(), {
-                    location: track.mapping.geoLocation,
+                    location: track.mapping.geoLocation!,
                     distance: getDistance(userLocation, trackLocation),
                 });
             }

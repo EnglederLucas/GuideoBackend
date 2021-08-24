@@ -1,4 +1,4 @@
-import { IMapping, ITrack } from './../core/models';
+import { Mapping, ITrack } from './../core/models';
 import { IGuide } from '../core/models';
 
 export class GuideDto {
@@ -34,7 +34,7 @@ export class TrackDto {
     private description: string;
     private trackLink: string;
     private trackLength: number;
-    private mapping: IMapping;
+    private mapping: Mapping;
     private hidden: boolean;
     private order: number;
 

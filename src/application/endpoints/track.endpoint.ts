@@ -1,4 +1,4 @@
-import { IMapping } from './../../core/models';
+import { Mapping } from './../../core/models';
 import { Request, Response } from 'express';
 import { IGeoLocation, ITrack } from '../../core/models';
 import { Endpoint, Get, Validate, Post, Query, Put, Delete, Middleware } from '../../nexos-express/decorators';
@@ -95,7 +95,7 @@ export class TrackDBEndpoint {
 
                 //Note: Does not work with simply using track.id / trackId as parameter to .toDataURL(...)
                 const qrDataUrl = await QRCode.toDataURL(track.id.toString(), { errorCorrectionLevel: 'H' }); 
-                
+
                 track.mapping.qr.qrDataUrl = qrDataUrl;
 
                 await this.unitOfWork.tracks.update(track);
@@ -202,9 +202,9 @@ export class TrackDBEndpoint {
         return newTrack;
     }
 
-    private getMapping(obj: any): IMapping {
-        let mapping: IMapping | null = null;
-        let objMapping: IMapping | undefined = obj.mapping;
+    private getMapping(obj: any): Mapping {
+        let mapping: Mapping | null = null;
+        let objMapping: Mapping | undefined = obj.mapping;
 
         if (objMapping === undefined) {
             throw new Error('No mapping defined');
