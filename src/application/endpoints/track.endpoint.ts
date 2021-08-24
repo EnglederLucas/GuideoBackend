@@ -83,7 +83,7 @@ export class TrackDBEndpoint {
             },
         }),
     )
-    @Middleware(verifyUserToken)
+    //@Middleware(verifyUserToken)
     async addTrack(req: Request, res: Response) {
         try {
             const track: ITrack = this.mapToTrack(req.body);
@@ -92,9 +92,12 @@ export class TrackDBEndpoint {
             //Generate QRCode with TrackId - if QRCode mapping is active
             if(track.mapping.qr?.active){
                 track.id = trackId;
-                //let qrCodeSegments = [{data: trackId, mode: "alphanumeric"}];
-                //track.mapping.qr.qrCode = QRCode.create(qrCodeSegments, {errorCorrectionLevel: 'H'} );
-                track.mapping.qr.qrCode = QRCode.create(trackId, {errorCorrectionLevel: 'H'} );
+
+                //Note: Does not work with simply using track.id / trackId as parameter to .toDataURL(...)
+                const qrDataUrl = await QRCode.toDataURL(track.id.toString(), { errorCorrectionLevel: 'H' }); 
+                
+                track.mapping.qr.qrDataUrl = qrDataUrl;
+
                 await this.unitOfWork.tracks.update(track);
             }
 

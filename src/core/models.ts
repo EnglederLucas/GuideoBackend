@@ -63,7 +63,7 @@ export interface IGeoLocation {
 
 export interface IQR {
     active: boolean;
-    qrCode: QRCode;
+    qrDataUrl: string;
 }
 
 export interface ICode {

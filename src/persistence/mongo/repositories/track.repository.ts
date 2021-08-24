@@ -27,7 +27,6 @@ export class TrackRepository implements ITrackRepository {
     }
 
     async update(track: ITrack): Promise<void> {
-        console.log(track);
         await DbTrack.updateOne({ _id: track.id }, { $set: track }).exec();
     }
 
