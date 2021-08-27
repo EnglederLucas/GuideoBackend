@@ -18,7 +18,7 @@ export class DbDataInitializer implements IDataInitializer {
         ]);
 
         await this.unitOfWork.guides.add({
-            id: '',
+            id: '1',
             name: 'History of Linz',
             user: 'rOogJsfoD1eHbIZXbYHWf5DGr983', //thelegend27
             username: 'thelegend27',
@@ -32,7 +32,7 @@ export class DbDataInitializer implements IDataInitializer {
         });
 
         await this.unitOfWork.guides.add({
-            id: '',
+            id: '2',
             name: 'A Guide with name 2',
             user: 'maxmuster',
             username: 'thelegend27',
@@ -46,7 +46,7 @@ export class DbDataInitializer implements IDataInitializer {
         });
 
         await this.unitOfWork.guides.add({
-            id: '',
+            id: '3',
             name: 'Callcenter access 3000',
             user: 'luxdachef',
             username: 'thelegend27',
@@ -60,7 +60,7 @@ export class DbDataInitializer implements IDataInitializer {
         });
 
         await this.unitOfWork.guides.add({
-            id: '',
+            id: '4',
             name: 'A man must do, what a man has to do',
             user: 'thelegend27',
             username: 'thelegend27',
@@ -74,7 +74,7 @@ export class DbDataInitializer implements IDataInitializer {
         });
 
         await this.unitOfWork.users.add({
-            id: '',
+            id: '1',
             authid: 'rOogJsfoD1eHbIZXbYHWf5DGr983',
             email: 'thelegend27@x.at',
             username: 'thelegend27',
