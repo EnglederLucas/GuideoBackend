@@ -47,8 +47,6 @@ export interface ITrack {
     order: number;
 }
 
-//TODO: Only one property is required
-
 interface IBaseMapping{
     geoLocation?: IGeoLocation;
     qr?: IQR;

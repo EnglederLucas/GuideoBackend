@@ -67,7 +67,9 @@ export class UserEndpoint {
             const id = await this.unitOfWork.users.add(user);
             return Created({ id: id });
         } catch (err) {
-            return BadRequest({ msg: err.toString() });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -94,7 +96,9 @@ export class UserEndpoint {
             this.unitOfWork.users.update(user);
             return Ok(`Updated user ${user.username}`);
         } catch (err) {
-            return BadRequest({ msg: err.toString() });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 

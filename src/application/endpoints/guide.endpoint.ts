@@ -20,12 +20,14 @@ export class GuideEndpoint {
 
     @Get('/')
     @RouteDescription('Returns all available guides')
-    async getAll(req: Request, res: Response): Promise<JsonResponse<any>> {
+    async getAll(req: Request, res: Response){
         try {
             const guides: IGuide[] = await this.unitOfWork.guides.getAll();
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -41,7 +43,9 @@ export class GuideEndpoint {
 
             return Ok(new GuideDto(guide));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -56,7 +60,9 @@ export class GuideEndpoint {
             const guides = await this.unitOfWork.guides.getGuidesPaged(pos, size);
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -69,7 +75,9 @@ export class GuideEndpoint {
             const guides = await this.unitOfWork.guides.getTopGuides(limit);
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -80,7 +88,9 @@ export class GuideEndpoint {
             const guides = await this.unitOfWork.guides.getGuidesByName(guideName);
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -91,7 +101,9 @@ export class GuideEndpoint {
             const guides = await this.unitOfWork.guides.getGuidesOfUser(userName, true);
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -102,7 +114,9 @@ export class GuideEndpoint {
             const guides: IGuide[] = await this.unitOfWork.guides.getByRating(Number.parseFloat(rating));
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -113,7 +127,9 @@ export class GuideEndpoint {
             const guides = await this.unitOfWork.guides.getGuidesWithTags(tags);
             return Ok(this.convertToDto(guides));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -156,7 +172,9 @@ export class GuideEndpoint {
 
             return Ok(filteredGuides);
         } catch(err){
-            return BadRequest({msg: err.message});
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -192,7 +210,9 @@ export class GuideEndpoint {
             const guideId = await this.unitOfWork.guides.add(guide);
             return Created(guideId);
         } catch (err) {
-            return BadRequest(err.toString());
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -256,7 +276,9 @@ export class GuideEndpoint {
             });
             return new JsonResponse(202, null);
         } catch (err) {
-            return BadRequest({ msg: err.message }); //I'm not sure, are we using msg or err.ToString()?
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -303,12 +325,16 @@ export class GuideEndpoint {
                 //Delete guide + tracks from db
                 await this.unitOfWork.guides.delete(guideId);
             } catch (err) {
-                BadRequest({ msg: err.message });
+                if(err instanceof Error){
+                    return BadRequest({ msg: err.message });
+                }
             }
 
             return new JsonResponse(204, null);
         } catch (err) {
-            return BadRequest(err.toString());
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 

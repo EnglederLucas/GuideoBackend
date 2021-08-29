@@ -10,6 +10,8 @@ export class DbDataInitializer implements IDataInitializer {
     }
 
     async initData(): Promise<number> {
+
+        //Add Tags
         await this.unitOfWork.tags.addRange([
             { name: 'history', numberOfUses: 0 },
             { name: 'culture', numberOfUses: 0 },
@@ -17,7 +19,8 @@ export class DbDataInitializer implements IDataInitializer {
             { name: 'irrelevant', numberOfUses: 0 },
         ]);
 
-        await this.unitOfWork.guides.add({
+        //Add guides and save guideIds for later usage
+        const guideIdOne = await this.unitOfWork.guides.add({
             id: '1',
             name: 'History of Linz',
             user: 'rOogJsfoD1eHbIZXbYHWf5DGr983', //thelegend27
@@ -31,7 +34,7 @@ export class DbDataInitializer implements IDataInitializer {
             privateFlag: false,
         });
 
-        await this.unitOfWork.guides.add({
+        const guideIdTwo = await this.unitOfWork.guides.add({
             id: '2',
             name: 'A Guide with name 2',
             user: 'maxmuster',
@@ -45,7 +48,7 @@ export class DbDataInitializer implements IDataInitializer {
             privateFlag: true,
         });
 
-        await this.unitOfWork.guides.add({
+        const guideIdThree = await this.unitOfWork.guides.add({
             id: '3',
             name: 'Callcenter access 3000',
             user: 'luxdachef',
@@ -73,6 +76,7 @@ export class DbDataInitializer implements IDataInitializer {
             privateFlag: false,
         });
 
+        //Add users
         await this.unitOfWork.users.add({
             id: '1',
             authid: 'rOogJsfoD1eHbIZXbYHWf5DGr983',
@@ -80,6 +84,100 @@ export class DbDataInitializer implements IDataInitializer {
             username: 'thelegend27',
         });
 
+        await this.unitOfWork.users.add({
+            id: '2',
+            authid: 'bOogJsfoD1eHbIZXbYHWf5DGr983',
+            username: 'thetester27'
+        });
+
+        await this.unitOfWork.users.add({
+            id: '3',
+            authid: 'fOogJsfoD1eHbIZXbYHWf5DGr983',
+            username: 'thejester27'
+        });
+
+        //Add tracks
+
+        await this.unitOfWork.tracks.add({
+            id: '1',
+            guideId: guideIdOne,
+            trackName: 'TrackOne',
+            description: 'First Test Track',
+            hidden: false,
+            order: 1,
+            trackLength: 25,
+            trackLink: '/test/address',
+            mapping: {
+                geoLocation: {
+                    radius: 25,
+                    latitude: 25,
+                    longitude: 25
+                },
+                qr: {
+                    active: true,
+                    qrDataUrl: "qrCode"
+                }
+            }
+        });
+
+        await this.unitOfWork.tracks.add({
+            id: '2',
+            guideId: guideIdOne,
+            trackName: 'TrackTwo',
+            description: 'Second Test Track',
+            hidden: false,
+            order: 1,
+            trackLength: 15,
+            trackLink: '/test/anotherAddress',
+            mapping: {
+                qr: {
+                    active: true,
+                    qrDataUrl: "qrCodeTwo"
+                }
+            }
+        });
+
+        await this.unitOfWork.tracks.add({
+            id: '3',
+            guideId: guideIdOne,
+            trackName: 'TrackThree',
+            description: 'Third Test Track',
+            hidden: true,
+            order: 1,
+            trackLength: 45,
+            trackLink: '/test/address',
+            mapping: {
+                geoLocation: {
+                    radius: 25,
+                    latitude: 25,
+                    longitude: 25.00001
+                }
+            }
+        });
+
+        await this.unitOfWork.tracks.add({
+            id: '4',
+            guideId: guideIdTwo,
+            trackName: 'TrackOne-SecondGuide',
+            description: 'First Test Track of Guide Two',
+            hidden: false,
+            order: 1,
+            trackLength: 35,
+            trackLink: '/test/address',
+            mapping: {
+                geoLocation: {
+                    radius: 25,
+                    latitude: 25.0001,
+                    longitude: 25
+                },
+                qr: {
+                    active: true,
+                    qrDataUrl: "qrCode"
+                }
+            }
+        });
+        
+        //Add ratings
         const ratings: IRating[] = [
             {
                 userId: '1',
@@ -91,11 +189,11 @@ export class DbDataInitializer implements IDataInitializer {
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
                 rating: 1,
             },
-            // {
-            //     userId: '3',
-            //     guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
-            //     rating: 5,
-            // },
+            //{
+            //    userId: '3',
+            //    guideId: (await this.unitOfWork.guides.getGuidesByName('A Guide with name 2'))[0].id,
+            //    rating: 5,
+            //},
             {
                 userId: '1',
                 guideId: (await this.unitOfWork.guides.getGuidesByName('Callcenter access 3000'))[0].id,
@@ -185,7 +283,7 @@ export class DbDataInitializer implements IDataInitializer {
             await this.unitOfWork.ratings.add(r);
         }
 
-        return 10;
+        return 30;
     }
 
     getGuides(): IGuide[] {

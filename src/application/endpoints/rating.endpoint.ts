@@ -125,7 +125,9 @@ export class RatingEndpoint {
 
             return Created({ msg: 'nice one' });
         } catch (err) {
-            return BadRequest({ msg: err.toString() });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 

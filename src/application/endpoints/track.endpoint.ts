@@ -18,7 +18,7 @@ export class TrackDBEndpoint {
 
     @Get('/byGuide')
     @Validate(query('guideId', 'the id of the guide has to be defined with "guideId"').isString())
-    async getByGuide(req: Request, res: Response): Promise<JsonResponse<any>> {
+    async getByGuide(req: Request, res: Response) {
         const guideId = req.query.guideId as string;
         // $Log.logger.info(`guideId: ${guideId}`);
 
@@ -26,7 +26,9 @@ export class TrackDBEndpoint {
             const data = await this.unitOfWork.tracks.getByGuide(guideId);
             return Ok(data.map(t => new TrackDto(t)));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -40,19 +42,21 @@ export class TrackDBEndpoint {
         @Query('radius') radius: number,
         req: Request,
         res: Response,
-    ): Promise<JsonResponse<any>> {
+    ){
         const guideId = req.query.guideId as string;
 
         try {
             const data = await this.unitOfWork.tracks.getByGuideAndLocation(guideId, { latitude, longitude, radius });
             return Ok(data.map(t => new TrackDto(t)));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
     @Get('/:trackId')
-    async getById(req: Request, res: Response): Promise<JsonResponse<any>> {
+    async getById(req: Request, res: Response) {
         const trackId = req.params['trackId'];
 
         try {
@@ -62,7 +66,9 @@ export class TrackDBEndpoint {
 
             return Ok(new TrackDto(track));
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -103,7 +109,9 @@ export class TrackDBEndpoint {
 
             return Created(trackId);
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -139,7 +147,9 @@ export class TrackDBEndpoint {
             await this.unitOfWork.tracks.update(updatedTrack);
             return new JsonResponse(202, null);
         } catch (err) {
-            return BadRequest({ msg: err.message });
+            if(err instanceof Error){
+                return BadRequest({ msg: err.message });
+            }
         }
     }
 
@@ -166,12 +176,16 @@ export class TrackDBEndpoint {
                 //Delete track
                 await this.unitOfWork.tracks.delete(trackId);
             } catch (err) {
-                return BadRequest({ msg: err.message });
+                if(err instanceof Error){
+                    return BadRequest({ msg: err.message });
+                }
             }
 
             return new JsonResponse(204, null);
         } catch (err) {
-            return BadRequest(err.toString());
+            if(err instanceof Error){
+                return BadRequest(err.toString());
+            }
         }
     }
 
@@ -196,7 +210,7 @@ export class TrackDBEndpoint {
             trackLength,
             mapping,
             hidden,
-            order,
+            order
         };
 
         return newTrack;
