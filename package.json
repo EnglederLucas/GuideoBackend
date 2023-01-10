@@ -19,7 +19,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-validator": "^6.5.0",
-    "firebase-admin": "^9.11.0",
+    "firebase-admin": "^11.4.1",
     "geolib": "^3.3.1",
     "mongoose": "^5.13.5",
     "mp3-duration": "^1.1.0",
